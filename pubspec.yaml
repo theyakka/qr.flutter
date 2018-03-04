@@ -2,6 +2,10 @@ name: qr_flutter
 description: A QR code library for Flutter.
 version: 1.0.0
 author: Luke Freeman <freeman.luke@gmail.com>
+homepage: https://twitter.com/lukeaf
+
+environment:
+  sdk: ">=1.8.0 <2.0.0"
 
 dependencies:
   flutter:
