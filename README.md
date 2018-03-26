@@ -1,4 +1,6 @@
-**QR - Flutter** is a QR code generation and rendering library for Flutter.
+<img src="https://storage.googleapis.com/product-logos/logo_qr_flutter.png" align="center" width="182">
+
+QR.Flutter is a QR code generation and rendering library for Flutter.
 
 # Features
 - Built on [QR - Dart](https://github.com/kevmoo/qr.dart)
