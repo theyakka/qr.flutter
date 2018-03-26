@@ -2,6 +2,10 @@
 
 QR.Flutter is a QR code generation and rendering library for Flutter.
 
+[![CircleCI](https://circleci.com/gh/lukef/qr.flutter.svg?style=svg)](https://circleci.com/gh/lukef/qr.flutter)
+[![Pub](https://img.shields.io/badge/pub-1.0.0-lightgrey.svg)](https://pub.dartlang.org/packages/qr_flutter)
+[![codecov](https://codecov.io/gh/lukef/qr.flutter/branch/master/graph/badge.svg)](https://codecov.io/gh/lukef/qr.flutter)
+
 # Features
 - Built on [QR - Dart](https://github.com/kevmoo/qr.dart)
 - Supports QR code versions 1 - 40

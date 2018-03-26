@@ -1,0 +1,11 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/android:api-27-alpha
+    working_directory: /app
+    steps:
+      - checkout
+      - run: ./scripts/setup_ci.sh
+      - run: ./flutter/bin/flutter doctor
+      - run: ./flutter/bin/flutter test --coverage
