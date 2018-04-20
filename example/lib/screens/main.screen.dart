@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../../lib/src/qr_image.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class MainScreen extends StatefulWidget {
   @override
