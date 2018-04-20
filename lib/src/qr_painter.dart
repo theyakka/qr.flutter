@@ -55,7 +55,7 @@ class QrPainter extends CustomPainter {
   bool shouldRepaint(CustomPainter oldDelegate) {
     if (oldDelegate is QrPainter) {
       return this.color != oldDelegate.color || this.errorCorrectionLevel != oldDelegate.errorCorrectionLevel ||
-          this.version != oldDelegate.version;
+          this.version != oldDelegate.version || this._qr != oldDelegate._qr;
     }
     return false;
   }
