@@ -15,7 +15,7 @@ You can install the package by adding the following lines to your `pubspec.yaml`
 
 ```yaml
 dependencies:
-  qr_flutter: ^1.1.0
+  qr_flutter: ^1.1.1
 ```
 
 After adding the dependency to your `pubspec.yaml` you can run: `pub get` or `flutter packages get` if you're using Flutter.
