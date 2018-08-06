@@ -24,16 +24,21 @@ class QrImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new Container(
-      width: size,
-      height: size,
-      color: backgroundColor,
-      child: new Padding(
-        padding: this.padding,
-        child: new CustomPaint(
-          painter: _painter,
-        ),
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double widgetSize = size ?? constraints.biggest.shortestSide;
+        return new Container(
+          width: widgetSize,
+          height: widgetSize,
+          color: backgroundColor,
+          child: new Padding(
+            padding: this.padding,
+            child: new CustomPaint(
+              painter: _painter,
+            ),
+          ),
+        );
+      },
     );
   }
 }
