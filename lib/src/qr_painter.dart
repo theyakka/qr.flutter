@@ -4,19 +4,15 @@ import 'package:qr/qr.dart';
 typedef void QrError(dynamic error);
 
 class QrPainter extends CustomPainter {
-  QrPainter(
-    String data,
-    this.color,
-    this.version,
-    this.errorCorrectionLevel,
-    {this.onError}
-  ) : this._qr = new QrCode(version, errorCorrectionLevel) {
+  QrPainter(String data, this.color, this.version, this.errorCorrectionLevel,
+      {this.onError})
+      : this._qr = new QrCode(version, errorCorrectionLevel) {
     _p.color = this.color;
     // configure and make the QR code data
     try {
       _qr.addData(data);
       _qr.make();
-    } catch(ex) {
+    } catch (ex) {
       if (this.onError != null) {
         _hasError = true;
         this.onError(ex);
@@ -38,13 +34,15 @@ class QrPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     if (_hasError) return;
     if (size.shortestSide == 0) {
-      print("[QR] WARN: width or height is zero. You should set a 'size' value or nest this painter in a Widget that defines a non-zero size");
+      print(
+          "[QR] WARN: width or height is zero. You should set a 'size' value or nest this painter in a Widget that defines a non-zero size");
     }
     final squareSize = size.shortestSide / _qr.moduleCount;
     for (int x = 0; x < _qr.moduleCount; x++) {
       for (int y = 0; y < _qr.moduleCount; y++) {
         if (_qr.isDark(y, x)) {
-          final squareRect = new Rect.fromLTWH(x * squareSize, y * squareSize, squareSize, squareSize);
+          final squareRect = new Rect.fromLTWH(
+              x * squareSize, y * squareSize, squareSize, squareSize);
           canvas.drawRect(squareRect, _p);
         }
       }
@@ -54,8 +52,10 @@ class QrPainter extends CustomPainter {
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
     if (oldDelegate is QrPainter) {
-      return this.color != oldDelegate.color || this.errorCorrectionLevel != oldDelegate.errorCorrectionLevel ||
-          this.version != oldDelegate.version || this._qr != oldDelegate._qr;
+      return this.color != oldDelegate.color ||
+          this.errorCorrectionLevel != oldDelegate.errorCorrectionLevel ||
+          this.version != oldDelegate.version ||
+          this._qr != oldDelegate._qr;
     }
     return false;
   }

@@ -14,7 +14,9 @@ class QrImage extends StatelessWidget {
     int version = 4,
     int errorCorrectionLevel = QrErrorCorrectLevel.L,
     this.onError,
-  }) : _painter = new QrPainter(data, foregroundColor, version, errorCorrectionLevel, onError: onError);
+  }) : _painter = new QrPainter(
+            data, foregroundColor, version, errorCorrectionLevel,
+            onError: onError);
 
   final QrPainter _painter;
   final Color backgroundColor;

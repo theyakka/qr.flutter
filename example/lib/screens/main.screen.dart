@@ -7,16 +7,14 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-
   static const double _topSectionTopPadding = 50.0;
   static const double _topSectionBottomPadding = 20.0;
   static const double _topSectionHeight = 50.0;
 
-  
   String _dataString = "Hello from this QR code!";
   String _inputErrorText;
   final TextEditingController _textController = new TextEditingController();
-  
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -28,20 +26,21 @@ class _MainScreenState extends State<MainScreen> {
   @override
   didUpdateWidget(Widget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    setState((){});
+    setState(() {});
   }
-  
+
   _contentWidget() {
-    final bodyHeight = MediaQuery.of(context).size.height - MediaQuery.of(context).viewInsets.bottom;
+    final bodyHeight = MediaQuery.of(context).size.height -
+        MediaQuery.of(context).viewInsets.bottom;
     return new Container(
       color: const Color(0xFFFFFFFF),
       child: new Column(
         children: <Widget>[
           new Padding(
             padding: const EdgeInsets.only(
-              top: _topSectionTopPadding, 
-              left: 20.0, 
-              right: 10.0, 
+              top: _topSectionTopPadding,
+              left: 20.0,
+              right: 10.0,
               bottom: _topSectionBottomPadding,
             ),
             child: new Container(
@@ -64,7 +63,7 @@ class _MainScreenState extends State<MainScreen> {
                     child: new FlatButton(
                       child: new Text("SUBMIT"),
                       onPressed: () {
-                        setState((){
+                        setState(() {
                           _dataString = _textController.text;
                           _inputErrorText = null;
                         });
@@ -79,11 +78,11 @@ class _MainScreenState extends State<MainScreen> {
             child: new Center(
               child: new QrImage(
                 data: _dataString,
-                size: 0.5 * bodyHeight,
                 onError: (ex) {
                   print("[QR] ERROR - $ex");
-                  setState((){
-                    _inputErrorText = "Error! Maybe your input value is too long?";
+                  setState(() {
+                    _inputErrorText =
+                        "Error! Maybe your input value is too long?";
                   });
                 },
               ),
