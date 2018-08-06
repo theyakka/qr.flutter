@@ -1,6 +1,6 @@
 <img src="https://storage.googleapis.com/product-logos/logo_qr_flutter.png" align="center" width="240">
 <br/>
-QR.Flutter is a QR code generation and rendering library for Flutter.
+QR.Flutter is a Flutter library for simple and fast QR code rendering via a Widget or custom painter.
 
 # Features
 - Built on [QR - Dart](https://github.com/kevmoo/qr.dart)
@@ -49,3 +49,19 @@ Depending on your data requirements you may want to tweak the QR code output. Th
 
 # Example
 See the `example` directory for a basic working example.
+
+# FAQ
+## Has it been tested in production? Can I use it in production?
+
+Yep! It's stable and ready to rock. It's currently in use in quite a few production applications including:
+- Sixpoint: [Android](https://play.google.com/store/apps/details?id=com.sixpoint.sixpoint&hl=en_US) & [iOS](https://itunes.apple.com/us/app/sixpoint/id663008674?mt=8) 
+
+# Outro
+## Credits
+Thanks to Kevin Moore for his awesome [QR - Dart](https://github.com/kevmoo/qr.dart) library. It's the core of this library.
+
+For author/contributor information, see the `AUTHORS` file.
+
+## License
+
+QR.Flutter is released under a modified MIT license. See `LICENSE` for details.
