@@ -1,5 +1,5 @@
-<img src="https://storage.googleapis.com/product-logos/logo_qr_flutter.png" align="center" width="182">
-
+<img src="https://storage.googleapis.com/product-logos/logo_qr_flutter.png" align="center" width="240">
+<br/>
 QR.Flutter is a QR code generation and rendering library for Flutter.
 
 # Features
@@ -10,25 +10,24 @@ QR.Flutter is a QR code generation and rendering library for Flutter.
 - No internet connection required
 
 # Installing
-
 You can install the package by adding the following lines to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  qr_flutter: ^1.1.1
+  qr_flutter: ^1.1.2
 ```
 
-After adding the dependency to your `pubspec.yaml` you can run: `pub get` or `flutter packages get` if you're using Flutter.
+After adding the dependency to your `pubspec.yaml` you can run: `flutter packages get` or update your packages using
+your IDE.
 
 # Getting started
-
 To start, import the dependency in your code:
 
 ```dart
 import 'package:qr_flutter/qr_flutter.dart';
 ```
 
-Next, to render a basic QR code you can do as such:
+Next, to render a basic QR code you can use the following code (or something like it):
 
 ```dart
 new QrImage(
@@ -37,20 +36,16 @@ new QrImage(
 ),
 ```
 
-Depending on your data requirements you may want to tweak the QR code output:
+Depending on your data requirements you may want to tweak the QR code output. The following options are available:
 
 | Property | Type | Description |
 |----|----|----|
 | `version` | int | A value between 1 and 40. See http://www.qrcode.com/en/about/version.html for details. |
 | `errorCorrectionLevel` | int | A value defined on `QrErrorCorrectLevel`. e.g.: `QrErrorCorrectLevel.L`. |
-| `size` | double | The (square) size of the image |
+| `size` | double | The (square) size of the image. If not given, will auto size using shortest size constraint. |
 | `padding` | EdgeInsets | Padding surrounding the QR code data |
 | `backgroundColor` | Color | The background color (default is none) |
 | `foregroundColor` | Color | The foreground color (default is black) |
 
-# Demo
-
+# Example
 See the `example` directory for a basic working example.
-
-# Authors
- * [Luke Freeman](https://github.com/lukef) ([@lukeaf](http://twitter.com/lukeaf))
