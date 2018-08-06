@@ -4,7 +4,7 @@ description: >
   Widget or custom painter.
 version: 1.1.2
 author: Luke Freeman <freeman.luke@gmail.com>
-homepage: https://twitter.com/lukeaf
+homepage: https://github.com/lukef/qr.flutter
 
 environment:
   sdk: ">=2.0.0-dev.61.0 <3.0.0"
