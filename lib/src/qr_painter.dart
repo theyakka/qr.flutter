@@ -1,3 +1,8 @@
+/*
+ * QR.Flutter
+ * Copyright (c) 2018 the QR.Flutter authors.
+ * See LICENSE for distribution and usage details.
+ */
 import 'package:flutter/widgets.dart';
 import 'package:qr/qr.dart';
 
