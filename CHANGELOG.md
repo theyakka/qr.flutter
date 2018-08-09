@@ -1,3 +1,6 @@
+# 1.1.3
+- Lower min sdk version to cater to some older versions of Flutter
+
 # 1.1.2
 - The QrImage widget will now autosize if no size has been defined (thanks @romkor!)
 - Requires Dart 2 (as so does Flutter)
