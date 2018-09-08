@@ -1,3 +1,6 @@
+# 1.1.4
+- Add gapless toggle
+
 # 1.1.3
 - Lower min sdk version to cater to some older versions of Flutter
 

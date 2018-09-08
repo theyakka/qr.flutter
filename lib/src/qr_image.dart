@@ -19,15 +19,17 @@ class QrImage extends StatelessWidget {
     int version = 4,
     int errorCorrectionLevel = QrErrorCorrectLevel.L,
     this.onError,
+    this.gapless = false,
   }) : _painter = new QrPainter(
             data, foregroundColor, version, errorCorrectionLevel,
-            onError: onError);
+            gapless: gapless, onError: onError);
 
   final QrPainter _painter;
   final Color backgroundColor;
   final EdgeInsets padding;
   final double size;
   final QrError onError;
+  final bool gapless;
 
   @override
   Widget build(BuildContext context) {

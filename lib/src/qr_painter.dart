@@ -10,7 +10,7 @@ typedef void QrError(dynamic error);
 
 class QrPainter extends CustomPainter {
   QrPainter(String data, this.color, this.version, this.errorCorrectionLevel,
-      {this.onError})
+      {this.onError, this.gapless})
       : this._qr = new QrCode(version, errorCorrectionLevel) {
     _p.color = this.color;
     // configure and make the QR code data
@@ -34,6 +34,7 @@ class QrPainter extends CustomPainter {
   final int errorCorrectionLevel; // the qr code error correction level
   final Color color; // the color of the dark squares
   final QrError onError;
+  final bool gapless;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -43,11 +44,14 @@ class QrPainter extends CustomPainter {
           "[QR] WARN: width or height is zero. You should set a 'size' value or nest this painter in a Widget that defines a non-zero size");
     }
     final squareSize = size.shortestSide / _qr.moduleCount;
+
+    final extra = gapless ? 1 : 0;
+
     for (int x = 0; x < _qr.moduleCount; x++) {
       for (int y = 0; y < _qr.moduleCount; y++) {
         if (_qr.isDark(y, x)) {
-          final squareRect = new Rect.fromLTWH(
-              x * squareSize, y * squareSize, squareSize, squareSize);
+          final squareRect = new Rect.fromLTWH(x * squareSize, y * squareSize,
+              squareSize + extra, squareSize + extra);
           canvas.drawRect(squareRect, _p);
         }
       }
