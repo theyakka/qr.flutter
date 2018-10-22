@@ -46,6 +46,7 @@ Depending on your data requirements you may want to tweak the QR code output. Th
 | `padding` | EdgeInsets | Padding surrounding the QR code data |
 | `backgroundColor` | Color | The background color (default is none) |
 | `foregroundColor` | Color | The foreground color (default is black) |
+| `gapless` | bool | Adds an extra pixel in size to prevent gaps |
 
 # Example
 See the `example` directory for a basic working example.
