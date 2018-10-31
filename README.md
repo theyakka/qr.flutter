@@ -7,6 +7,7 @@ QR.Flutter is a Flutter library for simple and fast QR code rendering via a Widg
 - Supports QR code versions 1 - 40
 - Error correction / redundancy
 - Configurable output size, padding, background and foreground colors
+- Export to image data to save to file or use in memory
 - No internet connection required
 
 # Installing
@@ -14,7 +15,7 @@ You can install the package by adding the following lines to your `pubspec.yaml`
 
 ```yaml
 dependencies:
-  qr_flutter: ^1.1.3
+  qr_flutter: ^1.1.5
 ```
 
 After adding the dependency to your `pubspec.yaml` you can run: `flutter packages get` or update your packages using

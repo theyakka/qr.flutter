@@ -21,8 +21,12 @@ class QrImage extends StatelessWidget {
     this.onError,
     this.gapless = false,
   }) : _painter = new QrPainter(
-            data, foregroundColor, version, errorCorrectionLevel,
-            gapless: gapless, onError: onError);
+            data: data,
+            color: foregroundColor,
+            version: version,
+            errorCorrectionLevel: errorCorrectionLevel,
+            gapless: gapless,
+            onError: onError);
 
   final QrPainter _painter;
   final Color backgroundColor;

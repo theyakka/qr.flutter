@@ -1,3 +1,6 @@
+# 1.1.5
+- Add image data export functions (see `test/painter_tests.dart` for an example)
+
 # 1.1.4
 - Add gapless toggle
 
