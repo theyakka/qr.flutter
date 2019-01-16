@@ -1,3 +1,6 @@
+# 2.0.0-dev.1
+- Fixes issue caused by breaking change in Flutter (https://github.com/flutter/flutter/issues/26655).
+
 # 1.1.6
 - Adds analyzer configuration
 - Fixes linting issues
