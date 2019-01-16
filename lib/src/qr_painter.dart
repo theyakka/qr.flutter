@@ -3,23 +3,16 @@
  * Copyright (c) 2018 the QR.Flutter authors.
  * See LICENSE for distribution and usage details.
  */
+import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:qr/qr.dart';
 
-typedef void QrError(dynamic error);
+typedef QrError = void Function(dynamic error);
 
 class QrPainter extends CustomPainter {
-  // properties
-  final int version; // the qr code version
-  final int errorCorrectionLevel; // the qr code error correction level
-  final Color color; // the color of the dark squares
-  final Color emptyColor; // the other color
-  final QrError onError;
-  final bool gapless;
-
   QrPainter(
       {@required String data,
       @required this.version,
@@ -28,27 +21,38 @@ class QrPainter extends CustomPainter {
       this.emptyColor,
       this.onError,
       this.gapless = false})
-      : this._qr = new QrCode(version, errorCorrectionLevel) {
-    _p.color = this.color;
+      : _qr = QrCode(version, errorCorrectionLevel) {
+    _p.color = color;
     // configure and make the QR code data
     try {
       _qr.addData(data);
       _qr.make();
     } catch (ex) {
-      if (this.onError != null) {
+      if (onError != null) {
         _hasError = true;
         this.onError(ex);
       }
     }
   }
 
+  // properties
+  final int version; // the qr code version
+  final int errorCorrectionLevel; // the qr code error correction level
+  final Color color; // the color of the dark squares
+  final Color emptyColor; // the other color
+  final QrError onError;
+  final bool gapless;
+
   final QrCode _qr; // our qr code data
-  final _p = new Paint()..style = PaintingStyle.fill;
+  final ui.Paint _p = Paint()..style = PaintingStyle.fill;
   bool _hasError = false;
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (_hasError) return;
+    if (_hasError) {
+      return;
+    }
+
     if (size.shortestSide == 0) {
       print(
           "[QR] WARN: width or height is zero. You should set a 'size' value or nest this painter in a Widget that defines a non-zero size");
@@ -58,13 +62,16 @@ class QrPainter extends CustomPainter {
       canvas.drawColor(emptyColor, BlendMode.color);
     }
 
-    final squareSize = size.shortestSide / _qr.moduleCount;
-    final pxAdjustValue = gapless ? 1 : 0;
+    final double squareSize = size.shortestSide / _qr.moduleCount;
+    final int pxAdjustValue = gapless ? 1 : 0;
     for (int x = 0; x < _qr.moduleCount; x++) {
       for (int y = 0; y < _qr.moduleCount; y++) {
         if (_qr.isDark(y, x)) {
-          final squareRect = new Rect.fromLTWH(x * squareSize, y * squareSize,
-              squareSize + pxAdjustValue, squareSize + pxAdjustValue);
+          final ui.Rect squareRect = Rect.fromLTWH(
+              x * squareSize,
+              y * squareSize,
+              squareSize + pxAdjustValue,
+              squareSize + pxAdjustValue);
           canvas.drawRect(squareRect, _p);
         }
       }
@@ -74,17 +81,17 @@ class QrPainter extends CustomPainter {
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
     if (oldDelegate is QrPainter) {
-      return this.color != oldDelegate.color ||
-          this.errorCorrectionLevel != oldDelegate.errorCorrectionLevel ||
-          this.version != oldDelegate.version ||
-          this._qr != oldDelegate._qr;
+      return color != oldDelegate.color ||
+          errorCorrectionLevel != oldDelegate.errorCorrectionLevel ||
+          version != oldDelegate.version ||
+          _qr != oldDelegate._qr;
     }
     return false;
   }
 
   ui.Picture toPicture(double size) {
-    ui.PictureRecorder recorder = new ui.PictureRecorder();
-    Canvas canvas = new Canvas(recorder);
+    final ui.PictureRecorder recorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(recorder);
     paint(canvas, Size(size, size));
     return recorder.endRecording();
   }
