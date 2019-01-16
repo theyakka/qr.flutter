@@ -97,7 +97,7 @@ class QrPainter extends CustomPainter {
 
   Future<ByteData> toImageData(double size,
       {ui.ImageByteFormat format = ui.ImageByteFormat.png}) async {
-    final ui.Image uiImage =
+    final ui.Image uiImage = await
         toPicture(size).toImage(size.toInt(), size.toInt());
     return await uiImage.toByteData(format: format);
   }
