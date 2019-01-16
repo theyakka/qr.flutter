@@ -3,6 +3,7 @@
  * Copyright (c) 2018 the QR.Flutter authors.
  * See LICENSE for distribution and usage details.
  */
+import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:flutter/services.dart';
@@ -91,7 +92,7 @@ class QrPainter extends CustomPainter {
 
   Future<ByteData> toImageData(double size,
       {ui.ImageByteFormat format = ui.ImageByteFormat.png}) async {
-    final uiImage = toPicture(size).toImage(size.toInt(), size.toInt());
-    return await uiImage.toByteData(format: format);
+    final uiImage = await toPicture(size).toImage(size.toInt(), size.toInt());
+    return uiImage.toByteData(format: format);
   }
 }
