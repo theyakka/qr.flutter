@@ -1,6 +1,6 @@
 /*
  * QR.Flutter
- * Copyright (c) 2018 the QR.Flutter authors.
+ * Copyright (c) 2019 the QR.Flutter authors.
  * See LICENSE for distribution and usage details.
  */
 import 'package:flutter/foundation.dart';
@@ -20,7 +20,7 @@ class QrImage extends StatelessWidget {
     int errorCorrectionLevel = QrErrorCorrectLevel.L,
     this.onError,
     this.gapless = false,
-  }) : _painter = new QrPainter(
+  }) : _painter = QrPainter(
             data: data,
             color: foregroundColor,
             version: version,
@@ -38,15 +38,15 @@ class QrImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-      builder: (context, constraints) {
-        double widgetSize = size ?? constraints.biggest.shortestSide;
-        return new Container(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        final double widgetSize = size ?? constraints.biggest.shortestSide;
+        return Container(
           width: widgetSize,
           height: widgetSize,
           color: backgroundColor,
-          child: new Padding(
-            padding: this.padding,
-            child: new CustomPaint(
+          child: Padding(
+            padding: padding,
+            child: CustomPaint(
               painter: _painter,
             ),
           ),
