@@ -18,6 +18,18 @@ dependencies:
   qr_flutter: ^1.1.6
 ```
 
+**Note**: If you're using the Flutter `master` channel (or you encounter build issues) then you should use the 2.0.0-dev branch and not a specific release version. To do so, use the following configuration in your `pubspec.yaml`:
+ 
+```yaml
+dependencies:
+  qr_flutter:
+    git:
+      url: git://github.com/lukef/qr.flutter.git
+      ref: 2.0.0-dev
+```
+
+Keep in mind the 2.0.0-dev branch could be unstable. You can also pin to a specific dev tag such as `2.0.0-dev.1`.
+
 After adding the dependency to your `pubspec.yaml` you can run: `flutter packages get` or update your packages using
 your IDE.
 
