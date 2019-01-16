@@ -1,3 +1,10 @@
+# 1.1.6
+- Adds analyzer configuration
+- Fixes linting issues
+- Migrate to Dart 2.x friendly syntax
+- Tidy some initialization logic / code
+- Bump copyright
+
 # 1.1.5
 - Add image data export functions (see `test/painter_tests.dart` for an example)
 
