@@ -2,18 +2,19 @@ import 'package:flutter/material.dart';
 
 import 'screens/main.screen.dart';
 
-void main() => runApp(new App());
+void main() => runApp(App());
 
 class App extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
+    return MaterialApp(
       title: 'QR code demo',
-      theme: new ThemeData(
+      theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: new MainScreen(),
+      home: MainScreen(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
