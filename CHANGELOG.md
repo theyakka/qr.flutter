@@ -1,3 +1,6 @@
+# 2.0.0
+- Flutter 1.2.1 compatibility
+
 # 2.0.0-dev.1
 - Fixes issue caused by breaking change in Flutter (https://github.com/flutter/flutter/issues/26655).
 
