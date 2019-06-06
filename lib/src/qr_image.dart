@@ -12,6 +12,7 @@ import 'qr_painter.dart';
 class QrImage extends StatelessWidget {
   QrImage({
     @required String data,
+    Key key,
     this.size,
     this.padding = const EdgeInsets.all(10.0),
     this.backgroundColor,
@@ -26,7 +27,8 @@ class QrImage extends StatelessWidget {
             version: version,
             errorCorrectionLevel: errorCorrectionLevel,
             gapless: gapless,
-            onError: onError);
+            onError: onError
+  ), super(key: key);
 
   final QrPainter _painter;
   final Color backgroundColor;
