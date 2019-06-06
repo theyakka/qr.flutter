@@ -21,14 +21,14 @@ class QrImage extends StatelessWidget {
     int errorCorrectionLevel = QrErrorCorrectLevel.L,
     this.onError,
     this.gapless = true,
-  }) : _painter = QrPainter(
+  })  : _painter = QrPainter(
             data: data,
             color: foregroundColor,
             version: version,
             errorCorrectionLevel: errorCorrectionLevel,
             gapless: gapless,
-            onError: onError
-  ), super(key: key);
+            onError: onError),
+        super(key: key);
 
   final QrPainter _painter;
   final Color backgroundColor;
