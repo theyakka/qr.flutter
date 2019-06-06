@@ -16,7 +16,7 @@ If you're using Flutter 1.2+ or the master/beta channel then you will need to us
 
 ```yaml
 dependencies:
-  qr_flutter: ^2.0.0
+  qr_flutter: ^2.1.0
 ```
 
 If you're using an older Flutter version (< 1.2.1), you **must** use version `1.1.6` if you cannot upgrade to the latest version of Flutter:
