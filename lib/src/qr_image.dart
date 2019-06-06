@@ -20,7 +20,7 @@ class QrImage extends StatelessWidget {
     int version = 4,
     int errorCorrectionLevel = QrErrorCorrectLevel.L,
     this.onError,
-    this.gapless = false,
+    this.gapless = true,
   }) : _painter = QrPainter(
             data: data,
             color: foregroundColor,
