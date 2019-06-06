@@ -1,3 +1,9 @@
+# 2.1.0
+- The `gapless` option is now `true` by default.
+- Allow assigning `Key` values to `QrImage` widgets.
+- Update `qr.dart` dependency.
+- `qr.dart` is now exported so you don't need a second `import`.
+
 # 2.0.0
 - Flutter 1.2.1 compatibility
 
