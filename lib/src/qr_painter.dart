@@ -23,11 +23,8 @@ class QrPainter extends CustomPainter {
   final Color color; // the color of the dark squares
   final Color emptyColor; // the other color
   final bool gapless;
-
   final QrCode qr; // our qr code data
   final Paint _paint = Paint()..style = PaintingStyle.fill;
-
-  QrCode get _qr => qr;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -38,11 +35,11 @@ class QrPainter extends CustomPainter {
       canvas.drawColor(emptyColor, BlendMode.color);
     }
 
-    final double squareSize = size.shortestSide / _qr.moduleCount.toDouble();
+    final double squareSize = size.shortestSide / qr.moduleCount.toDouble();
     final int pxAdjustValue = gapless ? 1 : 0;
-    for (int x = 0; x < _qr.moduleCount; x++) {
-      for (int y = 0; y < _qr.moduleCount; y++) {
-        if (_qr.isDark(y, x)) {
+    for (int x = 0; x < qr.moduleCount; x++) {
+      for (int y = 0; y < qr.moduleCount; y++) {
+        if (qr.isDark(y, x)) {
           final Rect squareRect = Rect.fromLTWH(x * squareSize, y * squareSize,
               squareSize + pxAdjustValue, squareSize + pxAdjustValue);
           canvas.drawRect(squareRect, _paint);
@@ -54,7 +51,7 @@ class QrPainter extends CustomPainter {
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
     if (oldDelegate is QrPainter) {
-      return color != oldDelegate.color || _qr != oldDelegate._qr;
+      return color != oldDelegate.color || qr != oldDelegate.qr;
     }
     return false;
   }

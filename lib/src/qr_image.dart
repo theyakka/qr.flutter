@@ -12,17 +12,6 @@ import 'qr_painter.dart';
 typedef ErrorBuilder = Widget Function(BuildContext context, dynamic error);
 
 class QrImage extends StatelessWidget {
-  final String data;
-  final ErrorBuilder errorBuilder;
-  final Color foregroundColor;
-  final Color backgroundColor;
-  final EdgeInsets padding;
-  final double size;
-  final bool gapless;
-
-  final int version;
-  final int errorCorrectionLevel;
-
   QrImage({
     @required this.data,
     this.errorBuilder,
@@ -36,9 +25,19 @@ class QrImage extends StatelessWidget {
     this.gapless = true,
   }) : super(key: key);
 
+  final String data;
+  final ErrorBuilder errorBuilder;
+  final Color foregroundColor;
+  final Color backgroundColor;
+  final EdgeInsets padding;
+  final double size;
+  final bool gapless;
+  final int version;
+  final int errorCorrectionLevel;
+
   @override
   Widget build(BuildContext context) {
-    final qr = QrCode(version, errorCorrectionLevel);
+    final QrCode qr = QrCode(version, errorCorrectionLevel);
 
     bool hasError = false;
     dynamic error;
