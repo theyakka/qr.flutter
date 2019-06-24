@@ -9,36 +9,49 @@ import 'package:qr/qr.dart';
 
 import 'qr_painter.dart';
 
+typedef ErrorBuilder = Widget Function(BuildContext context, dynamic error);
+
 class QrImage extends StatelessWidget {
+  final String data;
+  final ErrorBuilder errorBuilder;
+  final Color foregroundColor;
+  final Color backgroundColor;
+  final EdgeInsets padding;
+  final double size;
+  final bool gapless;
+
+  final int version;
+  final int errorCorrectionLevel;
+
   QrImage({
-    @required String data,
+    @required this.data,
+    this.errorBuilder,
     Key key,
     this.size,
     this.padding = const EdgeInsets.all(10.0),
     this.backgroundColor,
-    Color foregroundColor = const Color(0xFF000000),
-    int version = 4,
-    int errorCorrectionLevel = QrErrorCorrectLevel.L,
-    this.onError,
+    this.foregroundColor = const Color(0xFF000000),
+    this.version = 4,
+    this.errorCorrectionLevel = QrErrorCorrectLevel.L,
     this.gapless = true,
-  })  : _painter = QrPainter(
-            data: data,
-            color: foregroundColor,
-            version: version,
-            errorCorrectionLevel: errorCorrectionLevel,
-            gapless: gapless,
-            onError: onError),
-        super(key: key);
-
-  final QrPainter _painter;
-  final Color backgroundColor;
-  final EdgeInsets padding;
-  final double size;
-  final QrError onError;
-  final bool gapless;
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final qr = QrCode(version, errorCorrectionLevel);
+
+    bool hasError = false;
+    dynamic error;
+
+    try {
+      qr.addData(data);
+      qr.make();
+      hasError = false;
+    } catch (e) {
+      hasError = true;
+      error = e;
+    }
+
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         final double widgetSize = size ?? constraints.biggest.shortestSide;
@@ -48,9 +61,15 @@ class QrImage extends StatelessWidget {
           color: backgroundColor,
           child: Padding(
             padding: padding,
-            child: CustomPaint(
-              painter: _painter,
-            ),
+            child: hasError
+                ? errorBuilder(context, error)
+                : CustomPaint(
+                    painter: QrPainter(
+                      qr: qr,
+                      color: foregroundColor,
+                      gapless: gapless,
+                    ),
+                  ),
           ),
         );
       },

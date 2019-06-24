@@ -81,13 +81,7 @@ class _MainScreenState extends State<MainScreen> {
                   data: _dataString,
                   gapless: false,
                   foregroundColor: const Color(0xFF111111),
-                  onError: (dynamic ex) {
-                    print('[QR] ERROR - $ex');
-                    setState(() {
-                      _inputErrorText =
-                          'Error! Maybe your input value is too long?';
-                    });
-                  },
+                  errorBuilder: (_, dynamic e) => Text('Error! $e'),
                 ),
               ),
             ),

@@ -14,51 +14,25 @@ typedef QrError = void Function(dynamic error);
 
 class QrPainter extends CustomPainter {
   QrPainter({
-    @required String data,
-    @required this.version,
-    this.errorCorrectionLevel = QrErrorCorrectLevel.L,
+    @required this.qr,
     this.color = const Color(0xff000000),
     this.emptyColor,
-    this.onError,
     this.gapless = false,
-  }) : _qr = QrCode(version, errorCorrectionLevel) {
-    _init(data);
-  }
+  });
 
-  final int version; // the qr code version
-  final int errorCorrectionLevel; // the qr code error correction level
   final Color color; // the color of the dark squares
   final Color emptyColor; // the other color
-  final QrError onError;
   final bool gapless;
 
-  final QrCode _qr; // our qr code data
+  final QrCode qr; // our qr code data
   final Paint _paint = Paint()..style = PaintingStyle.fill;
-  bool _hasError = false;
 
-  void _init(String data) {
-    _paint.color = color;
-    // configure and make the QR code data
-    try {
-      _qr.addData(data);
-      _qr.make();
-    } catch (ex) {
-      if (onError != null) {
-        _hasError = true;
-        this.onError(ex);
-      }
-    }
-  }
+  QrCode get _qr => qr;
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (_hasError) {
-      return;
-    }
-    if (size.shortestSide == 0) {
-      print(
-          "[QR] WARN: width or height is zero. You should set a 'size' value or nest this painter in a Widget that defines a non-zero size");
-    }
+    assert(size.shortestSide != 0,
+        "[QR] WARN: width or height is zero. You should set a 'size' value or nest this painter in a Widget that defines a non-zero size");
 
     if (emptyColor != null) {
       canvas.drawColor(emptyColor, BlendMode.color);
@@ -80,10 +54,7 @@ class QrPainter extends CustomPainter {
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
     if (oldDelegate is QrPainter) {
-      return color != oldDelegate.color ||
-          errorCorrectionLevel != oldDelegate.errorCorrectionLevel ||
-          version != oldDelegate.version ||
-          _qr != oldDelegate._qr;
+      return color != oldDelegate.color || _qr != oldDelegate._qr;
     }
     return false;
   }

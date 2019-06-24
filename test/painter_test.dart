@@ -8,14 +8,20 @@ import 'package:qr_flutter/src/qr_painter.dart';
 
 void main() {
   testWidgets('Painter generates an image', (WidgetTester tester) async {
+    const int version = 4;
+    const int errorCorrectionLevel = QrErrorCorrectLevel.L;
+    const String data = 'This is a test image';
+
+    final QrCode qr = QrCode(version, errorCorrectionLevel)
+      ..addData(data)
+      ..make();
+
     await tester.runAsync(() async {
       final QrPainter painter = QrPainter(
-        data: 'This is a test image',
+        qr: qr,
         color: const Color(0xff222222),
         emptyColor: const Color(0xffffffff),
-        version: 4,
         gapless: true,
-        errorCorrectionLevel: QrErrorCorrectLevel.L,
       );
       final ByteData imageData = await painter.toImageData(300.0);
       File file = File('./test_image.png');
