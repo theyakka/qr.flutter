@@ -15,13 +15,11 @@ typedef QrError = void Function(dynamic error);
 class QrPainter extends CustomPainter {
   QrPainter({
     @required this.qr,
-    this.color = const Color(0xff000000),
     this.emptyColor,
     this.gapless = false,
   });
 
-  final Color color; // the color of the dark squares
-  final Color emptyColor; // the other color
+  final Color emptyColor; // the background color
   final bool gapless;
   final QrCode qr; // our qr code data
   final Paint _paint = Paint()..style = PaintingStyle.fill;
@@ -51,7 +49,7 @@ class QrPainter extends CustomPainter {
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
     if (oldDelegate is QrPainter) {
-      return color != oldDelegate.color || qr != oldDelegate.qr;
+      return qr != oldDelegate.qr;
     }
     return false;
   }

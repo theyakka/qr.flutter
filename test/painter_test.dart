@@ -19,7 +19,6 @@ void main() {
     await tester.runAsync(() async {
       final QrPainter painter = QrPainter(
         qr: qr,
-        color: const Color(0xff222222),
         emptyColor: const Color(0xffffffff),
         gapless: true,
       );

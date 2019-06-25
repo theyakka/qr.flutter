@@ -19,7 +19,6 @@ class QrImage extends StatelessWidget {
     this.size,
     this.padding = const EdgeInsets.all(10.0),
     this.backgroundColor,
-    this.foregroundColor = const Color(0xFF000000),
     this.version = 4,
     this.errorCorrectionLevel = QrErrorCorrectLevel.L,
     this.gapless = true,
@@ -27,7 +26,6 @@ class QrImage extends StatelessWidget {
 
   final String data;
   final ErrorBuilder errorBuilder;
-  final Color foregroundColor;
   final Color backgroundColor;
   final EdgeInsets padding;
   final double size;
@@ -65,7 +63,6 @@ class QrImage extends StatelessWidget {
                 : CustomPaint(
                     painter: QrPainter(
                       qr: qr,
-                      color: foregroundColor,
                       gapless: gapless,
                     ),
                   ),
