@@ -8,3 +8,4 @@ export 'package:qr/qr.dart';
 
 export 'src/qr_image.dart';
 export 'src/qr_painter.dart';
+export 'src/qr_provider.dart';

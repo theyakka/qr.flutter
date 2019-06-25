@@ -77,11 +77,9 @@ class _MainScreenState extends State<MainScreen> {
             child: Center(
               child: Padding(
                 padding: const EdgeInsets.all(25.0),
-                child: QrImage(
-                  data: _dataString,
-                  gapless: false,
-                  foregroundColor: const Color(0xFF111111),
-                  errorBuilder: (_, dynamic e) => Text('Error! $e'),
+                child: Image(
+                  width: 100,
+                  image: QrImageProvider(_dataString),
                 ),
               ),
             ),
