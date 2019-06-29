@@ -15,8 +15,8 @@ typedef QrError = void Function(dynamic error);
 class QrPainter extends CustomPainter {
   QrPainter({
     @required String data,
-    @required this.version,
-    this.errorCorrectionLevel = QrErrorCorrectLevel.L,
+    @required int version,
+    int errorCorrectionLevel = QrErrorCorrectLevel.L,
     this.color = const Color(0xff000000),
     this.emptyColor,
     this.onError,
@@ -25,14 +25,24 @@ class QrPainter extends CustomPainter {
     _init(data);
   }
 
-  final int version; // the qr code version
-  final int errorCorrectionLevel; // the qr code error correction level
+  QrPainter.fromQr({
+    @required QrCode qr,
+    this.color = const Color(0xff000000),
+    this.emptyColor,
+    this.onError,
+    this.gapless = false,
+  }) : _qr = qr {
+    _init(null);
+  }
+
+  int get version => _qr.typeNumber;
+  int get errorCorrectionLevel => _qr.errorCorrectLevel;
   final Color color; // the color of the dark squares
   final Color emptyColor; // the other color
   final QrError onError;
   final bool gapless;
 
-  final QrCode _qr; // our qr code data
+  final QrCode _qr;
   final Paint _paint = Paint()..style = PaintingStyle.fill;
   bool _hasError = false;
 
@@ -40,7 +50,9 @@ class QrPainter extends CustomPainter {
     _paint.color = color;
     // configure and make the QR code data
     try {
-      _qr.addData(data);
+      if (data != null) {
+        _qr.addData(data);
+      }
       _qr.make();
     } catch (ex) {
       if (onError != null) {

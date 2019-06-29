@@ -30,6 +30,22 @@ class QrImage extends StatelessWidget {
             onError: onError),
         super(key: key);
 
+  QrImage.fromQr({
+    @required QrCode qr,
+    Key key,
+    this.size,
+    this.padding = const EdgeInsets.all(10.0),
+    this.backgroundColor,
+    Color foregroundColor = const Color(0xFF000000),
+    this.onError,
+    this.gapless = true,
+  })  : _painter = QrPainter.fromQr(
+      qr: qr,
+      color: foregroundColor,
+      gapless: gapless,
+      onError: onError),
+        super(key: key);
+
   final QrPainter _painter;
   final Color backgroundColor;
   final EdgeInsets padding;
