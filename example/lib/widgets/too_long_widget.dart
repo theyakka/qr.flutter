@@ -5,24 +5,38 @@ class ContentTooLongWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      constraints: BoxConstraints(
+        maxHeight: 300,
+        minHeight: 200,
+      ),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10),
+        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            DecoratedBox(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(999),
-                color: const Color(0xff8d42f5),
-              ),
-              child: Container(
-                width: 90,
-                height: 90,
-                child: Padding(
-                  padding: EdgeInsets.all(10),
-                  child: QrImage(
-                    foregroundColor: Colors.white,
-                    data: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            Expanded(
+              child: Center(
+                child: Container(
+                  constraints: BoxConstraints(
+                    minWidth: 60,
+                    maxWidth: 200,
+                    minHeight: 60,
+                    maxHeight: 200,
+                  ),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(999),
+                      color: const Color(0xff8d42f5),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.all(14),
+                      child: QrImage(
+                        gapless: true,
+                        foregroundColor: Colors.white,
+                        data: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                      ),
+                    ),
                   ),
                 ),
               ),

@@ -43,16 +43,33 @@ class _ContentWidgetState extends State<ContentWidget> {
                     child: TextField(
                       autofocus: true,
                       controller: _textController,
+                      style: TextStyle(
+                        fontFamily: 'Inconsolata',
+                      ),
                       decoration: InputDecoration(
                         hintText: 'Enter a custom message',
                         errorText: _inputErrorText,
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: const Color(0xff8d42f5),
+                          ),
+                        ),
                       ),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 10.0),
                     child: FlatButton(
-                      child: const Text('SUBMIT'),
+                      highlightColor: const Color(0x118d42f5),
+                      splashColor: const Color(0x338d42f5),
+                      child: const Text(
+                        'SUBMIT',
+                        style: TextStyle(
+                          color: Color(0xff8d42f5),
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                        ),
+                      ),
                       onPressed: () {
                         setState(() {
                           _dataString = _textController.text;
@@ -69,18 +86,16 @@ class _ContentWidgetState extends State<ContentWidget> {
             child: Center(
               child: Padding(
                 padding: const EdgeInsets.all(25.0),
-                child: QrImage(
-                  data: _dataString,
-                  gapless: false,
-                  version: 2,
-                  errorCorrectionLevel: QrErrorCorrectLevel.L,
-                  backgroundColor: Colors.yellow,
-                  foregroundColor: const Color(0xFF111111),
-                  errorStateBuilder: (ctx, ex) {
-                    return ContentTooLongWidget();
-                  },
-                ),
-//                child: Container(),
+//                child: QrImage(
+//                  data: _dataString,
+//                  gapless: false,
+//                  errorCorrectionLevel: QrErrorCorrectLevel.L,
+//                  foregroundColor: const Color(0xFF111111),
+//                  errorStateBuilder: (ctx, ex) {
+//                    return ContentTooLongWidget();
+//                  },
+//                ),
+                child: ContentTooLongWidget(),
               ),
             ),
           ),

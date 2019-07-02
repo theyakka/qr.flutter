@@ -4,12 +4,12 @@ import 'screens/main.screen.dart';
 
 void main() => runApp(App());
 
+/// The example application entry point
 class App extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'QR code demo',
+      title: 'QR.Flutter',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),

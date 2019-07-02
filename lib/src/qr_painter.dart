@@ -4,7 +4,6 @@
  * See LICENSE for distribution and usage details.
  */
 import 'dart:async';
-import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
@@ -129,7 +128,7 @@ class QrPainter extends CustomPainter {
     final paintMetrics = _PaintMetrics(
       containerSize: size.shortestSide,
       moduleCount: _qr.moduleCount,
-      gapSize: _gapSize,
+      gapSize: (gapless ? 0 : _gapSize),
     );
 
     // draw the finder pattern elements
@@ -140,13 +139,13 @@ class QrPainter extends CustomPainter {
         FinderPatternPosition.topRight, canvas, paintMetrics);
 
     // DEBUG: draw the inner content boundary
-    final paint = Paint()..style = ui.PaintingStyle.stroke;
-    paint.strokeWidth = 1;
-    paint.color = const Color(0x55222222);
-    canvas.drawRect(
-        Rect.fromLTWH(paintMetrics.inset, paintMetrics.inset,
-            paintMetrics.innerContentSize, paintMetrics.innerContentSize),
-        paint);
+//    final paint = Paint()..style = ui.PaintingStyle.stroke;
+//    paint.strokeWidth = 1;
+//    paint.color = const Color(0x55222222);
+//    canvas.drawRect(
+//        Rect.fromLTWH(paintMetrics.inset, paintMetrics.inset,
+//            paintMetrics.innerContentSize, paintMetrics.innerContentSize),
+//        paint);
 
     double left;
     double top;
