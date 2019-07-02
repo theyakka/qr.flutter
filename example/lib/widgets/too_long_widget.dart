@@ -17,24 +17,28 @@ class ContentTooLongWidget extends StatelessWidget {
           children: <Widget>[
             Expanded(
               child: Center(
-                child: Container(
-                  constraints: BoxConstraints(
-                    minWidth: 60,
-                    maxWidth: 200,
-                    minHeight: 60,
-                    maxHeight: 200,
-                  ),
-                  child: DecoratedBox(
+                child: AspectRatio(
+                  aspectRatio: 1.0,
+                  child: Container(
+                    constraints: BoxConstraints(
+                      minWidth: 100,
+                      maxWidth: 200,
+                      minHeight: 100,
+                      maxHeight: 200,
+                    ),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(999),
                       color: const Color(0xff8d42f5),
                     ),
-                    child: Padding(
-                      padding: EdgeInsets.all(14),
-                      child: QrImage(
-                        gapless: true,
-                        foregroundColor: Colors.white,
-                        data: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                    child: Center(
+                      child: FractionallySizedBox(
+                        widthFactor: 0.7,
+                        heightFactor: 0.7,
+                        child: QrImage(
+                          gapless: true,
+                          foregroundColor: Colors.white,
+                          data: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                        ),
                       ),
                     ),
                   ),
