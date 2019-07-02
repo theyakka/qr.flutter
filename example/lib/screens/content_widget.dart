@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import '../widgets/too_long_widget.dart';
 
+/// The primary content holder for the example app main screen
 class ContentWidget extends StatefulWidget {
   @override
   _ContentWidgetState createState() => _ContentWidgetState();
@@ -17,6 +19,9 @@ class _ContentWidgetState extends State<ContentWidget> {
 
   @override
   Widget build(BuildContext context) {
+    if (_inputErrorText != null) {
+      _showErrorSnackbar(context, null);
+    }
     return Container(
       color: const Color(0xFFFFFFFF),
       child: Column(
@@ -49,7 +54,6 @@ class _ContentWidgetState extends State<ContentWidget> {
                     child: FlatButton(
                       child: const Text('SUBMIT'),
                       onPressed: () {
-                        _showErrorSnackbar(context, null);
                         setState(() {
                           _dataString = _textController.text;
                           _inputErrorText = null;
@@ -68,11 +72,12 @@ class _ContentWidgetState extends State<ContentWidget> {
                 child: QrImage(
                   data: _dataString,
                   gapless: false,
+                  version: 2,
+                  errorCorrectionLevel: QrErrorCorrectLevel.L,
+                  backgroundColor: Colors.yellow,
                   foregroundColor: const Color(0xFF111111),
-                  onError: (ex) {
-                    print('[QR] ERROR - $ex');
-//                    _showErrorSnackbar(context, ex);
-//                    setState(() {});
+                  errorStateBuilder: (ctx, ex) {
+                    return ContentTooLongWidget();
                   },
                 ),
 //                child: Container(),
@@ -88,8 +93,16 @@ class _ContentWidgetState extends State<ContentWidget> {
 //    if (ex is InputTooLongException) {
 //      _inputErrorText = 'Error! Maybe your input value is too long?';
     Scaffold.of(ctx).showSnackBar(
-      SnackBar(content: Text("Oops! Content is too long.")),
+      SnackBar(content: Text(_inputErrorText)),
     );
 //    }
+  }
+
+  void _qrErrHandler(Exception ex) {
+    print('[QR] ERROR - $ex');
+    setState(() {
+      _inputErrorText = "Oops! Content is too long.";
+    });
+    _showErrorSnackbar(context, ex);
   }
 }

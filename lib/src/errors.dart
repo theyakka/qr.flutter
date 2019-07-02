@@ -1,3 +1,8 @@
+/*
+ * QR.Flutter
+ * Copyright (c) 2019 the QR.Flutter authors.
+ * See LICENSE for distribution and usage details.
+ */
 import 'package:qr_flutter/src/qr_versions.dart';
 
 /// An exception that is thrown when an invalid QR code version / type is

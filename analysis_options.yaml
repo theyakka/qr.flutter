@@ -15,7 +15,6 @@ analyzer:
     - 'build/**'
     - 'ios/**'
     - 'res/**'
-    - 'example/**'
 
 linter:
   rules:
