@@ -86,16 +86,15 @@ class _ContentWidgetState extends State<ContentWidget> {
             child: Center(
               child: Padding(
                 padding: const EdgeInsets.all(25.0),
-//                child: QrImage(
-//                  data: _dataString,
-//                  gapless: false,
-//                  errorCorrectionLevel: QrErrorCorrectLevel.L,
-//                  foregroundColor: const Color(0xFF111111),
-//                  errorStateBuilder: (ctx, ex) {
-//                    return ContentTooLongWidget();
-//                  },
-//                ),
-                child: ContentTooLongWidget(),
+                child: QrImage(
+                  data: _dataString,
+                  gapless: false,
+                  errorCorrectionLevel: QrErrorCorrectLevel.L,
+                  foregroundColor: const Color(0xFF111111),
+                  errorStateBuilder: (ctx, ex) {
+                    return ContentTooLongWidget();
+                  },
+                ),
               ),
             ),
           ),
