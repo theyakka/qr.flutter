@@ -9,9 +9,7 @@ class ContentWidget extends StatefulWidget {
 }
 
 class _ContentWidgetState extends State<ContentWidget> {
-  static const double _topSectionTopPadding = 50.0;
-  static const double _topSectionBottomPadding = 20.0;
-  static const double _topSectionHeight = 50.0;
+  static const double _topSectionHeight = 70.0;
 
   String _dataString = 'Hello from this QR code!';
   String _inputErrorText;
@@ -22,83 +20,85 @@ class _ContentWidgetState extends State<ContentWidget> {
     if (_inputErrorText != null) {
       _showErrorSnackbar(context, null);
     }
-    return Container(
-      color: const Color(0xFFFFFFFF),
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(
-              top: _topSectionTopPadding,
-              left: 30.0,
-              right: 20.0,
-              bottom: _topSectionBottomPadding,
-            ),
-            child: Container(
-              height: _topSectionHeight,
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Expanded(
-                    child: TextField(
-                      autofocus: true,
-                      controller: _textController,
-                      style: TextStyle(
-                        fontFamily: 'Inconsolata',
-                      ),
-                      decoration: InputDecoration(
-                        hintText: 'Enter a custom message',
-                        errorText: _inputErrorText,
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: const Color(0xff8d42f5),
+    return SafeArea(
+      top: true,
+      bottom: true,
+      child: Container(
+        color: const Color(0xFFFFFFFF),
+        child: Padding(
+          padding: const EdgeInsets.only(left: 30, right: 20),
+          child: Column(
+            children: <Widget>[
+              Container(
+                height: _topSectionHeight,
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      child: TextField(
+                        autofocus: true,
+                        controller: _textController,
+                        style: TextStyle(
+                          fontFamily: 'Inconsolata',
+                        ),
+                        decoration: InputDecoration(
+                          hintText: 'Enter a custom message',
+                          errorText: _inputErrorText,
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: const Color(0xff8d42f5),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
-                    child: FlatButton(
-                      highlightColor: const Color(0x118d42f5),
-                      splashColor: const Color(0x338d42f5),
-                      child: const Text(
-                        'SUBMIT',
-                        style: TextStyle(
-                          color: Color(0xff8d42f5),
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16,
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10.0),
+                      child: Container(
+                        height: 50,
+                        child: FlatButton(
+                          highlightColor: const Color(0x118d42f5),
+                          splashColor: const Color(0x338d42f5),
+                          child: const Text(
+                            'SUBMIT',
+                            style: TextStyle(
+                              color: Color(0xff8d42f5),
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                            ),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _dataString = _textController.text;
+                              _inputErrorText = null;
+                            });
+                          },
                         ),
                       ),
-                      onPressed: () {
-                        setState(() {
-                          _dataString = _textController.text;
-                          _inputErrorText = null;
-                        });
-                      },
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-          Expanded(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(25.0),
-                child: QrImage(
-                  data: _dataString,
-                  gapless: false,
-                  errorCorrectionLevel: QrErrorCorrectLevel.L,
-                  foregroundColor: const Color(0xFF111111),
-                  errorStateBuilder: (ctx, ex) {
-                    return ContentTooLongWidget();
-                  },
+                    )
+                  ],
                 ),
               ),
-            ),
+              Expanded(
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(25.0),
+                    child: QrImage(
+                      data: _dataString,
+                      gapless: false,
+                      errorCorrectionLevel: QrErrorCorrectLevel.L,
+                      foregroundColor: const Color(0xFF111111),
+                      errorStateBuilder: (ctx, ex) {
+                        return ContentTooLongWidget();
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
