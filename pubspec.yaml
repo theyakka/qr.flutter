@@ -14,7 +14,7 @@ dependencies:
   flutter:
     sdk: flutter
   qr:
-    path: ../../other/qr.dart
+    git: git@github.com:kevmoo/qr.dart
 
 dev_dependencies:
   flutter_test:
