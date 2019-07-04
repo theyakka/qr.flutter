@@ -26,6 +26,7 @@ class QrImage extends StatelessWidget {
     this.version = QrVersions.auto,
     this.errorCorrectionLevel = QrErrorCorrectLevel.L,
     this.errorStateBuilder,
+    this.constrainErrorBounds = true,
     this.gapless = true,
   })  : assert(QrVersions.isSupportedVersion(version)),
         super(key: key);
@@ -56,6 +57,15 @@ class QrImage extends StatelessWidget {
   /// to your user.
   final QrErrorBuilder errorStateBuilder;
 
+  /// If `true` then the error widget will be constrained to the boundary of the
+  /// QR widget if it had been valid. If `false` the error widget will grow to
+  /// the size it needs. If the error widget is allowed to grow, your layout may
+  /// jump around (depending on specifics).
+  ///
+  /// NOTE: Setting a [size] value will override this setting and both the
+  /// content widget and error widget will adhere to the size value.
+  final bool constrainErrorBounds;
+
   /// If set to false, each of the squares in the QR code will have a small
   /// gap. Default is true.
   final bool gapless;
@@ -64,15 +74,19 @@ class QrImage extends StatelessWidget {
   Widget build(BuildContext context) {
     final validationResult = QrValidator.validate(data: data);
     return LayoutBuilder(builder: (context, constraints) {
-      final widgetSize = size ?? constraints.biggest.shortestSide;
       if (!validationResult.isValid) {
         Widget errorWidget = Container();
         if (errorStateBuilder != null) {
           errorWidget =
               errorStateBuilder(context, validationResult.error) ?? Container();
         }
-        return _qrContentWidget(errorWidget, widgetSize);
+        final errorWidgetSize = size ??
+            (constrainErrorBounds
+                ? constraints.biggest.shortestSide
+                : constraints.biggest.longestSide);
+        return _qrContentWidget(errorWidget, errorWidgetSize);
       }
+      final widgetSize = size ?? constraints.biggest.shortestSide;
       final painter = QrPainter.withQr(
         qr: validationResult.qrCode,
         color: foregroundColor,

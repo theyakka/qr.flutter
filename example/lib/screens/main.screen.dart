@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'content_widget.dart';
 
+/// The main screen of the application. This is the screen you see when the
+/// app starts.
 class MainScreen extends StatefulWidget {
   @override
   _MainScreenState createState() => _MainScreenState();

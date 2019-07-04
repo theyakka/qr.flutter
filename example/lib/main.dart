@@ -12,12 +12,26 @@ class App extends StatelessWidget {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       systemNavigationBarColor: Colors.white,
       systemNavigationBarIconBrightness: Brightness.dark,
+      statusBarColor: const Color(0xff8d42f5),
     ));
+
+    final themeData = ThemeData.light().copyWith(
+      primaryColor: const Color(0xff8d42f5),
+      accentColor: const Color(0xff8d42f5),
+      buttonTheme: ButtonThemeData(
+        highlightColor: const Color(0x118d42f5),
+        splashColor: const Color(0x338d42f5),
+        textTheme: ButtonTextTheme.primary,
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: const Color(0xff8d42f5)),
+        ),
+      ),
+    );
     return MaterialApp(
       title: 'QR.Flutter',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: themeData,
       home: MainScreen(),
       debugShowCheckedModeBanner: false,
     );
