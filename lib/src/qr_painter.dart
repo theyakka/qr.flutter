@@ -4,22 +4,27 @@
  * See LICENSE for distribution and usage details.
  */
 import 'dart:async';
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:qr/qr.dart';
-import 'package:qr_flutter/src/paint_cache.dart';
-import 'package:qr_flutter/src/validator.dart';
 
 import 'errors.dart';
+import 'paint_cache.dart';
 import 'qr_versions.dart';
 import 'types.dart';
+import 'validator.dart';
 
 // ignore_for_file: deprecated_member_use_from_same_package
 
 const _finderPatternLimit = 7;
+
+// default color for the qr code pixels
+const _qrDefaultColor = Color(0xff111111);
 
 /// A [CustomPainter] object that you can use to paint a QR code.
 class QrPainter extends CustomPainter {
@@ -28,9 +33,11 @@ class QrPainter extends CustomPainter {
     @required String data,
     @required this.version,
     this.errorCorrectionLevel = QrErrorCorrectLevel.L,
-    this.color = const Color(0xff000000),
+    this.color = _qrDefaultColor,
     this.emptyColor,
     this.gapless = false,
+    this.image,
+    this.imageStyle,
   }) : assert(QrVersions.isSupportedVersion(version)) {
     _init(data);
   }
@@ -40,9 +47,11 @@ class QrPainter extends CustomPainter {
   /// flow or for when you need to pre-validate the QR data.
   QrPainter.withQr({
     QrCode qr,
-    this.color = const Color(0xff000000),
+    this.color = _qrDefaultColor,
     this.emptyColor,
     this.gapless = false,
+    this.image,
+    this.imageStyle,
   })  : _qr = qr,
         version = qr.typeNumber,
         errorCorrectionLevel = qr.errorCorrectLevel {
@@ -52,10 +61,13 @@ class QrPainter extends CustomPainter {
 
   /// The QR code version.
   final int version; // the qr code version
+
   /// The error correction level of the QR code.
   final int errorCorrectionLevel; // the qr code error correction level
+
   /// The color of the squares.
   final Color color; // the color of the dark squares
+
   /// The color of the non-squares (background).
   @Deprecated(
       'You should us the background color value of your container widget')
@@ -63,6 +75,12 @@ class QrPainter extends CustomPainter {
   /// If set to false, the painter will leave a 1px gap between each of the
   /// squares.
   final bool gapless;
+
+  /// The image data to overlay in the center of the qr code.
+  final ui.Image image;
+
+  /// Styling options for the image overlay.
+  final QrImageStyle imageStyle;
 
   /// The base QR code data
   QrCode _qr;
@@ -178,6 +196,17 @@ class QrPainter extends CustomPainter {
         }
       }
     }
+
+    if (image != null) {
+      final side = 0.4 * size.shortestSide;
+      final position =
+          Offset((size.width - side) / 2.0, (size.height - side) / 2.0);
+      var imageSize = Size(side, side);
+      if (imageStyle != null) {
+        imageSize = imageStyle.size ?? imageSize;
+      }
+      _drawImageOverlay(canvas, position, imageSize); // draw the image overlay.
+    }
   }
 
   bool _hasAdjacentVerticalPixel(int x, int y, int moduleCount) {
@@ -239,6 +268,16 @@ class QrPainter extends CustomPainter {
     final innerRect = Rect.fromLTWH(offset.dx + gapHalf + strokeAdjust,
         offset.dy + gapHalf + strokeAdjust, innerSize, innerSize);
     canvas.drawRect(innerRect, innerPaint);
+  }
+
+  void _drawImageOverlay(Canvas canvas, Offset position, Size size) {
+    final paint = Paint()
+      ..isAntiAlias = true
+      ..filterQuality = FilterQuality.high;
+    final srcSize = Size(image.width.toDouble(), image.height.toDouble());
+    final src = Alignment.center.inscribe(srcSize, Offset.zero & srcSize);
+    final dst = Alignment.center.inscribe(size, position & size);
+    canvas.drawImageRect(image, src, dst, paint);
   }
 
   @override

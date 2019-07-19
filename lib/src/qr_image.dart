@@ -3,14 +3,18 @@
  * Copyright (c) 2019 the QR.Flutter authors.
  * See LICENSE for distribution and usage details.
  */
+
+import 'dart:ui' as ui;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:qr/qr.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 
 import 'qr_painter.dart';
 import 'qr_versions.dart';
+import 'types.dart';
+import 'validator.dart';
 
 /// A widget that shows a QR code.
 class QrImage extends StatelessWidget {
@@ -28,6 +32,8 @@ class QrImage extends StatelessWidget {
     this.errorStateBuilder,
     this.constrainErrorBounds = true,
     this.gapless = true,
+    this.image,
+    this.imageStyle,
   })  : assert(QrVersions.isSupportedVersion(version)),
         super(key: key);
 
@@ -70,9 +76,19 @@ class QrImage extends StatelessWidget {
   /// gap. Default is true.
   final bool gapless;
 
+  /// The image data to overlay in the center of the qr code.
+  final ui.Image image;
+
+  /// Styling options for the image overlay.
+  final QrImageStyle imageStyle;
+
   @override
   Widget build(BuildContext context) {
-    final validationResult = QrValidator.validate(data: data);
+    final validationResult = QrValidator.validate(
+      data: data,
+      version: version,
+      errorCorrectionLevel: errorCorrectionLevel,
+    );
     return LayoutBuilder(builder: (context, constraints) {
       if (!validationResult.isValid) {
         Widget errorWidget = Container();
@@ -91,6 +107,8 @@ class QrImage extends StatelessWidget {
         qr: validationResult.qrCode,
         color: foregroundColor,
         gapless: gapless,
+        image: image,
+        imageStyle: imageStyle,
       );
       return _qrContentWidget(CustomPaint(painter: painter), widgetSize);
     });
