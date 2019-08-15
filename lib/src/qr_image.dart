@@ -8,6 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:qr/qr.dart';
 
 import 'qr_painter.dart';
+import './version_helper.dart';
 
 class QrImage extends StatelessWidget {
   QrImage({
@@ -17,14 +18,14 @@ class QrImage extends StatelessWidget {
     this.padding = const EdgeInsets.all(10.0),
     this.backgroundColor,
     Color foregroundColor = const Color(0xFF000000),
-    int version = 4,
+    int version,
     int errorCorrectionLevel = QrErrorCorrectLevel.L,
     this.onError,
     this.gapless = true,
   })  : _painter = QrPainter(
             data: data,
             color: foregroundColor,
-            version: version,
+            version: optimalVersion(data, correctionLievel: errorCorrectionLevel),
             errorCorrectionLevel: errorCorrectionLevel,
             gapless: gapless,
             onError: onError),
