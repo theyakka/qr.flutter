@@ -4,8 +4,6 @@
  * See LICENSE for distribution and usage details.
  */
 
-import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
@@ -36,25 +34,12 @@ enum FinderPatternPosition {
   bottomLeft,
 }
 
-class ImageRef {
-  ImageRef(String filename);
-  ImageRef.withBytes(Uint8List bytes) : _bytes = bytes;
-  Uint8List _bytes;
-  Uint8List get rawBytes => _bytes;
-  Future<Uint8List> get bytes async {
-    if (bytes == null) {
-      return _resolve();
-    }
-    return _bytes;
-  }
-
-  Future<Uint8List> _resolve() async {
-    _bytes = await File('').readAsBytes();
-    return _bytes;
-  }
-}
-
 class QrImageStyle {
+  QrImageStyle({
+    this.offset = Offset(0, 0),
+    this.size = Size(50, 50),
+    this.color,
+  });
   Offset offset;
   Size size;
   Color color;

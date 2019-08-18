@@ -10,4 +10,5 @@ export 'src/errors.dart';
 export 'src/qr_image.dart';
 export 'src/qr_painter.dart';
 export 'src/qr_versions.dart';
+export 'src/types.dart';
 export 'src/validator.dart';

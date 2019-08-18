@@ -106,7 +106,7 @@ class QrImage extends StatelessWidget {
       final widgetSize = size ?? constraints.biggest.shortestSide;
       if (image != null) {
         return FutureBuilder(
-          future: _loadQrImage(validationResult),
+          future: _loadQrImage(context, validationResult),
           builder: (ctx, snapshot) {
             if (snapshot.hasData) {
               final ui.Image loadedImage = snapshot.data;
@@ -136,9 +136,13 @@ class QrImage extends StatelessWidget {
     });
   }
 
-  Future<ui.Image> _loadQrImage(QrValidationResult validationResult) async {
+  Future<ui.Image> _loadQrImage(
+      BuildContext buildContext, QrValidationResult validationResult) async {
+    final mq = MediaQuery.of(buildContext);
     final completer = Completer<ui.Image>();
-    final stream = image.resolve(ImageConfiguration());
+    final stream = image.resolve(ImageConfiguration(
+      devicePixelRatio: mq.devicePixelRatio,
+    ));
     stream.addListener(ImageStreamListener((info, err) {
       return completer.complete(info.image);
     }));
