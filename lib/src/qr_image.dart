@@ -108,7 +108,7 @@ class QrImage extends StatelessWidget {
         return FutureBuilder(
           future: _loadQrImage(validationResult),
           builder: (ctx, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasData) {
               final ui.Image loadedImage = snapshot.data;
               final painter = QrPainter.withQr(
                 qr: validationResult.qrCode,
