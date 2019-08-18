@@ -3,8 +3,10 @@
  * Copyright (c) 2019 the QR.Flutter authors.
  * See LICENSE for distribution and usage details.
  */
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qr/qr.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -33,9 +35,9 @@ void main() {
       ),
     );
     await tester.pumpWidget(widget);
-//      await tester.pump();
-    expect(
-      find.byType(Image),
+    await tester.pumpAndSettle();
+    await expectLater(
+      find.byType(RepaintBoundary),
       matchesGoldenFile('./.golden/qr_painter_golden.png'),
     );
   });

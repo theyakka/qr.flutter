@@ -4,6 +4,7 @@
  * See LICENSE for distribution and usage details.
  */
 
+import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
@@ -77,7 +78,7 @@ class QrImage extends StatelessWidget {
   final bool gapless;
 
   /// The image data to overlay in the center of the qr code.
-  final ui.Image image;
+  final ImageProvider image;
 
   /// Styling options for the image overlay.
   final QrImageStyle imageStyle;
@@ -103,15 +104,45 @@ class QrImage extends StatelessWidget {
         return _qrContentWidget(errorWidget, errorWidgetSize);
       }
       final widgetSize = size ?? constraints.biggest.shortestSide;
-      final painter = QrPainter.withQr(
-        qr: validationResult.qrCode,
-        color: foregroundColor,
-        gapless: gapless,
-        image: image,
-        imageStyle: imageStyle,
-      );
-      return _qrContentWidget(CustomPaint(painter: painter), widgetSize);
+      if (image != null) {
+        return FutureBuilder(
+          future: _loadQrImage(validationResult),
+          builder: (ctx, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              final ui.Image loadedImage = snapshot.data;
+              final painter = QrPainter.withQr(
+                qr: validationResult.qrCode,
+                color: foregroundColor,
+                gapless: gapless,
+                imageStyle: imageStyle,
+                image: loadedImage,
+              );
+              return _qrContentWidget(
+                  CustomPaint(painter: painter), widgetSize);
+            } else {
+              return Container();
+            }
+          },
+        );
+      } else {
+        final painter = QrPainter.withQr(
+          qr: validationResult.qrCode,
+          color: foregroundColor,
+          gapless: gapless,
+          imageStyle: imageStyle,
+        );
+        return _qrContentWidget(CustomPaint(painter: painter), widgetSize);
+      }
     });
+  }
+
+  Future<ui.Image> _loadQrImage(QrValidationResult validationResult) async {
+    final completer = Completer<ui.Image>();
+    final stream = image.resolve(ImageConfiguration());
+    stream.addListener(ImageStreamListener((info, err) {
+      return completer.complete(info.image);
+    }));
+    return completer.future;
   }
 
   Widget _qrContentWidget(Widget child, double size) {

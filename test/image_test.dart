@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -27,11 +26,7 @@ void main() {
 
   testWidgets('QrImage generates correct image with logo', (tester) async {
     final logoUri = Uri.parse('./test/.images/logo_yakka.png');
-    final imageData = File.fromUri(logoUri).readAsBytesSync();
-    ui.Image image;
-    await tester.runAsync(() async {
-      image = await decodeImageFromList(imageData);
-    });
+    final imageFile = File.fromUri(logoUri);
     final qrImage = Center(
       child: RepaintBoundary(
         child: QrImage(
@@ -39,7 +34,7 @@ void main() {
           version: QrVersions.auto,
           gapless: true,
           errorCorrectionLevel: QrErrorCorrectLevel.L,
-          image: image,
+          image: FileImage(imageFile),
         ),
       ),
     );
