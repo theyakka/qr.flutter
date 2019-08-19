@@ -1,4 +1,5 @@
-<img src="https://storage.googleapis.com/product-logos/logo_qr_flutter.png" align="center" width="240">
+<br/>
+<img src="https://storage.googleapis.com/product-logos/logo_qr_flutter.png" align="center" width="200">
 <br/>
 QR.Flutter is a Flutter library for simple and fast QR code rendering via a Widget or custom painter.
 
@@ -18,7 +19,7 @@ You should add the following to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  qr_flutter: ^3.0.0
+  qr_flutter: ^3.0.1
 ```
 
 **Note**: If you're using the Flutter `master` channel, if you encounter build issues, or want to try the latest and greatest then you should use the `master` branch and not a specific release version. To do so, use the following configuration in your `pubspec.yaml`:
@@ -69,7 +70,12 @@ Depending on your data requirements you may want to tweak the QR code output. Th
 | `embeddedImageStyle` | QrEmbeddedImageStyle | Properties to style the embedded image. |
 | `embeddedImageEmitsError` | bool | If true, any failure to load the embedded image will trigger the `errorStateBuilder` or render an empty `Container`. If false, the QR code will be rendered and the embedded image will be ignored. |
 
-# Example
+# Examples
+
+There is a simple, working, example Flutter app in the `/example` directory. You can use it to play with all
+the options. 
+
+Also, the following examples give you a quick overview on how to use the library.
 
 A basic QR code will look something like:
 

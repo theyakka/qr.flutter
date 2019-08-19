@@ -1,3 +1,6 @@
+# 3.0.1
+- Added an example
+
 # 3.0.0
 - Use `QrVersions.auto` and let the library pick the appropriate version for you.
 - Add an image that will be overlaid in the centre of the widget. You can specify the image size but not position.
