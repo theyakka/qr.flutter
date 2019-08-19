@@ -6,7 +6,7 @@
 
 import 'dart:ui';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 
 /// Represents a specific element / part of a QR code. This is used to isolate
 /// the different parts so that we can style and modify specific parts
@@ -34,13 +34,33 @@ enum FinderPatternPosition {
   bottomLeft,
 }
 
-class QrImageStyle {
-  QrImageStyle({
-    this.offset = Offset(0, 0),
-    this.size = Size(50, 50),
+/// Styling options for any embedded image overlay
+class QrEmbeddedImageStyle {
+  /// Create a new set of styling options.
+  QrEmbeddedImageStyle({
+    this.size,
     this.color,
   });
-  Offset offset;
+
+  /// The size of the image. If one dimension is zero then the other dimension
+  /// will be used to scale the zero dimension based on the original image
+  /// size.
   Size size;
+
+  /// Color to tint the image.
   Color color;
+
+  /// Check to see if the style object has a non-null, non-zero size.
+  bool get hasDefinedSize => size != null && size.longestSide > 0;
+
+  @override
+  int get hashCode => size.hashCode ^ color.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    if (other is QrEmbeddedImageStyle) {
+      return size == other.size && color == other.color;
+    }
+    return false;
+  }
 }

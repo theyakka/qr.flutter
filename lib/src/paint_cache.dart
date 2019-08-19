@@ -4,8 +4,9 @@
  * See LICENSE for distribution and usage details.
  */
 
-import 'package:flutter/cupertino.dart';
-import 'package:qr_flutter/src/types.dart';
+import 'package:flutter/widgets.dart';
+
+import 'types.dart';
 
 ///
 class PaintCache {

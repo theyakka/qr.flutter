@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qr/qr.dart';
@@ -25,8 +23,6 @@ void main() {
   });
 
   testWidgets('QrImage generates correct image with logo', (tester) async {
-    final logoUri = Uri.parse('./test/.images/logo_yakka.png');
-    final imageFile = File.fromUri(logoUri);
     final qrImage = Center(
       child: RepaintBoundary(
         child: QrImage(
@@ -34,7 +30,7 @@ void main() {
           version: QrVersions.auto,
           gapless: true,
           errorCorrectionLevel: QrErrorCorrectLevel.L,
-          image: FileImage(imageFile),
+          embeddedImage: AssetImage('assets/images/logo_yakka.png'),
         ),
       ),
     );

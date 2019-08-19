@@ -3,6 +3,7 @@
  * Copyright (c) 2019 the QR.Flutter authors.
  * See LICENSE for distribution and usage details.
  */
+
 /// This class only contains special version codes. QR codes support version
 /// numbers from 1-40 and you should just use the numeric version directly.
 class QrVersions {

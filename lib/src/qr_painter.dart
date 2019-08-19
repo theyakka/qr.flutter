@@ -3,12 +3,12 @@
  * Copyright (c) 2019 the QR.Flutter authors.
  * See LICENSE for distribution and usage details.
  */
+
 import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:qr/qr.dart';
@@ -36,8 +36,8 @@ class QrPainter extends CustomPainter {
     this.color = _qrDefaultColor,
     this.emptyColor,
     this.gapless = false,
-    this.image,
-    this.imageStyle,
+    this.embeddedImage,
+    this.embeddedImageStyle,
   }) : assert(QrVersions.isSupportedVersion(version)) {
     _init(data);
   }
@@ -50,8 +50,8 @@ class QrPainter extends CustomPainter {
     this.color = _qrDefaultColor,
     this.emptyColor,
     this.gapless = false,
-    this.image,
-    this.imageStyle,
+    this.embeddedImage,
+    this.embeddedImageStyle,
   })  : _qr = qr,
         version = qr.typeNumber,
         errorCorrectionLevel = qr.errorCorrectLevel {
@@ -76,11 +76,12 @@ class QrPainter extends CustomPainter {
   /// squares.
   final bool gapless;
 
-  /// The image data to overlay in the center of the qr code.
-  final ui.Image image;
+  /// The image data to embed (as an overlay) in the QR code. The image will
+  /// be added to the center of the QR code.
+  final ui.Image embeddedImage;
 
   /// Styling options for the image overlay.
-  final QrImageStyle imageStyle;
+  final QrEmbeddedImageStyle embeddedImageStyle;
 
   /// The base QR code data
   QrCode _qr;
@@ -105,7 +106,7 @@ class QrPainter extends CustomPainter {
       version: version,
       errorCorrectionLevel: errorCorrectionLevel,
     );
-    if (validationResult.status != QrValidationStatus.valid) {
+    if (!validationResult.isValid) {
       throw validationResult.error;
     }
     _qr = validationResult.qrCode;
@@ -197,15 +198,20 @@ class QrPainter extends CustomPainter {
       }
     }
 
-    if (image != null) {
-      final side = 0.4 * size.shortestSide;
-      final position =
-          Offset((size.width - side) / 2.0, (size.height - side) / 2.0);
-      var imageSize = Size(side, side);
-      if (imageStyle != null) {
-        imageSize = imageStyle.size ?? imageSize;
-      }
-      _drawImageOverlay(canvas, position, imageSize); // draw the image overlay.
+    if (embeddedImage != null) {
+      final originalSize = Size(
+        embeddedImage.width.toDouble(),
+        embeddedImage.height.toDouble(),
+      );
+      final requestedSize =
+          embeddedImageStyle != null ? embeddedImageStyle.size : null;
+      final imageSize = _scaledAspectSize(size, originalSize, requestedSize);
+      final position = Offset(
+        (size.width - imageSize.width) / 2.0,
+        (size.height - imageSize.height) / 2.0,
+      );
+      // draw the image overlay.
+      _drawImageOverlay(canvas, position, imageSize, embeddedImageStyle);
     }
   }
 
@@ -270,14 +276,38 @@ class QrPainter extends CustomPainter {
     canvas.drawRect(innerRect, innerPaint);
   }
 
-  void _drawImageOverlay(Canvas canvas, Offset position, Size size) {
+  bool _hasOneNonZeroSide(Size size) => size.longestSide > 0;
+
+  Size _scaledAspectSize(
+      Size widgetSize, Size originalSize, Size requestedSize) {
+    if (requestedSize != null && !requestedSize.isEmpty) {
+      return requestedSize;
+    } else if (requestedSize != null && _hasOneNonZeroSide(requestedSize)) {
+      final maxSide = requestedSize.longestSide;
+      final ratio = maxSide / originalSize.longestSide;
+      return Size(ratio * originalSize.width, ratio * originalSize.height);
+    } else {
+      final maxSide = 0.25 * widgetSize.shortestSide;
+      final ratio = maxSide / originalSize.longestSide;
+      return Size(ratio * originalSize.width, ratio * originalSize.height);
+    }
+  }
+
+  void _drawImageOverlay(
+      Canvas canvas, Offset position, Size size, QrEmbeddedImageStyle style) {
     final paint = Paint()
       ..isAntiAlias = true
       ..filterQuality = FilterQuality.high;
-    final srcSize = Size(image.width.toDouble(), image.height.toDouble());
+    if (style != null) {
+      if (style.color != null) {
+        paint.colorFilter = ColorFilter.mode(style.color, BlendMode.srcATop);
+      }
+    }
+    final srcSize =
+        Size(embeddedImage.width.toDouble(), embeddedImage.height.toDouble());
     final src = Alignment.center.inscribe(srcSize, Offset.zero & srcSize);
     final dst = Alignment.center.inscribe(size, position & size);
-    canvas.drawImageRect(image, src, dst, paint);
+    canvas.drawImageRect(embeddedImage, src, dst, paint);
   }
 
   @override
@@ -286,7 +316,10 @@ class QrPainter extends CustomPainter {
       return color != oldPainter.color ||
           errorCorrectionLevel != oldPainter.errorCorrectionLevel ||
           _calcVersion != oldPainter._calcVersion ||
-          _qr != oldPainter._qr;
+          _qr != oldPainter._qr ||
+          gapless != oldPainter.gapless ||
+          embeddedImage != oldPainter.embeddedImage ||
+          embeddedImageStyle != oldPainter.embeddedImageStyle;
     }
     return true;
   }

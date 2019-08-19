@@ -6,7 +6,8 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:qr/qr.dart';
-import 'package:qr_flutter/src/qr_versions.dart';
+
+import 'qr_versions.dart';
 
 /// A utility class for validating and pre-rendering QR code data.
 class QrValidator {
