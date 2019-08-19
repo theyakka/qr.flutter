@@ -17,7 +17,7 @@ import 'types.dart';
 import 'validator.dart';
 
 /// A widget that shows a QR code.
-class QrImage extends StatelessWidget {
+class QrImage extends StatefulWidget {
   /// Create a new QR code using the [String] data and the passed options (or
   /// using the default options).
   QrImage({
@@ -36,16 +36,9 @@ class QrImage extends StatelessWidget {
     this.embeddedImageStyle,
     this.embeddedImageEmitsError = false,
   })  : assert(QrVersions.isSupportedVersion(version)),
-        super(key: key) {
-    _validationResult = QrValidator.validate(
-      data: data,
-      version: version,
-      errorCorrectionLevel: errorCorrectionLevel,
-    );
-    if (_validationResult.isValid) {
-      _qr = _validationResult.qrCode;
-    }
-  }
+        _data = data,
+        _qrCode = null,
+        super(key: key);
 
   /// Create a new QR code using the [QrCode] data and the passed options (or
   /// using the default options).
@@ -65,16 +58,14 @@ class QrImage extends StatelessWidget {
     this.embeddedImageStyle,
     this.embeddedImageEmitsError = false,
   })  : assert(QrVersions.isSupportedVersion(version)),
-        _qr = qr,
-        _validationResult =
-            QrValidationResult(status: QrValidationStatus.valid, qrCode: qr),
+        _data = null,
+        _qrCode = qr,
         super(key: key);
 
-  /// The QR code string data.
-  QrCode _qr;
-
-  /// The current validation status.
-  QrValidationResult _validationResult;
+  // The data passed to the widget
+  final String _data;
+  // The QR code data passed to the widget
+  final QrCode _qrCode;
 
   /// The background color of the final QR code widget.
   final Color backgroundColor;
@@ -126,22 +117,49 @@ class QrImage extends StatelessWidget {
   final bool embeddedImageEmitsError;
 
   @override
+  _QrImageState createState() => _QrImageState();
+}
+
+class _QrImageState extends State<QrImage> {
+  /// The QR code string data.
+  QrCode _qr;
+
+  /// The current validation status.
+  QrValidationResult _validationResult;
+
+  @override
   Widget build(BuildContext context) {
+    if (widget._data != null) {
+      _validationResult = QrValidator.validate(
+        data: widget._data,
+        version: widget.version,
+        errorCorrectionLevel: widget.errorCorrectionLevel,
+      );
+      if (_validationResult.isValid) {
+        _qr = _validationResult.qrCode;
+      } else {
+        _qr = null;
+      }
+    } else if (widget._qrCode != null) {
+      _qr = widget._qrCode;
+      _validationResult =
+          QrValidationResult(status: QrValidationStatus.valid, qrCode: _qr);
+    }
     return LayoutBuilder(builder: (context, constraints) {
       // validation failed, show an error state widget if builder is present.
       if (!_validationResult.isValid) {
         return _errorWidget(context, constraints, _validationResult.error);
       }
       // no error, build the regular widget
-      final widgetSize = size ?? constraints.biggest.shortestSide;
-      if (embeddedImage != null) {
+      final widgetSize = widget.size ?? constraints.biggest.shortestSide;
+      if (widget.embeddedImage != null) {
         // if requesting to embed an image then we need to load via a
         // FutureBuilder because the image provider will be async.
         return FutureBuilder(
-          future: _loadQrImage(context, embeddedImageStyle),
+          future: _loadQrImage(context, widget.embeddedImageStyle),
           builder: (ctx, snapshot) {
             if (snapshot.error != null) {
-              if (embeddedImageEmitsError) {
+              if (widget.embeddedImageEmitsError) {
                 return _errorWidget(context, constraints, snapshot.error);
               } else {
                 return _qrWidget(context, null, widgetSize);
@@ -164,32 +182,31 @@ class QrImage extends StatelessWidget {
   Widget _qrWidget(BuildContext context, ui.Image image, double edgeLength) {
     final painter = QrPainter.withQr(
       qr: _qr,
-      color: foregroundColor,
-      gapless: gapless,
-      embeddedImageStyle: embeddedImageStyle,
+      color: widget.foregroundColor,
+      gapless: widget.gapless,
+      embeddedImageStyle: widget.embeddedImageStyle,
       embeddedImage: image,
     );
     return _QrContentView(
       edgeLength: edgeLength,
-      backgroundColor: backgroundColor,
-      padding: padding,
+      backgroundColor: widget.backgroundColor,
+      padding: widget.padding,
       child: CustomPaint(painter: painter),
     );
   }
 
   Widget _errorWidget(
       BuildContext context, BoxConstraints constraints, Object error) {
-    final errorWidget = errorStateBuilder == null
+    final errorWidget = widget.errorStateBuilder == null
         ? Container()
-        : errorStateBuilder(context, error) ?? Container();
-    final errorSideLength = size ??
-        (constrainErrorBounds
-            ? constraints.biggest.shortestSide
-            : constraints.biggest.longestSide);
+        : widget.errorStateBuilder(context, error) ?? Container();
+    final errorSideLength = (widget.constrainErrorBounds
+        ? widget.size ?? constraints.biggest.shortestSide
+        : constraints.biggest.longestSide);
     return _QrContentView(
       edgeLength: errorSideLength,
-      backgroundColor: backgroundColor,
-      padding: padding,
+      backgroundColor: widget.backgroundColor,
+      padding: widget.padding,
       child: errorWidget,
     );
   }
@@ -200,7 +217,7 @@ class QrImage extends StatelessWidget {
 
     final mq = MediaQuery.of(buildContext);
     final completer = Completer<ui.Image>();
-    final stream = embeddedImage.resolve(ImageConfiguration(
+    final stream = widget.embeddedImage.resolve(ImageConfiguration(
       devicePixelRatio: mq.devicePixelRatio,
     ));
     stream.addListener(ImageStreamListener((info, err) {
