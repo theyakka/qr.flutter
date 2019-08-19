@@ -13,7 +13,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  qr: 1.2.0
+  qr: ^1.2.0
 
 dev_dependencies:
   flutter_test:
