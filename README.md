@@ -4,26 +4,21 @@ QR.Flutter is a Flutter library for simple and fast QR code rendering via a Widg
 
 # Features
 - Built on [QR - Dart](https://github.com/kevmoo/qr.dart)
+- Automatic QR code version/type detection or manual entry 
 - Supports QR code versions 1 - 40
 - Error correction / redundancy
 - Configurable output size, padding, background and foreground colors
+- Supports image overlays
 - Export to image data to save to file or use in memory
 - No internet connection required
 
 # Installing
 
-If you're using Flutter 1.2+ or the master/beta channel then you will need to use version `2.0.0` or higher as Flutter 1.2 is not compatible with earlier versions of the Flutter framework.
+You should add the following to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  qr_flutter: ^2.1.0
-```
-
-If you're using an older Flutter version (< 1.2.1), you **must** use version `1.1.6` if you cannot upgrade to the latest version of Flutter:
-
-```yaml
-dependencies:
-  qr_flutter: ^1.1.6
+  qr_flutter: ^3.0.0
 ```
 
 **Note**: If you're using the Flutter `master` channel, if you encounter build issues, or want to try the latest and greatest then you should use the `master` branch and not a specific release version. To do so, use the following configuration in your `pubspec.yaml`:
@@ -50,8 +45,9 @@ import 'package:qr_flutter/qr_flutter.dart';
 Next, to render a basic QR code you can use the following code (or something like it):
 
 ```dart
-new QrImage(
+QrImage(
   data: "1234567890",
+  version: QrVersions.auto,
   size: 200.0,
 ),
 ```
@@ -60,16 +56,69 @@ Depending on your data requirements you may want to tweak the QR code output. Th
 
 | Property | Type | Description |
 |----|----|----|
-| `version` | int | A value between 1 and 40. See http://www.qrcode.com/en/about/version.html for details. |
+| `version` | int | `QrVersions.auto` or a value between 1 and 40. See http://www.qrcode.com/en/about/version.html for limitations and details. |
 | `errorCorrectionLevel` | int | A value defined on `QrErrorCorrectLevel`. e.g.: `QrErrorCorrectLevel.L`. |
 | `size` | double | The (square) size of the image. If not given, will auto size using shortest size constraint. |
-| `padding` | EdgeInsets | Padding surrounding the QR code data |
-| `backgroundColor` | Color | The background color (default is none) |
-| `foregroundColor` | Color | The foreground color (default is black) |
-| `gapless` | bool | Adds an extra pixel in size to prevent gaps (default is true) |
+| `padding` | EdgeInsets | Padding surrounding the QR code data. |
+| `backgroundColor` | Color | The background color (default is none). |
+| `foregroundColor` | Color | The foreground color (default is black). |
+| `gapless` | bool | Adds an extra pixel in size to prevent gaps (default is true). |
+| `errorStateBuilder` | QrErrorBuilder | Allows you to show an error state `Widget` in the event there is an error rendering the QR code (e.g.: version is too low, input is too long, etc). |
+| `constrainErrorBounds` | bool | If true, the error `Widget` will be constrained to the square that the QR code was going to be drawn in. If false, the error state `Widget` will grow/shrink to whatever size it needs. |
+| `embeddedImage` | ImageProvider | An `ImageProvider` that defines an image to be overlaid in the center of the QR code. |
+| `embeddedImageStyle` | QrEmbeddedImageStyle | Properties to style the embedded image. |
+| `embeddedImageEmitsError` | bool | If true, any failure to load the embedded image will trigger the `errorStateBuilder` or render an empty `Container`. If false, the QR code will be rendered and the embedded image will be ignored. |
 
 # Example
-See the `example` directory for a basic working example.
+
+A basic QR code will look something like:
+
+```dart
+QrImage(
+  data: 'This is a simple QR code',
+  version: QrVersions.auto,
+  size: 320,
+  gapless: false,
+)
+```
+
+A QR code with an image (from your application's assets) will look like:
+
+```dart
+QrImage(
+  data: 'This QR code has an embedded image as well',
+  version: QrVersions.auto,
+  size: 320,
+  gapless: false,
+  embeddedImage: AssetImage('assets/images/my_embedded_image.png'),
+  embeddedImageStyle: QrEmbeddedImageStyle(
+    size: Size(80, 80),
+  ),
+)
+```
+
+To show an error state in the event that the QR code can't be validated:
+
+```dart
+QrImage(
+  data: 'This QR code will show the error state instead',
+  version: 1,
+  size: 320,
+  gapless: false,
+  errorStateBuilder: (cxt, err) {
+    return Container(
+      child: Center(
+        child: Text(
+          "Uh oh! Something went wrong...",
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  },
+)
+```
+
+
 
 # FAQ
 ## Has it been tested in production? Can I use it in production?

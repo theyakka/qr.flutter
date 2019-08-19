@@ -1,3 +1,10 @@
+# 3.0.0
+- Use `QrVersions.auto` and let the library pick the appropriate version for you.
+- Add an image that will be overlaid in the centre of the widget. You can specify the image size but not position.
+- `QrImage.onError` has been removed. It was horribly broken so we decided to not deprecate it and just remove it totally.
+- `QrImage.errorStateBuilder` introduced to allow you to display an in-line `Widget` when an error (such as data too long) occurs. By default the error state `Widget` will be constrained to the `QRImage` bounds (aka a Square) but you can use the `constrainErrorBounds` property to prevent that.
+- A bunch of bug fixes you can look at in the source code.
+
 # 2.1.0
 - The `gapless` option is now `true` by default.
 - Allow assigning `Key` values to `QrImage` widgets.

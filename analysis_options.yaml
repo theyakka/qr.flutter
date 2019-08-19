@@ -15,88 +15,89 @@ analyzer:
     - 'build/**'
     - 'ios/**'
     - 'res/**'
-    - 'example/**'
 
 linter:
   rules:
-    - always_declare_return_types
-    - always_put_control_body_on_new_line
-    - always_require_non_null_named_parameters
-    - always_specify_types
-    - annotate_overrides
-    - avoid_as
-    - avoid_empty_else
-    - avoid_field_initializers_in_const_classes
-    - avoid_function_literals_in_foreach_calls
-    - avoid_init_to_null
-    - avoid_null_checks_in_equality_operators
-    - avoid_relative_lib_imports
-    - avoid_renaming_method_parameters
-    - avoid_return_types_on_setters
-    - avoid_slow_async_io
-    - avoid_types_as_parameter_names
-    - avoid_unused_constructor_parameters
-    - avoid_void_async
-    - await_only_futures
+    # --- STYLE
+    # identifiers
     - camel_case_types
-    - cancel_subscriptions
-    - control_flow_in_finally
-    - directives_ordering
-    - empty_catches
-    - empty_constructor_bodies
-    - empty_statements
-    - hash_and_equals
-    - implementation_imports
-    - iterable_contains_unrelated_type
     - library_names
+    - file_names
     - library_prefixes
-    - list_remove_unrelated_type
-    - no_adjacent_strings_in_list
-    - no_duplicate_case_values
     - non_constant_identifier_names
-    - overridden_fields
-    - package_api_docs
-    - package_names
-    - package_prefixed_library_names
-    - prefer_adjacent_string_concatenation
-    - prefer_asserts_in_initializer_lists
-    - prefer_collection_literals
-    - prefer_conditional_assignment
-    - prefer_const_constructors
-    - prefer_const_constructors_in_immutables
-    - prefer_const_declarations
-    - prefer_const_literals_to_create_immutables
-    - prefer_contains
-    - prefer_equal_for_default_values
-    - prefer_final_fields
-    - prefer_final_locals
-    - prefer_foreach
-    - prefer_generic_function_type_aliases
-    - prefer_initializing_formals
-    - prefer_is_empty
-    - prefer_is_not_empty
-    - prefer_iterable_whereType
-    - prefer_single_quotes
-    - prefer_typing_uninitialized_variables
-    - prefer_void_to_null
-    - recursive_getters
+    - constant_identifier_names # prefer
+    # ordering
+    - directives_ordering
+    # formatting
+    - lines_longer_than_80_chars # avoid
+    - curly_braces_in_flow_control_structures
+    # --- DOCUMENTATION
+    # comments
+    # doc comments
     - slash_for_doc_comments
-    - sort_constructors_first
-    - sort_unnamed_constructors_first
-    - super_goes_last
-    - test_types_in_equals
-    - throw_in_finally
-    - type_init_formals
-    - unnecessary_brace_in_string_interps
-    - unnecessary_const
+    - package_api_docs # prefer
+    - comment_references
+    # markdown
+    # writing
+    # --- USAGE
+    # libraries
+    - implementation_imports
+    - avoid_relative_lib_imports
+    # strings
+    - prefer_adjacent_string_concatenation
+    - prefer_interpolation_to_compose_strings # prefer
+    - unnecessary_brace_in_string_interps # avoid
+    # collections
+    - prefer_collection_literals
+    - avoid_function_literals_in_foreach_calls # avoid
+    - prefer_iterable_whereType
+    # functions
+    - prefer_function_declarations_over_variables
+    - unnecessary_lambdas
+    # parameters
+    - prefer_equal_for_default_values
+    # variables
+    - avoid_init_to_null
+    # members
     - unnecessary_getters_setters
-    - unnecessary_new
-    - unnecessary_null_aware_assignments
-    - unnecessary_null_in_if_null_operators
-    - unnecessary_overrides
-    - unnecessary_parenthesis
-    - unnecessary_statements
+    - prefer_final_fields
+    #- prefer_expression_function_bodies # consider
     - unnecessary_this
-    - unrelated_type_equality_checks
+    - prefer_typing_uninitialized_variables
+    # constructors
+    - prefer_initializing_formals
+    - type_init_formals
+    - empty_constructor_bodies
+    - unnecessary_new
+    - unnecessary_const
+    # error handling
+    - avoid_catches_without_on_clauses # avoid
     - use_rethrow_when_possible
-    - valid_regexps
+    # asynchrony
+    # --- DESIGN
+    # names
+    - use_to_and_as_if_applicable
+    # libraries
+    # classes
+    - one_member_abstracts # avoid
+    - avoid_classes_with_only_static_members # avoid
+    - public_member_api_docs
+    # constructors
+    - prefer_constructors_over_static_methods
+    # members
+    - use_setters_to_change_properties
+    - avoid_setters_without_getters
+    - avoid_returning_null # avoid
+    - avoid_returning_this # avoid
+    # types
+    - type_annotate_public_apis # prefer
+    - omit_local_variable_types # avoid
+    - avoid_types_on_closure_parameters # avoid
+    - avoid_return_types_on_setters
+    - prefer_generic_function_type_aliases
+    - avoid_private_typedef_functions # prefer
+    # parameters
+    - avoid_positional_boolean_parameters # avoid
+    # equality
+    - hash_and_equals
+    - avoid_null_checks_in_equality_operators

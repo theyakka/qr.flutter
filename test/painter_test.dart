@@ -1,27 +1,44 @@
-import 'dart:io';
-import 'dart:ui';
+/*
+ * QR.Flutter
+ * Copyright (c) 2019 the QR.Flutter authors.
+ * See LICENSE for distribution and usage details.
+ */
+import 'dart:typed_data';
 
-import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qr/qr.dart';
-import 'package:qr_flutter/src/qr_painter.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 void main() {
-  testWidgets('Painter generates an image', (WidgetTester tester) async {
+  testWidgets('QrPainter generates correct image', (tester) async {
+    final painter = QrPainter(
+      data: 'The painter is this thing',
+      version: QrVersions.auto,
+      gapless: true,
+      errorCorrectionLevel: QrErrorCorrectLevel.L,
+      color: const Color(0xFF000000),
+    );
+    ByteData imageData;
     await tester.runAsync(() async {
-      final QrPainter painter = QrPainter(
-        data: 'This is a test image',
-        color: const Color(0xff222222),
-        emptyColor: const Color(0xffffffff),
-        version: 4,
-        gapless: true,
-        errorCorrectionLevel: QrErrorCorrectLevel.L,
-      );
-      final ByteData imageData = await painter.toImageData(300.0);
-      File file = File('./test_image.png');
-      file = await file.writeAsBytes(imageData.buffer.asUint8List());
-      final int len = await file.length();
-      expect(len, greaterThan(0));
+      imageData = await painter.toImageData(600.0);
     });
+    final imageBytes = imageData.buffer.asUint8List();
+    final widget = Center(
+      child: RepaintBoundary(
+        child: Container(
+          width: 600,
+          height: 600,
+          child: Image.memory(imageBytes),
+        ),
+      ),
+    );
+    await tester.pumpWidget(widget);
+    await tester.pumpAndSettle();
+    await expectLater(
+      find.byType(RepaintBoundary),
+      matchesGoldenFile('./.golden/qr_painter_golden.png'),
+    );
   });
 }
