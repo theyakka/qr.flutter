@@ -193,10 +193,13 @@ class QrPainter extends CustomPainter {
             paintMetrics.pixelSize + pixelHTweak,
             paintMetrics.pixelSize + pixelVTweak,
           );
+          final roundedRect = RRect.fromRectAndRadius(squareRect, 
+          Radius.circular(100));
           print("PAINTING");
           canvas.drawCircle(Offset(x.toDouble(), y.toDouble()), 
            paintMetrics.pixelSize, pixelPaint);
-         // canvas.drawRect(squareRect, pixelPaint);
+          canvas.drawRRect(roundedRect, pixelPaint);
+          
         }
       }
     }
