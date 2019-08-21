@@ -193,6 +193,7 @@ class QrPainter extends CustomPainter {
             paintMetrics.pixelSize + pixelHTweak,
             paintMetrics.pixelSize + pixelVTweak,
           );
+          print("BITCH");
           canvas.drawCircle(Offset(0, 0),  paintMetrics.pixelSize, pixelPaint);
          // canvas.drawRect(squareRect, pixelPaint);
         }
