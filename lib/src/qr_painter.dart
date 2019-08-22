@@ -249,7 +249,7 @@ class QrPainter extends CustomPainter {
   bool _isLogoArea(int x, int y) {
     //Find center of module count and portion to cut out of QR
     var center = _qr.moduleCount / 2;
-    var canvasPortion = _qr.moduleCount * 0.2;
+    var canvasPortion = _qr.moduleCount * 0.15;
 
     if (x > center - canvasPortion &&
         x < center + canvasPortion &&
