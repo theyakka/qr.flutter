@@ -22,6 +22,11 @@ enum QrCodeElement {
   codePixel,
 }
 
+/// Styling options for qr code
+enum QrStyle{
+  circular,
+  square,
+}
 /// Enumeration representing the three finder pattern (square 'eye') locations.
 enum FinderPatternPosition {
   /// The top left position.

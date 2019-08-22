@@ -32,6 +32,8 @@ class QrImage extends StatefulWidget {
     this.errorStateBuilder,
     this.constrainErrorBounds = true,
     this.gapless = true,
+    this.imageGap = false,
+    this.style = QrStyle.square,
     this.embeddedImage,
     this.embeddedImageStyle,
     this.embeddedImageEmitsError = false,
@@ -54,6 +56,8 @@ class QrImage extends StatefulWidget {
     this.errorStateBuilder,
     this.constrainErrorBounds = true,
     this.gapless = true,
+    this.imageGap = false,
+    this.style = QrStyle.square,
     this.embeddedImage,
     this.embeddedImageStyle,
     this.embeddedImageEmitsError = false,
@@ -102,6 +106,13 @@ class QrImage extends StatefulWidget {
   /// If set to false, each of the squares in the QR code will have a small
   /// gap. Default is true.
   final bool gapless;
+
+  /// If set to true, an area in the middle of the QR code will be left blank
+  /// Default is false.
+  final bool imageGap;
+
+  /// Default Qr style is circular
+  final QrStyle style;
 
   /// The image data to embed (as an overlay) in the QR code. The image will
   /// be added to the center of the QR code.
@@ -184,6 +195,8 @@ class _QrImageState extends State<QrImage> {
       qr: _qr,
       color: widget.foregroundColor,
       gapless: widget.gapless,
+      style: widget.style,
+      imageGap: widget.imageGap,
       embeddedImageStyle: widget.embeddedImageStyle,
       embeddedImage: image,
     );

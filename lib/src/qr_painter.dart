@@ -36,6 +36,8 @@ class QrPainter extends CustomPainter {
     this.color = _qrDefaultColor,
     this.emptyColor,
     this.gapless = false,
+    this.imageGap = false,
+    this.style = QrStyle.circular,
     this.embeddedImage,
     this.embeddedImageStyle,
   }) : assert(QrVersions.isSupportedVersion(version)) {
@@ -50,6 +52,8 @@ class QrPainter extends CustomPainter {
     this.color = _qrDefaultColor,
     this.emptyColor,
     this.gapless = false,
+    this.imageGap = false,
+    this.style = QrStyle.circular,
     this.embeddedImage,
     this.embeddedImageStyle,
   })  : _qr = qr,
@@ -82,6 +86,13 @@ class QrPainter extends CustomPainter {
 
   /// Styling options for the image overlay.
   final QrEmbeddedImageStyle embeddedImageStyle;
+
+  /// If set to true, an area in the middle of the QR code will be left blank
+  /// Default is false.
+  final bool imageGap;
+
+  /// Default Qr style is circular
+  final QrStyle style;
 
   /// The base QR code data
   QrCode _qr;
@@ -175,7 +186,10 @@ class QrPainter extends CustomPainter {
       for (var y = 0; y < _qr.moduleCount; y++) {
         // draw the finder patterns independently
         if (_isFinderPatternPosition(x, y)) continue;
-        if (_isLogoArea(x, y)) continue;
+
+        // Exclude if pixel is in image gap space
+        if (imageGap && _isLogoArea(x, y)) continue;
+
         // paint an 'on' pixel
         if (_qr.isDark(y, x)) {
           left = paintMetrics.inset + (x * (paintMetrics.pixelSize + gap));
@@ -194,9 +208,13 @@ class QrPainter extends CustomPainter {
             paintMetrics.pixelSize * 0.8 + pixelHTweak,
             paintMetrics.pixelSize * 0.8 + pixelVTweak,
           );
-          final roundedRect =
-              RRect.fromRectAndRadius(squareRect, Radius.circular(100));
-          canvas.drawRRect(roundedRect, pixelPaint);
+          if (style == QrStyle.circular) {
+            final roundedRect =
+                RRect.fromRectAndRadius(squareRect, Radius.circular(100));
+            canvas.drawRRect(roundedRect, pixelPaint);
+          } else if (style == QrStyle.square) {
+            canvas.drawRect(squareRect, pixelPaint);
+          }
         }
       }
     }
@@ -229,12 +247,14 @@ class QrPainter extends CustomPainter {
   }
 
   bool _isLogoArea(int x, int y) {
- //   if (embeddedImage == null) return false;
-   var center = _qr.moduleCount/2;
-   var canvasPortion = 5;
-   
-   if( x > center-canvasPortion && x < center+canvasPortion &&
-   y > center-canvasPortion && y < center+canvasPortion) return true;
+    //Find center of module count and portion to cut out of QR
+    var center = _qr.moduleCount / 2;
+    var canvasPortion = _qr.moduleCount * 0.2;
+
+    if (x > center - canvasPortion &&
+        x < center + canvasPortion &&
+        y > center - canvasPortion &&
+        y < center + canvasPortion) return true;
     return false;
   }
 
@@ -281,17 +301,24 @@ class QrPainter extends CustomPainter {
 
     final strokeRect = Rect.fromLTWH(offset.dx, offset.dy, radius, radius);
 
-    final roundedStrokeRect =
-        RRect.fromRectAndRadius(strokeRect, Radius.circular(100));
-    canvas.drawRRect(roundedStrokeRect, outerPaint);
     final gapHalf = metrics.pixelSize;
     final gap = gapHalf * 2;
     final innerSize = radius - gap - (2 * strokeAdjust);
     final innerRect = Rect.fromLTWH(offset.dx + gapHalf + strokeAdjust,
         offset.dy + gapHalf + strokeAdjust, innerSize, innerSize);
-    final roundedInnerRect =
-        RRect.fromRectAndRadius(innerRect, Radius.circular(100));
-    canvas.drawRRect(roundedInnerRect, innerPaint);
+
+    // Paint shapes onto canvas
+    if (style == QrStyle.circular) {
+      final roundedStrokeRect =
+          RRect.fromRectAndRadius(strokeRect, Radius.circular(100));
+      canvas.drawRRect(roundedStrokeRect, outerPaint);
+      final roundedInnerRect =
+          RRect.fromRectAndRadius(innerRect, Radius.circular(100));
+      canvas.drawRRect(roundedInnerRect, innerPaint);
+    } else if (style == QrStyle.square) {
+      canvas.drawRect(strokeRect, outerPaint);
+      canvas.drawRect(innerRect, innerPaint);
+    }
   }
 
   bool _hasOneNonZeroSide(Size size) => size.longestSide > 0;
