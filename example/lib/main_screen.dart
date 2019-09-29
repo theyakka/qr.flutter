@@ -27,6 +27,8 @@ class _MainScreenState extends State<MainScreen> {
                     width: 280,
                     child: QrImage(
                       data: message,
+                      //if you will Make Qrcode for Big text Like PublicKey or Private Key  Add this
+                      //version: 25,
                       foregroundColor: Color(0xff03291c),
                       embeddedImage: AssetImage('assets/images/logo_yakka.png'),
                     ),
