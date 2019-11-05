@@ -119,6 +119,10 @@ class QrPainter extends CustomPainter {
     // expand it to multiple later (e.g.: different colours).
     _paintCache.cache(
         Paint()..style = PaintingStyle.fill, QrCodeElement.codePixel);
+    // Cache the empty pixel paint object. Empty color is deprecated and will go
+    // away.
+    _paintCache.cache(
+        Paint()..style = PaintingStyle.fill, QrCodeElement.codePixelEmpty);
     // Cache the finder pattern painters. We'll keep one for each one in case
     // we want to provide customization options later.
     for (final position in FinderPatternPosition.values) {
@@ -138,10 +142,6 @@ class QrPainter extends CustomPainter {
       print("[QR] WARN: width or height is zero. You should set a 'size' value "
           "or nest this painter in a Widget that defines a non-zero size");
       return;
-    }
-    // DEPRECATED: the `emptyColor` property will be removed soon
-    if (emptyColor != null) {
-      canvas.drawColor(emptyColor, BlendMode.color);
     }
 
     final paintMetrics = _PaintMetrics(
@@ -169,32 +169,38 @@ class QrPainter extends CustomPainter {
     double left;
     double top;
     final gap = !gapless ? _gapSize : 0;
+    // get the painters for the pixel information
     final pixelPaint = _paintCache.firstPaint(QrCodeElement.codePixel);
     pixelPaint.color = color;
+    Paint emptyPixelPaint;
+    if (emptyColor != null) {
+      emptyPixelPaint = _paintCache.firstPaint(QrCodeElement.codePixelEmpty);
+      emptyPixelPaint.color = emptyColor;
+    }
     for (var x = 0; x < _qr.moduleCount; x++) {
       for (var y = 0; y < _qr.moduleCount; y++) {
         // draw the finder patterns independently
         if (_isFinderPatternPosition(x, y)) continue;
-        // paint an 'on' pixel
-        if (_qr.isDark(y, x)) {
-          left = paintMetrics.inset + (x * (paintMetrics.pixelSize + gap));
-          top = paintMetrics.inset + (y * (paintMetrics.pixelSize + gap));
-          var pixelHTweak = 0.0;
-          var pixelVTweak = 0.0;
-          if (gapless && _hasAdjacentHorizontalPixel(x, y, _qr.moduleCount)) {
-            pixelHTweak = 0.5;
-          }
-          if (gapless && _hasAdjacentVerticalPixel(x, y, _qr.moduleCount)) {
-            pixelVTweak = 0.5;
-          }
-          final squareRect = Rect.fromLTWH(
-            left,
-            top,
-            paintMetrics.pixelSize + pixelHTweak,
-            paintMetrics.pixelSize + pixelVTweak,
-          );
-          canvas.drawRect(squareRect, pixelPaint);
+        final paint = _qr.isDark(y, x) ? pixelPaint : emptyPixelPaint;
+        if (paint == null) continue;
+        // paint a pixel
+        left = paintMetrics.inset + (x * (paintMetrics.pixelSize + gap));
+        top = paintMetrics.inset + (y * (paintMetrics.pixelSize + gap));
+        var pixelHTweak = 0.0;
+        var pixelVTweak = 0.0;
+        if (gapless && _hasAdjacentHorizontalPixel(x, y, _qr.moduleCount)) {
+          pixelHTweak = 0.5;
         }
+        if (gapless && _hasAdjacentVerticalPixel(x, y, _qr.moduleCount)) {
+          pixelVTweak = 0.5;
+        }
+        final squareRect = Rect.fromLTWH(
+          left,
+          top,
+          paintMetrics.pixelSize + pixelHTweak,
+          paintMetrics.pixelSize + pixelVTweak,
+        );
+        canvas.drawRect(squareRect, paint);
       }
     }
 

@@ -20,6 +20,9 @@ enum QrCodeElement {
 
   /// The individual pixels of the QR code
   codePixel,
+
+  /// The "empty" pixels of the QR code
+  codePixelEmpty,
 }
 
 /// Enumeration representing the three finder pattern (square 'eye') locations.
