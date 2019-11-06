@@ -220,11 +220,16 @@ class _QrImageState extends State<QrImage> {
     final stream = widget.embeddedImage.resolve(ImageConfiguration(
       devicePixelRatio: mq.devicePixelRatio,
     ));
-    stream.addListener(ImageStreamListener((info, err) {
+
+    ImageStreamListener streamListener;
+    streamListener = ImageStreamListener((info, err) {
+      stream.removeListener(streamListener);
       completer.complete(info.image);
     }, onError: (dynamic err, _) {
+      stream.removeListener(streamListener);
       completer.completeError(err);
-    }));
+    });
+    stream.addListener(streamListener);
     return completer.future;
   }
 }
