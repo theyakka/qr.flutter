@@ -1,6 +1,7 @@
-# 3.0.2
+# 3.1.0
 - Fix issue with `emptyColor` rendering.
 - Fix a bug related to placeholder image loading.
+- Bump to Flutter 1.7+. Flutter API changes have necessitated a bump. Sorry.
 
 # 3.0.1
 - Added an example.
