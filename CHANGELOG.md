@@ -1,5 +1,9 @@
+# 3.0.2
+- Fix issue with `emptyColor` rendering.
+- Fix a bug related to placeholder image loading.
+
 # 3.0.1
-- Added an example
+- Added an example.
 
 # 3.0.0
 - Use `QrVersions.auto` and let the library pick the appropriate version for you.
