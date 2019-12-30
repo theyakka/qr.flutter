@@ -159,6 +159,7 @@ class _QrImageState extends State<QrImage> {
           future: _loadQrImage(context, widget.embeddedImageStyle),
           builder: (ctx, snapshot) {
             if (snapshot.error != null) {
+              print("snapshot error: ${snapshot.error}");
               if (widget.embeddedImageEmitsError) {
                 return _errorWidget(context, constraints, snapshot.error);
               } else {
@@ -166,6 +167,7 @@ class _QrImageState extends State<QrImage> {
               }
             }
             if (snapshot.hasData) {
+              print('loaded image');
               final ui.Image loadedImage = snapshot.data;
               return _qrWidget(context, loadedImage, widgetSize);
             } else {
@@ -211,6 +213,7 @@ class _QrImageState extends State<QrImage> {
     );
   }
 
+  ImageStreamListener streamListener;
   Future<ui.Image> _loadQrImage(
       BuildContext buildContext, QrEmbeddedImageStyle style) async {
     if (style != null) {}
@@ -221,7 +224,6 @@ class _QrImageState extends State<QrImage> {
       devicePixelRatio: mq.devicePixelRatio,
     ));
 
-    ImageStreamListener streamListener;
     streamListener = ImageStreamListener((info, err) {
       stream.removeListener(streamListener);
       completer.complete(info.image);

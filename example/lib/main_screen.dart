@@ -1,4 +1,11 @@
+/*
+ * QR.Flutter
+ * Copyright (c) 2019 the QR.Flutter authors.
+ * See LICENSE for distribution and usage details.
+ */
+
 import 'dart:async';
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';

@@ -1,3 +1,7 @@
+# 3.2.0
+- Fix issue where finder patterns don't render correctly with the painter
+- Small fixes + optimizations
+
 # 3.1.0
 - Fix issue with `emptyColor` rendering.
 - Fix a bug related to placeholder image loading.

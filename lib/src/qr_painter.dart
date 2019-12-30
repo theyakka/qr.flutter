@@ -129,8 +129,11 @@ class QrPainter extends CustomPainter {
       _paintCache.cache(Paint()..style = PaintingStyle.stroke,
           QrCodeElement.finderPatternOuter,
           position: position);
+      _paintCache.cache(Paint()..style = PaintingStyle.stroke,
+          QrCodeElement.finderPatternInner,
+          position: position);
       _paintCache.cache(
-          Paint()..style = PaintingStyle.fill, QrCodeElement.finderPatternInner,
+          Paint()..style = PaintingStyle.fill, QrCodeElement.finderPatternDot,
           position: position);
     }
   }
@@ -270,16 +273,26 @@ class QrPainter extends CustomPainter {
 
     final innerPaint = _paintCache.firstPaint(QrCodeElement.finderPatternInner,
         position: position);
-    innerPaint.color = color;
+    innerPaint.strokeWidth = metrics.pixelSize;
+    innerPaint.color = emptyColor ?? Color(0x00ffffff);
 
-    final strokeRect = Rect.fromLTWH(offset.dx, offset.dy, radius, radius);
-    canvas.drawRect(strokeRect, outerPaint);
-    final gapHalf = metrics.pixelSize;
-    final gap = gapHalf * 2;
-    final innerSize = radius - gap - (2 * strokeAdjust);
-    final innerRect = Rect.fromLTWH(offset.dx + gapHalf + strokeAdjust,
-        offset.dy + gapHalf + strokeAdjust, innerSize, innerSize);
+    final dotPaint = _paintCache.firstPaint(QrCodeElement.finderPatternDot,
+        position: position);
+    dotPaint.color = color;
+
+    final outerRect = Rect.fromLTWH(offset.dx, offset.dy, radius, radius);
+    canvas.drawRect(outerRect, outerPaint);
+
+    final innerRadius = radius - (2 * metrics.pixelSize);
+    final innerRect = Rect.fromLTWH(offset.dx + metrics.pixelSize,
+        offset.dy + metrics.pixelSize, innerRadius, innerRadius);
     canvas.drawRect(innerRect, innerPaint);
+
+    final gap = metrics.pixelSize * 2;
+    final dotSize = radius - gap - (2 * strokeAdjust);
+    final dotRect = Rect.fromLTWH(offset.dx + metrics.pixelSize + strokeAdjust,
+        offset.dy + metrics.pixelSize + strokeAdjust, dotSize, dotSize);
+    canvas.drawRect(dotRect, dotPaint);
   }
 
   bool _hasOneNonZeroSide(Size size) => size.longestSide > 0;

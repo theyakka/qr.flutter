@@ -15,8 +15,11 @@ enum QrCodeElement {
   /// The 'stroke' / outer square of the QR code finder pattern element.
   finderPatternOuter,
 
-  /// The inner square of the QR code finder pattern element.
+  /// The inner/in-between square of the QR code finder pattern element.
   finderPatternInner,
+
+  /// The "dot" square of the QR code finder pattern element.
+  finderPatternDot,
 
   /// The individual pixels of the QR code
   codePixel,
