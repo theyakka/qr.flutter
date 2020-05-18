@@ -139,4 +139,4 @@ For author/contributor information, see the `AUTHORS` file.
 
 ## License
 
-QR.Flutter is released under a modified MIT license. See `LICENSE` for details.
+QR.Flutter is released under a BSD-3 license. See `LICENSE` for details.
