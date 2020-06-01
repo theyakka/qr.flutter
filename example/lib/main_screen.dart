@@ -36,6 +36,11 @@ class _MainScreenState extends State<MainScreen> {
           size: Size.square(size),
           painter: QrPainter(
             data: message,
+            topLeftRadius: 5,
+            bottomLeftRadius: 5,
+            topRightRadius: 5,
+            bottomRightRadius: 5,
+            gapless: true,
             version: QrVersions.auto,
             color: Color(0xff1a5441),
             emptyColor: Color(0xffeafcf6),

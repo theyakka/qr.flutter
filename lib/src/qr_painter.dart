@@ -38,6 +38,10 @@ class QrPainter extends CustomPainter {
     this.gapless = false,
     this.embeddedImage,
     this.embeddedImageStyle,
+    this.bottomLeftRadius = 0,
+    this.topLeftRadius = 0,
+    this.topRightRadius = 0,
+    this.bottomRightRadius = 0
   }) : assert(QrVersions.isSupportedVersion(version)) {
     _init(data);
   }
@@ -45,14 +49,18 @@ class QrPainter extends CustomPainter {
   /// Create a new QrPainter with a pre-validated/created [QrCode] object. This
   /// constructor is useful when you have a custom validation / error handling
   /// flow or for when you need to pre-validate the QR data.
-  QrPainter.withQr({
-    QrCode qr,
-    this.color = _qrDefaultColor,
-    this.emptyColor,
-    this.gapless = false,
-    this.embeddedImage,
-    this.embeddedImageStyle,
-  })  : _qr = qr,
+  QrPainter.withQr(
+      {QrCode qr,
+        this.color = _qrDefaultColor,
+        this.emptyColor,
+        this.gapless = false,
+        this.embeddedImage,
+        this.embeddedImageStyle,
+        this.bottomLeftRadius = 0,
+        this.topLeftRadius = 0,
+        this.topRightRadius = 0,
+        this.bottomRightRadius = 0})
+      : _qr = qr,
         version = qr.typeNumber,
         errorCorrectionLevel = qr.errorCorrectLevel {
     _calcVersion = version;
@@ -92,6 +100,18 @@ class QrPainter extends CustomPainter {
 
   /// The size of the 'gap' between the pixels
   final double _gapSize = 0.25;
+
+  /// Radius of bottom left corner
+  double bottomLeftRadius;
+
+  /// Radius of top left corner
+  double topLeftRadius;
+
+  /// Radius of bottom Right corner
+  double bottomRightRadius;
+
+  /// Radius of top right corner.
+  double topRightRadius;
 
   /// Cache for all of the [Paint] objects.
   final _paintCache = PaintCache();
@@ -184,7 +204,8 @@ class QrPainter extends CustomPainter {
       for (var y = 0; y < _qr.moduleCount; y++) {
         // draw the finder patterns independently
         if (_isFinderPatternPosition(x, y)) continue;
-        final paint = _qr.isDark(y, x) ? pixelPaint : emptyPixelPaint;
+        bool isDark = _qr.isDark(y, x);
+        final paint = isDark ? pixelPaint : emptyPixelPaint;
         if (paint == null) continue;
         // paint a pixel
         left = paintMetrics.inset + (x * (paintMetrics.pixelSize + gap));
@@ -203,7 +224,36 @@ class QrPainter extends CustomPainter {
           paintMetrics.pixelSize + pixelHTweak,
           paintMetrics.pixelSize + pixelVTweak,
         );
-        canvas.drawRect(squareRect, paint);
+        double bottomLeft = 0;
+        double bottomRight = 0;
+        double topLeft = 0;
+        double topRight = 0;
+        if(isDark){
+          bottomLeft = bottomLeftRadius;
+          bottomRight = bottomRightRadius;
+          topLeft = topLeftRadius;
+          topRight = topRightRadius;
+          if(gapless){
+            if(y-1 >= 0 && _qr.isDark(y-1, x)){
+              topLeft = topRight = 0;
+            }
+            if(y+1 < _qr.moduleCount && _qr.isDark(y+1, x)){
+              bottomRight = bottomLeft = 0;
+            }
+            if(x+1 < _qr.moduleCount && _qr.isDark(y, x+1)){
+              bottomRight = topRight = 0;
+            }
+            if(x-1 >= 0 && _qr.isDark(y, x-1)){
+              topLeft = bottomLeft = 0;
+            }
+          }
+        }
+        final roundedRect = RRect.fromRectAndCorners(squareRect,
+            bottomLeft: Radius.circular(bottomLeft),
+            bottomRight: Radius.circular(bottomRight),
+            topLeft: Radius.circular(topLeft),
+            topRight: Radius.circular(topRight));
+        canvas.drawRRect(roundedRect, paint);
       }
     }
 
@@ -213,7 +263,7 @@ class QrPainter extends CustomPainter {
         embeddedImage.height.toDouble(),
       );
       final requestedSize =
-          embeddedImageStyle != null ? embeddedImageStyle.size : null;
+      embeddedImageStyle != null ? embeddedImageStyle.size : null;
       final imageSize = _scaledAspectSize(size, originalSize, requestedSize);
       final position = Offset(
         (size.width - imageSize.width) / 2.0,
@@ -244,10 +294,10 @@ class QrPainter extends CustomPainter {
   }
 
   void _drawFinderPatternItem(
-    FinderPatternPosition position,
-    Canvas canvas,
-    _PaintMetrics metrics,
-  ) {
+      FinderPatternPosition position,
+      Canvas canvas,
+      _PaintMetrics metrics,
+      ) {
     final totalGap = (_finderPatternLimit - 1) * metrics.gapSize;
     final radius = ((_finderPatternLimit * metrics.pixelSize) + totalGap) -
         metrics.pixelSize;
@@ -281,18 +331,33 @@ class QrPainter extends CustomPainter {
     dotPaint.color = color;
 
     final outerRect = Rect.fromLTWH(offset.dx, offset.dy, radius, radius);
-    canvas.drawRect(outerRect, outerPaint);
+    final rOuterRect = RRect.fromRectAndCorners(outerRect,
+        bottomLeft: Radius.circular(bottomLeftRadius),
+        bottomRight: Radius.circular(bottomRightRadius),
+        topLeft: Radius.circular(topLeftRadius),
+        topRight: Radius.circular(topRightRadius));
+    canvas.drawRRect(rOuterRect, outerPaint);
 
     final innerRadius = radius - (2 * metrics.pixelSize);
     final innerRect = Rect.fromLTWH(offset.dx + metrics.pixelSize,
         offset.dy + metrics.pixelSize, innerRadius, innerRadius);
-    canvas.drawRect(innerRect, innerPaint);
+    final rInnerRect = RRect.fromRectAndCorners(innerRect,
+        bottomLeft: Radius.circular(bottomLeftRadius),
+        bottomRight: Radius.circular(bottomRightRadius),
+        topLeft: Radius.circular(topLeftRadius),
+        topRight: Radius.circular(topRightRadius));
+    canvas.drawRRect(rInnerRect, innerPaint);
 
     final gap = metrics.pixelSize * 2;
     final dotSize = radius - gap - (2 * strokeAdjust);
     final dotRect = Rect.fromLTWH(offset.dx + metrics.pixelSize + strokeAdjust,
         offset.dy + metrics.pixelSize + strokeAdjust, dotSize, dotSize);
-    canvas.drawRect(dotRect, dotPaint);
+    final rDotRect = RRect.fromRectAndCorners(dotRect,
+        bottomLeft: Radius.circular(bottomLeftRadius),
+        bottomRight: Radius.circular(bottomRightRadius),
+        topLeft: Radius.circular(topLeftRadius),
+        topRight: Radius.circular(topRightRadius));
+    canvas.drawRRect(rDotRect, dotPaint);
   }
 
   bool _hasOneNonZeroSide(Size size) => size.longestSide > 0;
@@ -323,7 +388,7 @@ class QrPainter extends CustomPainter {
       }
     }
     final srcSize =
-        Size(embeddedImage.width.toDouble(), embeddedImage.height.toDouble());
+    Size(embeddedImage.width.toDouble(), embeddedImage.height.toDouble());
     final src = Alignment.center.inscribe(srcSize, Offset.zero & srcSize);
     final dst = Alignment.center.inscribe(size, position & size);
     canvas.drawImageRect(embeddedImage, src, dst, paint);
@@ -368,8 +433,8 @@ class QrPainter extends CustomPainter {
 class _PaintMetrics {
   _PaintMetrics(
       {@required this.containerSize,
-      @required this.gapSize,
-      @required this.moduleCount}) {
+        @required this.gapSize,
+        @required this.moduleCount}) {
     _calculateMetrics();
   }
 
@@ -378,12 +443,15 @@ class _PaintMetrics {
   final double gapSize;
 
   double _pixelSize;
+
   double get pixelSize => _pixelSize;
 
   double _innerContentSize;
+
   double get innerContentSize => _innerContentSize;
 
   double _inset;
+
   double get inset => _inset;
 
   void _calculateMetrics() {
