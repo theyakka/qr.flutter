@@ -5,6 +5,7 @@
  */
 
 import 'dart:async';
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
@@ -35,8 +36,10 @@ class QrImage extends StatefulWidget {
     this.embeddedImage,
     this.embeddedImageStyle,
     this.embeddedImageEmitsError = false,
+    Uint8List rawBytes,
   })  : assert(QrVersions.isSupportedVersion(version)),
         _data = data,
+        _rawBytes = rawBytes,
         _qrCode = null,
         super(key: key);
 
@@ -59,11 +62,13 @@ class QrImage extends StatefulWidget {
     this.embeddedImageEmitsError = false,
   })  : assert(QrVersions.isSupportedVersion(version)),
         _data = null,
+        _rawBytes = null,
         _qrCode = qr,
         super(key: key);
 
   // The data passed to the widget
   final String _data;
+  final Uint8List _rawBytes;
   // The QR code data passed to the widget
   final QrCode _qrCode;
 
@@ -134,6 +139,7 @@ class _QrImageState extends State<QrImage> {
         data: widget._data,
         version: widget.version,
         errorCorrectionLevel: widget.errorCorrectionLevel,
+        rawBytes: widget._rawBytes,
       );
       if (_validationResult.isValid) {
         _qr = _validationResult.qrCode;

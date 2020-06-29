@@ -4,6 +4,8 @@
  * See LICENSE for distribution and usage details.
  */
 
+import 'dart:typed_data';
+
 import 'package:flutter/foundation.dart';
 import 'package:qr/qr.dart';
 
@@ -18,6 +20,7 @@ class QrValidator {
     @required String data,
     int version = QrVersions.auto,
     int errorCorrectionLevel = QrErrorCorrectLevel.L,
+    Uint8List rawBytes,
   }) {
     QrCode qrCode;
     try {
@@ -25,10 +28,15 @@ class QrValidator {
         qrCode = QrCode(version, errorCorrectionLevel);
         qrCode.addData(data);
       } else {
-        qrCode = QrCode.fromData(
-          data: data,
-          errorCorrectLevel: errorCorrectionLevel,
-        );
+        qrCode = rawBytes != null
+            ? QrCode.fromUint8List(
+                data: rawBytes,
+                errorCorrectLevel: errorCorrectionLevel,
+              )
+            : QrCode.fromData(
+                data: data,
+                errorCorrectLevel: errorCorrectionLevel,
+              );
       }
       qrCode.make();
       return QrValidationResult(

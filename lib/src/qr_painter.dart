@@ -38,8 +38,9 @@ class QrPainter extends CustomPainter {
     this.gapless = false,
     this.embeddedImage,
     this.embeddedImageStyle,
+    Uint8List rawBytes,
   }) : assert(QrVersions.isSupportedVersion(version)) {
-    _init(data);
+    _init(data, rawBytes: rawBytes);
   }
 
   /// Create a new QrPainter with a pre-validated/created [QrCode] object. This
@@ -96,7 +97,7 @@ class QrPainter extends CustomPainter {
   /// Cache for all of the [Paint] objects.
   final _paintCache = PaintCache();
 
-  void _init(String data) {
+  void _init(String data, {Uint8List rawBytes}) {
     if (!QrVersions.isSupportedVersion(version)) {
       throw QrUnsupportedVersionException(version);
     }
@@ -105,6 +106,7 @@ class QrPainter extends CustomPainter {
       data: data,
       version: version,
       errorCorrectionLevel: errorCorrectionLevel,
+      rawBytes: rawBytes,
     );
     if (!validationResult.isValid) {
       throw validationResult.error;
