@@ -32,6 +32,8 @@ class QrImage extends StatefulWidget {
     this.errorStateBuilder,
     this.constrainErrorBounds = true,
     this.gapless = true,
+    this.eyeStyle = QrEyeStyle.square,
+    this.dataModuleStyle = QrDataModuleStyle.square,
     this.embeddedImage,
     this.embeddedImageStyle,
     this.semanticsLabel = 'qr code',
@@ -55,6 +57,8 @@ class QrImage extends StatefulWidget {
     this.errorStateBuilder,
     this.constrainErrorBounds = true,
     this.gapless = true,
+    this.eyeStyle = QrEyeStyle.square,
+    this.dataModuleStyle = QrDataModuleStyle.square,
     this.embeddedImage,
     this.embeddedImageStyle,
     this.semanticsLabel = 'qr code',
@@ -111,6 +115,12 @@ class QrImage extends StatefulWidget {
 
   /// Styling options for the image overlay.
   final QrEmbeddedImageStyle embeddedImageStyle;
+
+  /// Styling option for QR Eye ball and frame.
+  final QrEyeStyle eyeStyle;
+
+  /// Styling option for QR data module.
+  final QrDataModuleStyle dataModuleStyle;
 
   /// If set to true and there is an error loading the embedded image, the
   /// [errorStateBuilder] callback will be called (if it is defined). If false,
@@ -195,6 +205,8 @@ class _QrImageState extends State<QrImage> {
       gapless: widget.gapless,
       embeddedImageStyle: widget.embeddedImageStyle,
       embeddedImage: image,
+      eyeStyle: widget.eyeStyle,
+      dataModuleStyle: widget.dataModuleStyle,
     );
     return _QrContentView(
       edgeLength: edgeLength,
