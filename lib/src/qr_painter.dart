@@ -38,6 +38,8 @@ class QrPainter extends CustomPainter {
     this.gapless = false,
     this.embeddedImage,
     this.embeddedImageStyle,
+    this.eyeStyle = QrEyeStyle.square,
+    this.dataModuleStyle = QrDataModuleStyle.square,
   }) : assert(QrVersions.isSupportedVersion(version)) {
     _init(data);
   }
@@ -52,6 +54,8 @@ class QrPainter extends CustomPainter {
     this.gapless = false,
     this.embeddedImage,
     this.embeddedImageStyle,
+    this.eyeStyle = QrEyeStyle.square,
+    this.dataModuleStyle = QrDataModuleStyle.square,
   })  : _qr = qr,
         version = qr.typeNumber,
         errorCorrectionLevel = qr.errorCorrectLevel {
@@ -82,6 +86,12 @@ class QrPainter extends CustomPainter {
 
   /// Styling options for the image overlay.
   final QrEmbeddedImageStyle embeddedImageStyle;
+
+  /// Styling option for QR Eye ball and frame.
+  final QrEyeStyle eyeStyle;
+
+  /// Styling option for QR data module.
+  final QrDataModuleStyle dataModuleStyle;
 
   /// The base QR code data
   QrCode _qr;
@@ -203,7 +213,13 @@ class QrPainter extends CustomPainter {
           paintMetrics.pixelSize + pixelHTweak,
           paintMetrics.pixelSize + pixelVTweak,
         );
-        canvas.drawRect(squareRect, paint);
+        if (dataModuleStyle == QrDataModuleStyle.square) {
+          canvas.drawRect(squareRect, paint);
+        } else {
+          final roundedRect = RRect.fromRectAndRadius(squareRect,
+              Radius.circular(paintMetrics.pixelSize + pixelHTweak));
+          canvas.drawRRect(roundedRect, paint);
+        }
       }
     }
 
@@ -281,18 +297,33 @@ class QrPainter extends CustomPainter {
     dotPaint.color = color;
 
     final outerRect = Rect.fromLTWH(offset.dx, offset.dy, radius, radius);
-    canvas.drawRect(outerRect, outerPaint);
 
     final innerRadius = radius - (2 * metrics.pixelSize);
     final innerRect = Rect.fromLTWH(offset.dx + metrics.pixelSize,
         offset.dy + metrics.pixelSize, innerRadius, innerRadius);
-    canvas.drawRect(innerRect, innerPaint);
 
     final gap = metrics.pixelSize * 2;
     final dotSize = radius - gap - (2 * strokeAdjust);
     final dotRect = Rect.fromLTWH(offset.dx + metrics.pixelSize + strokeAdjust,
         offset.dy + metrics.pixelSize + strokeAdjust, dotSize, dotSize);
-    canvas.drawRect(dotRect, dotPaint);
+
+    if (eyeStyle == QrEyeStyle.square) {
+      canvas.drawRect(outerRect, outerPaint);
+      canvas.drawRect(innerRect, innerPaint);
+      canvas.drawRect(dotRect, dotPaint);
+    } else {
+      final roundedOuterStrokeRect =
+      RRect.fromRectAndRadius(outerRect, Radius.circular(radius));
+      canvas.drawRRect(roundedOuterStrokeRect, outerPaint);
+
+      final roundedInnerStrokeRect =
+      RRect.fromRectAndRadius(outerRect, Radius.circular(innerRadius));
+      canvas.drawRRect(roundedInnerStrokeRect, innerPaint);
+
+      final roundedDotStrokeRect =
+      RRect.fromRectAndRadius(dotRect, Radius.circular(dotSize));
+      canvas.drawRRect(roundedDotStrokeRect, dotPaint);
+    }
   }
 
   bool _hasOneNonZeroSide(Size size) => size.longestSide > 0;

@@ -30,6 +30,26 @@ void main() {
     );
   });
 
+  testWidgets('QrImage generates correct image with styling', (tester) async {
+    final qrImage = Center(
+      child: RepaintBoundary(
+        child: QrImage(
+          data: 'This is a test image',
+          version: QrVersions.auto,
+          gapless: true,
+          errorCorrectionLevel: QrErrorCorrectLevel.L,
+          eyeStyle: QrEyeStyle.circle,
+          dataModuleStyle: QrDataModuleStyle.circle,
+        ),
+      ),
+    );
+    await tester.pumpWidget(qrImage);
+    await expectLater(
+      find.byType(RepaintBoundary),
+      matchesGoldenFile('./.golden/qr_image_styled_golden.png'),
+    );
+  });
+
   testWidgets('QrImage generates correct image with logo', (tester) async {
     final key = GlobalKey();
     final qrImage = Center(

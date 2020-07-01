@@ -28,6 +28,24 @@ enum QrCodeElement {
   codePixelEmpty,
 }
 
+/// Enumeration representing the three finder pattern eye's shape.
+enum QrEyeStyle {
+  /// Use square eye frame.
+  square,
+
+  /// Use circular eye frame.
+  circle,
+}
+
+/// Enumeration representing the shape of Data modules inside QR.
+enum QrDataModuleStyle {
+  /// Use square dots.
+  square,
+
+  /// Use circular dots.
+  circle,
+}
+
 /// Enumeration representing the three finder pattern (square 'eye') locations.
 enum FinderPatternPosition {
   /// The top left position.
