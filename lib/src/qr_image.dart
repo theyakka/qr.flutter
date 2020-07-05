@@ -120,7 +120,7 @@ class QrImage extends StatefulWidget {
 
   /// [semanticsLabel] will be used by screen readers to describe the content of
   /// the qr code.
-  /// Default is 'qr code'
+  /// Default is 'qr code'.
   final String semanticsLabel;
 
   @override
