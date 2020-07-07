@@ -69,6 +69,8 @@ Depending on your data requirements you may want to tweak the QR code output. Th
 | `embeddedImageStyle` | QrEmbeddedImageStyle | Properties to style the embedded image. |
 | `embeddedImageEmitsError` | bool | If true, any failure to load the embedded image will trigger the `errorStateBuilder` or render an empty `Container`. If false, the QR code will be rendered and the embedded image will be ignored. |
 |`semanticsLabel`|String|`semanticsLabel` will be used by screen readers to describe the content of the QR code.|
+| `eyeStyle` | QrEyeStyle | Defines the shape of the EyeFrame and EyeBall (default is QrEyeStyle.square)|
+| `dataModuleStyle` | QrDataModuleStyle | Defines the shape of the data modules (default is QrDataModuleStyle.square)|
 
 # Examples
 
