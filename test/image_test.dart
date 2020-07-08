@@ -102,6 +102,35 @@ void main() {
     );
   });
 
+  testWidgets(
+      'QrImage does not apply eye and data module color when foreground '
+      'color is also specified', (tester) async {
+    final qrImage = Center(
+      child: RepaintBoundary(
+        child: QrImage(
+          data: 'This is a test image',
+          version: QrVersions.auto,
+          gapless: true,
+          foregroundColor: Colors.red,
+          errorCorrectionLevel: QrErrorCorrectLevel.L,
+          eyeStyle: const QrEyeStyle(
+            eyeShape: QrEyeShape.circle,
+            color: Colors.green,
+          ),
+          dataModuleStyle: const QrDataModuleStyle(
+            dataModuleShape: QrDataModuleShape.circle,
+            color: Colors.blue,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpWidget(qrImage);
+    await expectLater(
+      find.byType(RepaintBoundary),
+      matchesGoldenFile('./.golden/qr_image_foreground_colored_golden.png'),
+    );
+  });
+
   testWidgets('QrImage generates correct image with logo', (tester) async {
     final key = GlobalKey();
     final qrImage = Center(
