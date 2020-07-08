@@ -24,7 +24,7 @@ import 'validator.dart';
 const _finderPatternLimit = 7;
 
 // default color for the qr code pixels
-const _qrDefaultColor = Color(0xff111111);
+const Color _qrDefaultColor = null;
 
 /// A [CustomPainter] object that you can use to paint a QR code.
 class QrPainter extends CustomPainter {
@@ -38,6 +38,14 @@ class QrPainter extends CustomPainter {
     this.gapless = false,
     this.embeddedImage,
     this.embeddedImageStyle,
+    this.eyeStyle = const QrEyeStyle(
+      eyeShape: QrEyeShape.square,
+      color: Color(0xFF000000),
+    ),
+    this.dataModuleStyle = const QrDataModuleStyle(
+      dataModuleShape: QrDataModuleShape.square,
+      color: Color(0xFF000000),
+    ),
   }) : assert(QrVersions.isSupportedVersion(version)) {
     _init(data);
   }
@@ -52,6 +60,14 @@ class QrPainter extends CustomPainter {
     this.gapless = false,
     this.embeddedImage,
     this.embeddedImageStyle,
+    this.eyeStyle = const QrEyeStyle(
+      eyeShape: QrEyeShape.square,
+      color: Color(0xFF000000),
+    ),
+    this.dataModuleStyle = const QrDataModuleStyle(
+      dataModuleShape: QrDataModuleShape.square,
+      color: Color(0xFF000000),
+    ),
   })  : _qr = qr,
         version = qr.typeNumber,
         errorCorrectionLevel = qr.errorCorrectLevel {
@@ -66,6 +82,7 @@ class QrPainter extends CustomPainter {
   final int errorCorrectionLevel; // the qr code error correction level
 
   /// The color of the squares.
+  @Deprecated('use colors in eyeStyle and dataModuleStyle instead')
   final Color color; // the color of the dark squares
 
   /// The color of the non-squares (background).
@@ -82,6 +99,12 @@ class QrPainter extends CustomPainter {
 
   /// Styling options for the image overlay.
   final QrEmbeddedImageStyle embeddedImageStyle;
+
+  /// Styling option for QR Eye ball and frame.
+  final QrEyeStyle eyeStyle;
+
+  /// Styling option for QR data module.
+  final QrDataModuleStyle dataModuleStyle;
 
   /// The base QR code data
   QrCode _qr;
@@ -174,7 +197,11 @@ class QrPainter extends CustomPainter {
     final gap = !gapless ? _gapSize : 0;
     // get the painters for the pixel information
     final pixelPaint = _paintCache.firstPaint(QrCodeElement.codePixel);
-    pixelPaint.color = color;
+    if (color != null) {
+      pixelPaint.color = color;
+    } else {
+      pixelPaint.color = dataModuleStyle.color;
+    }
     Paint emptyPixelPaint;
     if (emptyColor != null) {
       emptyPixelPaint = _paintCache.firstPaint(QrCodeElement.codePixelEmpty);
@@ -203,7 +230,13 @@ class QrPainter extends CustomPainter {
           paintMetrics.pixelSize + pixelHTweak,
           paintMetrics.pixelSize + pixelVTweak,
         );
-        canvas.drawRect(squareRect, paint);
+        if (dataModuleStyle.dataModuleShape == QrDataModuleShape.square) {
+          canvas.drawRect(squareRect, paint);
+        } else {
+          final roundedRect = RRect.fromRectAndRadius(squareRect,
+              Radius.circular(paintMetrics.pixelSize + pixelHTweak));
+          canvas.drawRRect(roundedRect, paint);
+        }
       }
     }
 
@@ -269,7 +302,11 @@ class QrPainter extends CustomPainter {
     final outerPaint = _paintCache.firstPaint(QrCodeElement.finderPatternOuter,
         position: position);
     outerPaint.strokeWidth = metrics.pixelSize;
-    outerPaint.color = color;
+    if (color != null) {
+      outerPaint.color = color;
+    } else {
+      outerPaint.color = eyeStyle.color;
+    }
 
     final innerPaint = _paintCache.firstPaint(QrCodeElement.finderPatternInner,
         position: position);
@@ -278,21 +315,40 @@ class QrPainter extends CustomPainter {
 
     final dotPaint = _paintCache.firstPaint(QrCodeElement.finderPatternDot,
         position: position);
-    dotPaint.color = color;
+    if (color != null) {
+      dotPaint.color = color;
+    } else {
+      dotPaint.color = eyeStyle.color;
+    }
 
     final outerRect = Rect.fromLTWH(offset.dx, offset.dy, radius, radius);
-    canvas.drawRect(outerRect, outerPaint);
 
     final innerRadius = radius - (2 * metrics.pixelSize);
     final innerRect = Rect.fromLTWH(offset.dx + metrics.pixelSize,
         offset.dy + metrics.pixelSize, innerRadius, innerRadius);
-    canvas.drawRect(innerRect, innerPaint);
 
     final gap = metrics.pixelSize * 2;
     final dotSize = radius - gap - (2 * strokeAdjust);
     final dotRect = Rect.fromLTWH(offset.dx + metrics.pixelSize + strokeAdjust,
         offset.dy + metrics.pixelSize + strokeAdjust, dotSize, dotSize);
-    canvas.drawRect(dotRect, dotPaint);
+
+    if (eyeStyle.eyeShape == QrEyeShape.square) {
+      canvas.drawRect(outerRect, outerPaint);
+      canvas.drawRect(innerRect, innerPaint);
+      canvas.drawRect(dotRect, dotPaint);
+    } else {
+      final roundedOuterStrokeRect =
+          RRect.fromRectAndRadius(outerRect, Radius.circular(radius));
+      canvas.drawRRect(roundedOuterStrokeRect, outerPaint);
+
+      final roundedInnerStrokeRect =
+          RRect.fromRectAndRadius(outerRect, Radius.circular(innerRadius));
+      canvas.drawRRect(roundedInnerStrokeRect, innerPaint);
+
+      final roundedDotStrokeRect =
+          RRect.fromRectAndRadius(dotRect, Radius.circular(dotSize));
+      canvas.drawRRect(roundedDotStrokeRect, dotPaint);
+    }
   }
 
   bool _hasOneNonZeroSide(Size size) => size.longestSide > 0;
@@ -332,13 +388,14 @@ class QrPainter extends CustomPainter {
   @override
   bool shouldRepaint(CustomPainter oldPainter) {
     if (oldPainter is QrPainter) {
-      return color != oldPainter.color ||
-          errorCorrectionLevel != oldPainter.errorCorrectionLevel ||
+      return errorCorrectionLevel != oldPainter.errorCorrectionLevel ||
           _calcVersion != oldPainter._calcVersion ||
           _qr != oldPainter._qr ||
           gapless != oldPainter.gapless ||
           embeddedImage != oldPainter.embeddedImage ||
-          embeddedImageStyle != oldPainter.embeddedImageStyle;
+          embeddedImageStyle != oldPainter.embeddedImageStyle ||
+          eyeStyle != oldPainter.eyeStyle ||
+          dataModuleStyle != oldPainter.dataModuleStyle;
     }
     return true;
   }
