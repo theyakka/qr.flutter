@@ -142,30 +142,54 @@ void main() {
   });
 
   testWidgets('QrImage generates correct image with logo', (tester) async {
-    final key = GlobalKey();
-    final qrImage = MaterialApp(
-      home: Center(
-        key: key,
-        child: RepaintBoundary(
-          child: QrImage(
-            data: 'This is a a qr code with a logo',
-            version: QrVersions.auto,
-            gapless: true,
-            errorCorrectionLevel: QrErrorCorrectLevel.L,
-            embeddedImage: FileImage(File('test/.images/logo_yakka.png')),
+    await pumpWidgetWithImages(
+      tester,
+      MaterialApp(
+        home: Center(
+          child: RepaintBoundary(
+            child: QrImage(
+              data: 'This is a a qr code with a logo',
+              version: QrVersions.auto,
+              gapless: true,
+              errorCorrectionLevel: QrErrorCorrectLevel.L,
+              embeddedImage: FileImage(File('test/.images/logo_yakka.png')),
+            ),
           ),
         ),
       ),
+      ['test/.images/logo_yakka.png'],
     );
 
-    await tester.pumpWidget(buildTestableWidget(qrImage));
-    await tester.pump(Duration(seconds: 15));
+    await tester.pumpAndSettle();
 
     await expectLater(
-      find.byKey(key),
+      find.byType(QrImage),
       matchesGoldenFile('./.golden/qr_image_logo_golden.png'),
     );
   });
+}
+
+/// Pre-cache images to make sure they show up in golden tests.
+///
+/// See https://github.com/flutter/flutter/issues/36552 for more info.
+Future<void> pumpWidgetWithImages(
+  WidgetTester tester,
+  Widget widget,
+  List<String> assetNames,
+) async {
+  Future<void> precacheFuture;
+  await tester.pumpWidget(
+    Builder(builder: (buildContext) {
+      precacheFuture = tester.runAsync(() async {
+        await Future.wait([
+          for (final assetName in assetNames)
+            precacheImage(FileImage(File(assetName)), buildContext),
+        ]);
+      });
+      return widget;
+    }),
+  );
+  await precacheFuture;
 }
 
 Widget buildTestableWidget(Widget widget) {
