@@ -28,6 +28,7 @@ class QrImage extends StatefulWidget {
     this.size,
     this.padding = const EdgeInsets.all(10.0),
     this.backgroundColor = Colors.transparent,
+    this.foregroundColor = Colors.black,
     this.version = QrVersions.auto,
     this.errorCorrectionLevel = QrErrorCorrectLevel.L,
     this.errorStateBuilder,
@@ -58,6 +59,7 @@ class QrImage extends StatefulWidget {
     this.size,
     this.padding = const EdgeInsets.all(10.0),
     this.backgroundColor = Colors.transparent,
+    this.foregroundColor = Colors.black,
     this.version = QrVersions.auto,
     this.errorCorrectionLevel = QrErrorCorrectLevel.L,
     this.errorStateBuilder,
@@ -87,6 +89,10 @@ class QrImage extends StatefulWidget {
 
   /// The background color of the final QR code widget.
   final Color backgroundColor;
+
+  /// The foreground color of the final QR code widget.
+  @Deprecated('use colors in eyeStyle and dataModuleStyle instead')
+  final Color foregroundColor;
 
   /// The QR code version to use.
   final int version;
@@ -210,6 +216,7 @@ class _QrImageState extends State<QrImage> {
   Widget _qrWidget(BuildContext context, ui.Image image, double edgeLength) {
     final painter = QrPainter.withQr(
       qr: _qr,
+      color: widget.foregroundColor,
       gapless: widget.gapless,
       embeddedImageStyle: widget.embeddedImageStyle,
       embeddedImage: image,

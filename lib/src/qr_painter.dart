@@ -23,6 +23,9 @@ import 'validator.dart';
 
 const _finderPatternLimit = 7;
 
+// default color for the qr code pixels
+const Color _qrDefaultColor = null;
+
 /// A [CustomPainter] object that you can use to paint a QR code.
 class QrPainter extends CustomPainter {
   /// Create a new QRPainter with passed options (or defaults).
@@ -30,6 +33,7 @@ class QrPainter extends CustomPainter {
     @required String data,
     @required this.version,
     this.errorCorrectionLevel = QrErrorCorrectLevel.L,
+    this.color = _qrDefaultColor,
     this.emptyColor,
     this.gapless = false,
     this.embeddedImage,
@@ -51,6 +55,7 @@ class QrPainter extends CustomPainter {
   /// flow or for when you need to pre-validate the QR data.
   QrPainter.withQr({
     QrCode qr,
+    this.color = _qrDefaultColor,
     this.emptyColor,
     this.gapless = false,
     this.embeddedImage,
@@ -75,6 +80,10 @@ class QrPainter extends CustomPainter {
 
   /// The error correction level of the QR code.
   final int errorCorrectionLevel; // the qr code error correction level
+
+  /// The color of the squares.
+  @Deprecated('use colors in eyeStyle and dataModuleStyle instead')
+  final Color color; // the color of the dark squares
 
   /// The color of the non-squares (background).
   @Deprecated(
@@ -188,7 +197,11 @@ class QrPainter extends CustomPainter {
     final gap = !gapless ? _gapSize : 0;
     // get the painters for the pixel information
     final pixelPaint = _paintCache.firstPaint(QrCodeElement.codePixel);
-    pixelPaint.color = dataModuleStyle.color;
+    if (color != null) {
+      pixelPaint.color = color;
+    } else {
+      pixelPaint.color = dataModuleStyle.color;
+    }
     Paint emptyPixelPaint;
     if (emptyColor != null) {
       emptyPixelPaint = _paintCache.firstPaint(QrCodeElement.codePixelEmpty);
@@ -289,7 +302,11 @@ class QrPainter extends CustomPainter {
     final outerPaint = _paintCache.firstPaint(QrCodeElement.finderPatternOuter,
         position: position);
     outerPaint.strokeWidth = metrics.pixelSize;
-    outerPaint.color = eyeStyle.color;
+    if (color != null) {
+      outerPaint.color = color;
+    } else {
+      outerPaint.color = eyeStyle.color;
+    }
 
     final innerPaint = _paintCache.firstPaint(QrCodeElement.finderPatternInner,
         position: position);
@@ -298,7 +315,11 @@ class QrPainter extends CustomPainter {
 
     final dotPaint = _paintCache.firstPaint(QrCodeElement.finderPatternDot,
         position: position);
-    dotPaint.color = eyeStyle.color;
+    if (color != null) {
+      dotPaint.color = color;
+    } else {
+      dotPaint.color = eyeStyle.color;
+    }
 
     final outerRect = Rect.fromLTWH(offset.dx, offset.dy, radius, radius);
 
