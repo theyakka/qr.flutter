@@ -34,6 +34,7 @@ class QrImage extends StatefulWidget {
     this.gapless = true,
     this.embeddedImage,
     this.embeddedImageStyle,
+    this.semanticsLabel = 'qr code',
     this.embeddedImageEmitsError = false,
   })  : assert(QrVersions.isSupportedVersion(version)),
         _data = data,
@@ -56,6 +57,7 @@ class QrImage extends StatefulWidget {
     this.gapless = true,
     this.embeddedImage,
     this.embeddedImageStyle,
+    this.semanticsLabel = 'qr code',
     this.embeddedImageEmitsError = false,
   })  : assert(QrVersions.isSupportedVersion(version)),
         _data = null,
@@ -115,6 +117,11 @@ class QrImage extends StatefulWidget {
   /// the widget will ignore the embedded image and just display the QR code.
   /// The default is false.
   final bool embeddedImageEmitsError;
+
+  /// [semanticsLabel] will be used by screen readers to describe the content of
+  /// the qr code.
+  /// Default is 'qr code'.
+  final String semanticsLabel;
 
   @override
   _QrImageState createState() => _QrImageState();
@@ -193,6 +200,7 @@ class _QrImageState extends State<QrImage> {
       edgeLength: edgeLength,
       backgroundColor: widget.backgroundColor,
       padding: widget.padding,
+      semanticsLabel: widget.semanticsLabel,
       child: CustomPaint(painter: painter),
     );
   }
@@ -210,6 +218,7 @@ class _QrImageState extends State<QrImage> {
       backgroundColor: widget.backgroundColor,
       padding: widget.padding,
       child: errorWidget,
+      semanticsLabel: widget.semanticsLabel,
     );
   }
 
@@ -244,6 +253,7 @@ class _QrContentView extends StatelessWidget {
     @required this.child,
     this.backgroundColor,
     this.padding,
+    this.semanticsLabel,
   });
 
   /// The length of both edges (because it has to be a square).
@@ -258,15 +268,22 @@ class _QrContentView extends StatelessWidget {
   /// The child widget.
   final Widget child;
 
+  /// [semanticsLabel] will be used by screen readers to describe the content of
+  /// the qr code.
+  final String semanticsLabel;
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: edgeLength,
-      height: edgeLength,
-      color: backgroundColor,
-      child: Padding(
-        padding: padding,
-        child: child,
+    return Semantics(
+      label: semanticsLabel,
+      child: Container(
+        width: edgeLength,
+        height: edgeLength,
+        color: backgroundColor,
+        child: Padding(
+          padding: padding,
+          child: child,
+        ),
       ),
     );
   }
