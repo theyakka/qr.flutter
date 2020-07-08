@@ -37,8 +37,14 @@ class _MainScreenState extends State<MainScreen> {
           painter: QrPainter(
             data: message,
             version: QrVersions.auto,
-            color: Color(0xff1a5441),
-            emptyColor: Color(0xffeafcf6),
+            eyeStyle: const QrEyeStyle(
+              eyeShape: QrEyeShape.square,
+              color: Colors.red,
+            ),
+            dataModuleStyle: const QrDataModuleStyle(
+              dataModuleShape: QrDataModuleShape.square,
+              color: Colors.red,
+            ),
             // size: 320.0,
             embeddedImage: snapshot.data,
             embeddedImageStyle: QrEmbeddedImageStyle(

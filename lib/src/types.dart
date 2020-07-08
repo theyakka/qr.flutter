@@ -40,6 +40,73 @@ enum FinderPatternPosition {
   bottomLeft,
 }
 
+/// Enumeration representing the finder pattern eye's shape.
+enum QrEyeShape {
+  /// Use square eye frame.
+  square,
+
+  /// Use circular eye frame.
+  circle,
+}
+
+/// Enumeration representing the shape of Data modules inside QR.
+enum QrDataModuleShape {
+  /// Use square dots.
+  square,
+
+  /// Use circular dots.
+  circle,
+}
+
+/// Styling options for finder pattern eye.
+class QrEyeStyle {
+  /// Create a new set of styling options for QR Eye.
+  const QrEyeStyle({this.eyeShape, this.color});
+
+  /// Eye shape.
+  final QrEyeShape eyeShape;
+
+  /// Color to tint the eye.
+  final Color color;
+
+  @override
+  int get hashCode => eyeShape.hashCode ^ color.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    if (other is QrEyeStyle) {
+      return eyeShape == other.eyeShape && color == other.color;
+    }
+    return false;
+  }
+}
+
+/// Styling options for data module.
+class QrDataModuleStyle {
+  /// Create a new set of styling options for data modules.
+  const QrDataModuleStyle({
+    this.dataModuleShape,
+    this.color,
+  });
+
+  /// Eye shape.
+  final QrDataModuleShape dataModuleShape;
+
+  /// Color to tint the data modules.
+  final Color color;
+
+  @override
+  int get hashCode => dataModuleShape.hashCode ^ color.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    if (other is QrDataModuleStyle) {
+      return dataModuleShape == other.dataModuleShape && color == other.color;
+    }
+    return false;
+  }
+}
+
 /// Styling options for any embedded image overlay
 class QrEmbeddedImageStyle {
   /// Create a new set of styling options.

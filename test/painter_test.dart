@@ -18,7 +18,6 @@ void main() {
       version: QrVersions.auto,
       gapless: true,
       errorCorrectionLevel: QrErrorCorrectLevel.L,
-      color: const Color(0xFF000000),
     );
     ByteData imageData;
     await tester.runAsync(() async {

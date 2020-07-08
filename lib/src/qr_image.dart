@@ -8,8 +8,10 @@ import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:qr/qr.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 import 'qr_painter.dart';
 import 'qr_versions.dart';
@@ -25,8 +27,7 @@ class QrImage extends StatefulWidget {
     Key key,
     this.size,
     this.padding = const EdgeInsets.all(10.0),
-    this.backgroundColor = const Color(0x00FFFFFF),
-    this.foregroundColor = const Color(0xFF000000),
+    this.backgroundColor = Colors.transparent,
     this.version = QrVersions.auto,
     this.errorCorrectionLevel = QrErrorCorrectLevel.L,
     this.errorStateBuilder,
@@ -35,6 +36,14 @@ class QrImage extends StatefulWidget {
     this.embeddedImage,
     this.embeddedImageStyle,
     this.semanticsLabel = 'qr code',
+    this.eyeStyle = const QrEyeStyle(
+      eyeShape: QrEyeShape.square,
+      color: Colors.black,
+    ),
+    this.dataModuleStyle = const QrDataModuleStyle(
+      dataModuleShape: QrDataModuleShape.square,
+      color: Colors.black,
+    ),
     this.embeddedImageEmitsError = false,
   })  : assert(QrVersions.isSupportedVersion(version)),
         _data = data,
@@ -48,8 +57,7 @@ class QrImage extends StatefulWidget {
     Key key,
     this.size,
     this.padding = const EdgeInsets.all(10.0),
-    this.backgroundColor = const Color(0x00FFFFFF),
-    this.foregroundColor = const Color(0xFF000000),
+    this.backgroundColor = Colors.transparent,
     this.version = QrVersions.auto,
     this.errorCorrectionLevel = QrErrorCorrectLevel.L,
     this.errorStateBuilder,
@@ -58,6 +66,14 @@ class QrImage extends StatefulWidget {
     this.embeddedImage,
     this.embeddedImageStyle,
     this.semanticsLabel = 'qr code',
+    this.eyeStyle = const QrEyeStyle(
+      eyeShape: QrEyeShape.square,
+      color: Colors.black,
+    ),
+    this.dataModuleStyle = const QrDataModuleStyle(
+      dataModuleShape: QrDataModuleShape.square,
+      color: Colors.black,
+    ),
     this.embeddedImageEmitsError = false,
   })  : assert(QrVersions.isSupportedVersion(version)),
         _data = null,
@@ -71,9 +87,6 @@ class QrImage extends StatefulWidget {
 
   /// The background color of the final QR code widget.
   final Color backgroundColor;
-
-  /// The foreground color of the final QR code widget.
-  final Color foregroundColor;
 
   /// The QR code version to use.
   final int version;
@@ -122,6 +135,12 @@ class QrImage extends StatefulWidget {
   /// the qr code.
   /// Default is 'qr code'.
   final String semanticsLabel;
+
+  /// Styling option for QR Eye ball and frame.
+  final QrEyeStyle eyeStyle;
+
+  /// Styling option for QR data module.
+  final QrDataModuleStyle dataModuleStyle;
 
   @override
   _QrImageState createState() => _QrImageState();
@@ -191,10 +210,11 @@ class _QrImageState extends State<QrImage> {
   Widget _qrWidget(BuildContext context, ui.Image image, double edgeLength) {
     final painter = QrPainter.withQr(
       qr: _qr,
-      color: widget.foregroundColor,
       gapless: widget.gapless,
       embeddedImageStyle: widget.embeddedImageStyle,
       embeddedImage: image,
+      eyeStyle: widget.eyeStyle,
+      dataModuleStyle: widget.dataModuleStyle,
     );
     return _QrContentView(
       edgeLength: edgeLength,
