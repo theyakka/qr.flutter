@@ -1,5 +1,8 @@
-# 3.2.1
-- add Qr from rawBytes support
+# 3.3.0
+- Add styling options to the "eye" and data segments
+- Add QR from rawBytes support
+- Remove some erroneous logging
+- **DEPRECATED**: `foregroundColor` should not be used. Use style options instead.
 
 # 3.2.0
 - Fix issue where finder patterns don't render correctly with the painter

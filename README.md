@@ -6,6 +6,7 @@ QR.Flutter is a Flutter library for simple and fast QR code rendering via a Widg
 - Built on [QR - Dart](https://github.com/kevmoo/qr.dart)
 - Automatic QR code version/type detection or manual entry 
 - Supports QR code versions 1 - 40
+- Supports String or Byte data
 - Error correction / redundancy
 - Configurable output size, padding, background and foreground colors
 - Supports image overlays
@@ -18,7 +19,7 @@ You should add the following to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  qr_flutter: ^3.2.0
+  qr_flutter: ^3.3.0
 ```
 
 **Note**: If you're using the Flutter `master` channel, if you encounter build issues, or want to try the latest and greatest then you should use the `master` branch and not a specific release version. To do so, use the following configuration in your `pubspec.yaml`:

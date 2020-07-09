@@ -1,6 +1,6 @@
 /*
  * QR.Flutter
- * Copyright (c) 2019 the QR.Flutter authors.
+ * Copyright (c) 2020, Yakka LLC.
  * See LICENSE for distribution and usage details.
  */
 
