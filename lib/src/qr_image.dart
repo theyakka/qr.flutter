@@ -21,6 +21,11 @@ import 'validator.dart';
 
 /// A widget that shows a QR code.
 class QrImage extends StatefulWidget {
+
+  // TODO - need to extract these default values somewhere
+  // they're now used across three constructors and it will be hard to maintain
+  // going forward
+
   /// Create a new QR code using the [String] data and the passed options (or
   /// using the default options).
   QrImage({
@@ -47,12 +52,44 @@ class QrImage extends StatefulWidget {
       color: Colors.black,
     ),
     this.embeddedImageEmitsError = false,
-    Uint8List rawBytes,
   })  : assert(QrVersions.isSupportedVersion(version)),
         _data = data,
-        _rawBytes = rawBytes,
+        _rawBytes = null,
         _qrCode = null,
         super(key: key);
+
+  /// Create a new QR code using the byte data and the passed options (or
+  /// using the default options).
+  QrImage.withBytes({
+    @required Uint8List bytes,
+    Key key,
+    this.size,
+    this.padding = const EdgeInsets.all(10.0),
+    this.backgroundColor = Colors.transparent,
+    this.foregroundColor,
+    this.version = QrVersions.auto,
+    this.errorCorrectionLevel = QrErrorCorrectLevel.L,
+    this.errorStateBuilder,
+    this.constrainErrorBounds = true,
+    this.gapless = true,
+    this.embeddedImage,
+    this.embeddedImageStyle,
+    this.semanticsLabel = 'qr code',
+    this.eyeStyle = const QrEyeStyle(
+      eyeShape: QrEyeShape.square,
+      color: Colors.black,
+    ),
+    this.dataModuleStyle = const QrDataModuleStyle(
+      dataModuleShape: QrDataModuleShape.square,
+      color: Colors.black,
+    ),
+    this.embeddedImageEmitsError = false,
+  })  : assert(QrVersions.isSupportedVersion(version)),
+        _data = null,
+        _rawBytes = bytes,
+        _qrCode = null,
+        super(key: key);
+
 
   /// Create a new QR code using the [QrCode] data and the passed options (or
   /// using the default options).
@@ -86,8 +123,10 @@ class QrImage extends StatefulWidget {
         _qrCode = qr,
         super(key: key);
 
-  // The data passed to the widget
+  // NOTE: only one of the following data options will be set at any time
+  // The string data passed to the widget
   final String _data;
+  // The byte data passed to the widget
   final Uint8List _rawBytes;
   // The QR code data passed to the widget
   final QrCode _qrCode;
@@ -167,7 +206,7 @@ class _QrImageState extends State<QrImage> {
   @override
   Widget build(BuildContext context) {
     if (widget._data != null) {
-      _validationResult = QrValidator.validate(
+      _validationResult = QrValidator.validateString(
         data: widget._data,
         version: widget.version,
         errorCorrectionLevel: widget.errorCorrectionLevel,

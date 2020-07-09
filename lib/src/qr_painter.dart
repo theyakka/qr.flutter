@@ -125,7 +125,7 @@ class QrPainter extends CustomPainter {
       throw QrUnsupportedVersionException(version);
     }
     // configure and make the QR code data
-    final validationResult = QrValidator.validate(
+    final validationResult = QrValidator.validateString(
       data: data,
       version: version,
       errorCorrectionLevel: errorCorrectionLevel,

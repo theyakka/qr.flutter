@@ -13,10 +13,10 @@ import 'qr_versions.dart';
 
 /// A utility class for validating and pre-rendering QR code data.
 class QrValidator {
-  /// Attempt to parse / generate the QR code data and check for any errors. The
-  /// resulting [QrValidationResult] object will hold the status of the QR code
-  /// as well as the generated QR code data.
-  static QrValidationResult validate({
+  /// Attempt to parse / generate the QR code string data and check for any
+  /// errors. The resulting [QrValidationResult] object will hold the status of
+  /// the QR code as well as the generated QR code data.
+  static QrValidationResult validateString({
     @required String data,
     int version = QrVersions.auto,
     int errorCorrectionLevel = QrErrorCorrectLevel.L,
@@ -48,6 +48,38 @@ class QrValidator {
       return QrValidationResult(status: QrValidationStatus.error, error: ex);
     }
   }
+
+  /// Attempt to parse / generate the QR code byte data and check for any
+  /// errors. The resulting [QrValidationResult] object will hold the status of
+  /// the QR code as well as the generated QR code data.
+  static QrValidationResult validateBytes({
+    @required Uint8List byteData,
+    int version = QrVersions.auto,
+    int errorCorrectionLevel = QrErrorCorrectLevel.L,
+  }) {
+    QrCode qrCode;
+    try {
+      if (version != QrVersions.auto) {
+        qrCode = QrCode(version, errorCorrectionLevel);
+        var data = ByteData.view(byteData.buffer);
+        qrCode.addByteData(data);
+      } else {
+        qrCode = QrCode.fromUint8List(
+          data: byteData,
+          errorCorrectLevel: errorCorrectionLevel,
+        );
+      }
+      qrCode.make();
+      return QrValidationResult(
+          status: QrValidationStatus.valid, qrCode: qrCode);
+    } on InputTooLongException catch (itle) {
+      return QrValidationResult(
+          status: QrValidationStatus.contentTooLong, error: itle);
+    } on Exception catch (ex) {
+      return QrValidationResult(status: QrValidationStatus.error, error: ex);
+    }
+  }
+
 }
 
 /// Captures the status or a QR code validation operations, as well as the
