@@ -9,8 +9,10 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:qr/qr.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 import 'qr_painter.dart';
 import 'qr_versions.dart';
@@ -26,8 +28,8 @@ class QrImage extends StatefulWidget {
     Key key,
     this.size,
     this.padding = const EdgeInsets.all(10.0),
-    this.backgroundColor = const Color(0x00FFFFFF),
-    this.foregroundColor = const Color(0xFF000000),
+    this.backgroundColor = Colors.transparent,
+    this.foregroundColor,
     this.version = QrVersions.auto,
     this.errorCorrectionLevel = QrErrorCorrectLevel.L,
     this.errorStateBuilder,
@@ -35,6 +37,15 @@ class QrImage extends StatefulWidget {
     this.gapless = true,
     this.embeddedImage,
     this.embeddedImageStyle,
+    this.semanticsLabel = 'qr code',
+    this.eyeStyle = const QrEyeStyle(
+      eyeShape: QrEyeShape.square,
+      color: Colors.black,
+    ),
+    this.dataModuleStyle = const QrDataModuleStyle(
+      dataModuleShape: QrDataModuleShape.square,
+      color: Colors.black,
+    ),
     this.embeddedImageEmitsError = false,
     Uint8List rawBytes,
   })  : assert(QrVersions.isSupportedVersion(version)),
@@ -50,8 +61,8 @@ class QrImage extends StatefulWidget {
     Key key,
     this.size,
     this.padding = const EdgeInsets.all(10.0),
-    this.backgroundColor = const Color(0x00FFFFFF),
-    this.foregroundColor = const Color(0xFF000000),
+    this.backgroundColor = Colors.transparent,
+    this.foregroundColor,
     this.version = QrVersions.auto,
     this.errorCorrectionLevel = QrErrorCorrectLevel.L,
     this.errorStateBuilder,
@@ -59,6 +70,15 @@ class QrImage extends StatefulWidget {
     this.gapless = true,
     this.embeddedImage,
     this.embeddedImageStyle,
+    this.semanticsLabel = 'qr code',
+    this.eyeStyle = const QrEyeStyle(
+      eyeShape: QrEyeShape.square,
+      color: Colors.black,
+    ),
+    this.dataModuleStyle = const QrDataModuleStyle(
+      dataModuleShape: QrDataModuleShape.square,
+      color: Colors.black,
+    ),
     this.embeddedImageEmitsError = false,
   })  : assert(QrVersions.isSupportedVersion(version)),
         _data = null,
@@ -76,6 +96,7 @@ class QrImage extends StatefulWidget {
   final Color backgroundColor;
 
   /// The foreground color of the final QR code widget.
+  @Deprecated('use colors in eyeStyle and dataModuleStyle instead')
   final Color foregroundColor;
 
   /// The QR code version to use.
@@ -120,6 +141,17 @@ class QrImage extends StatefulWidget {
   /// the widget will ignore the embedded image and just display the QR code.
   /// The default is false.
   final bool embeddedImageEmitsError;
+
+  /// [semanticsLabel] will be used by screen readers to describe the content of
+  /// the qr code.
+  /// Default is 'qr code'.
+  final String semanticsLabel;
+
+  /// Styling option for QR Eye ball and frame.
+  final QrEyeStyle eyeStyle;
+
+  /// Styling option for QR data module.
+  final QrDataModuleStyle dataModuleStyle;
 
   @override
   _QrImageState createState() => _QrImageState();
@@ -194,11 +226,14 @@ class _QrImageState extends State<QrImage> {
       gapless: widget.gapless,
       embeddedImageStyle: widget.embeddedImageStyle,
       embeddedImage: image,
+      eyeStyle: widget.eyeStyle,
+      dataModuleStyle: widget.dataModuleStyle,
     );
     return _QrContentView(
       edgeLength: edgeLength,
       backgroundColor: widget.backgroundColor,
       padding: widget.padding,
+      semanticsLabel: widget.semanticsLabel,
       child: CustomPaint(painter: painter),
     );
   }
@@ -216,6 +251,7 @@ class _QrImageState extends State<QrImage> {
       backgroundColor: widget.backgroundColor,
       padding: widget.padding,
       child: errorWidget,
+      semanticsLabel: widget.semanticsLabel,
     );
   }
 
@@ -250,6 +286,7 @@ class _QrContentView extends StatelessWidget {
     @required this.child,
     this.backgroundColor,
     this.padding,
+    this.semanticsLabel,
   });
 
   /// The length of both edges (because it has to be a square).
@@ -264,15 +301,22 @@ class _QrContentView extends StatelessWidget {
   /// The child widget.
   final Widget child;
 
+  /// [semanticsLabel] will be used by screen readers to describe the content of
+  /// the qr code.
+  final String semanticsLabel;
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: edgeLength,
-      height: edgeLength,
-      color: backgroundColor,
-      child: Padding(
-        padding: padding,
-        child: child,
+    return Semantics(
+      label: semanticsLabel,
+      child: Container(
+        width: edgeLength,
+        height: edgeLength,
+        color: backgroundColor,
+        child: Padding(
+          padding: padding,
+          child: child,
+        ),
       ),
     );
   }

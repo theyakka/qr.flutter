@@ -68,6 +68,7 @@ Depending on your data requirements you may want to tweak the QR code output. Th
 | `embeddedImage` | ImageProvider | An `ImageProvider` that defines an image to be overlaid in the center of the QR code. |
 | `embeddedImageStyle` | QrEmbeddedImageStyle | Properties to style the embedded image. |
 | `embeddedImageEmitsError` | bool | If true, any failure to load the embedded image will trigger the `errorStateBuilder` or render an empty `Container`. If false, the QR code will be rendered and the embedded image will be ignored. |
+|`semanticsLabel`|String|`semanticsLabel` will be used by screen readers to describe the content of the QR code.|
 
 # Examples
 
