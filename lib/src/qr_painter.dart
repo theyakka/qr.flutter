@@ -4,7 +4,6 @@
  * See LICENSE for distribution and usage details.
  */
 
-import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
