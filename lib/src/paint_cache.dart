@@ -13,14 +13,14 @@ class PaintCache {
   final List<Paint> _pixelPaints = <Paint>[];
   final Map<String, Paint> _keyedPaints = <String, Paint>{};
 
-  String _cacheKey(QrCodeElement element, {FinderPatternPosition position}) {
+  String _cacheKey(QrCodeElement element, {FinderPatternPosition? position}) {
     final posKey = position != null ? position.toString() : 'any';
     return '${element.toString()}:$posKey';
   }
 
   /// Save a [Paint] for the provided element and position into the cache.
   void cache(Paint paint, QrCodeElement element,
-      {FinderPatternPosition position}) {
+      {FinderPatternPosition? position}) {
     if (element == QrCodeElement.codePixel) {
       _pixelPaints.add(paint);
     } else {
