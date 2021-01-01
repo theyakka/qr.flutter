@@ -47,6 +47,9 @@ enum QrEyeShape {
 
   /// Use circular eye frame.
   circle,
+
+  /// Use custom frame
+  custom
 }
 
 /// Enumeration representing the shape of Data modules inside QR.
@@ -58,16 +61,71 @@ enum QrDataModuleShape {
   circle,
 }
 
+/// A holder for customizing the eye of a QRCode
+class QrEyeShapeStyle {
+  /// Set the border radius of the eye to give a shape
+  final BorderRadius eyeShape;
+
+  /// Set the border radius of the eyeball to give it a custom shape
+  final BorderRadius eyeballShape;
+
+  /// Create A new Shape style
+  const QrEyeShapeStyle(
+      {this.eyeShape = BorderRadius.zero, this.eyeballShape = BorderRadius
+          .zero});
+
+  /// Sets the style to none
+  static const none = QrEyeShapeStyle(
+      eyeShape: BorderRadius.zero, eyeballShape: BorderRadius.zero);
+}
+
+/// Customize the shape of the finders on a QRCode
+class QrEyeShapeStyles {
+  /// Customize the bottom left eye
+  final QrEyeShapeStyle bottomLeft;
+
+  /// Customize the top right eye
+  final QrEyeShapeStyle topRight;
+
+  /// Customize the top left eye
+  final QrEyeShapeStyle topLeft;
+
+  /// Sets the style to none
+  static const none = QrEyeShapeStyles.all(QrEyeShapeStyle.none);
+
+  const QrEyeShapeStyles._(this.bottomLeft, this.topLeft, this.topRight)
+      :assert(bottomLeft != null && topRight != null && topLeft != null);
+
+  const QrEyeShapeStyles.only(
+      {QrEyeShapeStyle bottomLeft = QrEyeShapeStyle.none,
+        QrEyeShapeStyle topRight = QrEyeShapeStyle.none,
+        QrEyeShapeStyle topLeft = QrEyeShapeStyle.none,
+      })
+      :this._(bottomLeft, topLeft, topRight);
+
+  /// Call this to create a uniform style
+  const QrEyeShapeStyles.all(QrEyeShapeStyle style) :
+        this._(style, style, style);
+
+}
+
 /// Styling options for finder pattern eye.
 class QrEyeStyle {
   /// Create a new set of styling options for QR Eye.
-  const QrEyeStyle({this.eyeShape, this.color});
+  const QrEyeStyle({
+    this.eyeShape,
+    this.color,
+    this.shape = QrEyeShapeStyles.none,
+  });
 
   /// Eye shape.
   final QrEyeShape eyeShape;
 
   /// Color to tint the eye.
   final Color color;
+
+  /// The custom shape of the eye
+  final QrEyeShapeStyles shape;
 
   @override
   int get hashCode => eyeShape.hashCode ^ color.hashCode;

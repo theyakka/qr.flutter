@@ -45,7 +45,7 @@ class QrImage extends StatefulWidget {
       dataModuleShape: QrDataModuleShape.square,
       color: Colors.black,
     ),
-    this.embeddedImageEmitsError = false,
+    this.embeddedImageEmitsError = false, this.blendEmbeddedImage=false,
   })  : assert(QrVersions.isSupportedVersion(version)),
         _data = data,
         _qrCode = null,
@@ -76,7 +76,7 @@ class QrImage extends StatefulWidget {
       dataModuleShape: QrDataModuleShape.square,
       color: Colors.black,
     ),
-    this.embeddedImageEmitsError = false,
+    this.embeddedImageEmitsError = false, this.blendEmbeddedImage=false,
   })  : assert(QrVersions.isSupportedVersion(version)),
         _data = null,
         _qrCode = qr,
@@ -84,6 +84,7 @@ class QrImage extends StatefulWidget {
 
   // The data passed to the widget
   final String _data;
+
   // The QR code data passed to the widget
   final QrCode _qrCode;
 
@@ -99,6 +100,12 @@ class QrImage extends StatefulWidget {
 
   /// The QR code error correction level to use.
   final int errorCorrectionLevel;
+
+  /// Embedded image will be blended into the qr code
+  ///
+  /// In layman terms, qr code will not be drawn behind embedded image so it
+  /// looks like the image is part of the qr code.
+  final bool blendEmbeddedImage;
 
   /// The external padding between the edge of the widget and the content.
   final EdgeInsets padding;
@@ -220,6 +227,7 @@ class _QrImageState extends State<QrImage> {
       gapless: widget.gapless,
       embeddedImageStyle: widget.embeddedImageStyle,
       embeddedImage: image,
+      blendEmbeddedImage: widget.blendEmbeddedImage,
       eyeStyle: widget.eyeStyle,
       dataModuleStyle: widget.dataModuleStyle,
     );
@@ -250,6 +258,7 @@ class _QrImageState extends State<QrImage> {
   }
 
   ImageStreamListener streamListener;
+
   Future<ui.Image> _loadQrImage(
       BuildContext buildContext, QrEmbeddedImageStyle style) async {
     if (style != null) {}
