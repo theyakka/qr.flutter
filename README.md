@@ -6,7 +6,7 @@ QR.Flutter is a Flutter library for simple and fast QR code rendering via a Widg
 
 Please do not submit an issue for a "How do i ..?" or "What is the deal with ..?" type question. They will pretty much be closed instantly. If you have questions, please ask them on the Discussions board or on Stack Overflow. They will get answered there.
 
-Using issues creates a large amount of noise and results in real issues gettign fixed slower.
+Using issues creates a large amount of noise and results in real issues getting fixed slower.
 
 # Features
 - Built on [QR - Dart](https://github.com/kevmoo/qr.dart)
