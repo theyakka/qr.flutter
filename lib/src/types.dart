@@ -69,10 +69,16 @@ class QrEyeShapeStyle {
   /// Set the border radius of the eyeball to give it a custom shape
   final BorderRadius eyeballShape;
 
+  /// if to use a dashed eye
+  ///
+  /// This field is ignored for the eyeball
+  final bool dashedBorder;
+
   /// Create A new Shape style
   const QrEyeShapeStyle(
-      {this.eyeShape = BorderRadius.zero, this.eyeballShape = BorderRadius
-          .zero});
+      {this.dashedBorder = false,
+      this.eyeShape = BorderRadius.zero,
+      this.eyeballShape = BorderRadius.zero});
 
   /// Sets the style to none
   static const none = QrEyeShapeStyle(
@@ -94,19 +100,17 @@ class QrEyeShapeStyles {
   static const none = QrEyeShapeStyles.all(QrEyeShapeStyle.none);
 
   const QrEyeShapeStyles._(this.bottomLeft, this.topLeft, this.topRight)
-      :assert(bottomLeft != null && topRight != null && topLeft != null);
+      : assert(bottomLeft != null && topRight != null && topLeft != null);
 
-  const QrEyeShapeStyles.only(
-      {QrEyeShapeStyle bottomLeft = QrEyeShapeStyle.none,
-        QrEyeShapeStyle topRight = QrEyeShapeStyle.none,
-        QrEyeShapeStyle topLeft = QrEyeShapeStyle.none,
-      })
-      :this._(bottomLeft, topLeft, topRight);
+  const QrEyeShapeStyles.only({
+    QrEyeShapeStyle bottomLeft = QrEyeShapeStyle.none,
+    QrEyeShapeStyle topRight = QrEyeShapeStyle.none,
+    QrEyeShapeStyle topLeft = QrEyeShapeStyle.none,
+  }) : this._(bottomLeft, topLeft, topRight);
 
   /// Call this to create a uniform style
-  const QrEyeShapeStyles.all(QrEyeShapeStyle style) :
-        this._(style, style, style);
-
+  const QrEyeShapeStyles.all(QrEyeShapeStyle style)
+      : this._(style, style, style);
 }
 
 /// Styling options for finder pattern eye.

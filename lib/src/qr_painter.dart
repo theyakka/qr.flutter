@@ -387,25 +387,50 @@ class QrPainter extends CustomPainter {
       ui.Canvas canvas) {
     BorderRadius eyeBorderRadius;
     BorderRadius eyeballBorderRadius;
+    bool dashedBorder = false;
     switch (position) {
       case FinderPatternPosition.topLeft:
         eyeBorderRadius = eyeStyle.shape.topLeft.eyeShape;
         eyeballBorderRadius = eyeStyle.shape.topLeft.eyeballShape;
+        dashedBorder = eyeStyle.shape.topLeft.dashedBorder;
         break;
       case FinderPatternPosition.topRight:
         eyeBorderRadius = eyeStyle.shape.topRight.eyeShape;
         eyeballBorderRadius = eyeStyle.shape.topRight.eyeballShape;
+        dashedBorder = eyeStyle.shape.topRight.dashedBorder;
         break;
       case FinderPatternPosition.bottomLeft:
         eyeBorderRadius = eyeStyle.shape.bottomLeft.eyeShape;
         eyeballBorderRadius = eyeStyle.shape.bottomLeft.eyeballShape;
+        dashedBorder = eyeStyle.shape.bottomLeft.dashedBorder;
         break;
     }
     var eyePath = drawRRect(outerRect.left, outerRect.top, outerRect.width,
         outerRect.height, eyeBorderRadius, outerPaint.strokeWidth);
     var eyeBallPath = drawRRect(dotRect.left, dotRect.top, dotRect.width,
         dotRect.height, eyeballBorderRadius, dotPaint.strokeWidth);
-    canvas.drawPath(eyePath..close(), outerPaint);
+
+    if (dashedBorder) {
+      var eyeDashPath = Path();
+
+      var dashWidth = 10.0;
+      var dashSpace = 5.0;
+      var distance = 0.0;
+      eyePath.close();
+      for (ui.PathMetric pathMetric in eyePath.computeMetrics()) {
+        while (distance < pathMetric.length) {
+          eyeDashPath.addPath(
+            pathMetric.extractPath(distance, distance + dashWidth),
+            Offset.zero,
+          );
+          distance += dashWidth;
+          distance += dashSpace;
+        }
+      }
+      canvas.drawPath(eyeDashPath..close(), outerPaint);
+    } else {
+      canvas.drawPath(eyePath..close(), outerPaint);
+    }
     canvas.drawPath(eyeBallPath..close(), dotPaint);
   }
 
