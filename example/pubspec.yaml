@@ -4,6 +4,7 @@ description: >
 version: 1.0.0+1
 author: Yakka, LLC <hello@yakka.agency>
 homepage: https://github.com/lukef/qr.flutter
+publish_to: none
 
 environment:
   sdk: ">=2.1.0 <3.0.0"

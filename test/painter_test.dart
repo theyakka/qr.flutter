@@ -6,7 +6,6 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qr/qr.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -19,11 +18,11 @@ void main() {
       gapless: true,
       errorCorrectionLevel: QrErrorCorrectLevel.L,
     );
-    ByteData imageData;
+    ByteData? imageData;
     await tester.runAsync(() async {
       imageData = await painter.toImageData(600.0);
     });
-    final imageBytes = imageData.buffer.asUint8List();
+    final imageBytes = imageData!.buffer.asUint8List();
     final widget = Center(
       child: RepaintBoundary(
         child: Container(
