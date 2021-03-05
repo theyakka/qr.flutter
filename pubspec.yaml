@@ -12,12 +12,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  qr: ^1.2.0
+  qr: ^2.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  test: ^1.6.0
+  test: ^1.16.5
 
 flutter:
   uses-material-design: false
