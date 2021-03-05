@@ -200,7 +200,7 @@ class _QrImageState extends State<QrImage> {
             }
             if (snapshot.hasData) {
               print('loaded image');
-              final ui.Image? loadedImage = snapshot.data;
+              final ui.Image? loadedImage = snapshot.data as ui.Image?;
               return _qrWidget(context, loadedImage, widgetSize);
             } else {
               return Container();
