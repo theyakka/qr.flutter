@@ -19,11 +19,11 @@ void main() {
       gapless: true,
       errorCorrectionLevel: QrErrorCorrectLevel.L,
     );
-    ByteData imageData;
+    ByteData? imageData;
     await tester.runAsync(() async {
       imageData = await painter.toImageData(600.0);
     });
-    final imageBytes = imageData.buffer.asUint8List();
+    final imageBytes = imageData!.buffer.asUint8List();
     final widget = Center(
       child: RepaintBoundary(
         child: Container(

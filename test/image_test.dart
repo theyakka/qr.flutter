@@ -177,7 +177,7 @@ Future<void> pumpWidgetWithImages(
   Widget widget,
   List<String> assetNames,
 ) async {
-  Future<void> precacheFuture;
+  Future<void>? precacheFuture;
   await tester.pumpWidget(
     Builder(builder: (buildContext) {
       precacheFuture = tester.runAsync(() async {
