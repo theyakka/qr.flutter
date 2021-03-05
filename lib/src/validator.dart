@@ -15,7 +15,7 @@ class QrValidator {
   /// resulting [QrValidationResult] object will hold the status of the QR code
   /// as well as the generated QR code data.
   static QrValidationResult validate({
-    @required String data,
+    @required String/*!*/ data,
     int version = QrVersions.auto,
     int errorCorrectionLevel = QrErrorCorrectLevel.L,
   }) {
