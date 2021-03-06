@@ -1,3 +1,6 @@
+# 4.0.0
+- Add support to null safety
+
 # 3.2.0
 - Fix issue where finder patterns don't render correctly with the painter
 - Small fixes + optimizations
