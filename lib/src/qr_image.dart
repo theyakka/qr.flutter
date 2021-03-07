@@ -236,7 +236,7 @@ class _QrImageState extends State<QrImage> {
       BuildContext context, BoxConstraints constraints, Object? error) {
     final errorWidget = widget.errorStateBuilder == null
         ? Container()
-        : widget.errorStateBuilder!(context, error) ?? Container();
+        : widget.errorStateBuilder?.call(context, error) ?? Container();
     final errorSideLength = (widget.constrainErrorBounds
         ? widget.size ?? constraints.biggest.shortestSide
         : constraints.biggest.longestSide);
