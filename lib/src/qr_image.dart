@@ -200,7 +200,7 @@ class _QrImageState extends State<QrImage> {
             }
             if (snapshot.hasData) {
               print('loaded image');
-              final ui.Image? loadedImage = snapshot.data as ui.Image?;
+              final loadedImage = snapshot.data as ui.Image?;
               return _qrWidget(context, loadedImage, widgetSize);
             } else {
               return Container();
@@ -216,6 +216,7 @@ class _QrImageState extends State<QrImage> {
   Widget _qrWidget(BuildContext context, ui.Image? image, double edgeLength) {
     final painter = QrPainter.withQr(
       qr: _qr!,
+      // ignore: deprecated_member_use_from_same_package
       color: widget.foregroundColor,
       gapless: widget.gapless,
       embeddedImageStyle: widget.embeddedImageStyle,
@@ -272,6 +273,7 @@ class _QrImageState extends State<QrImage> {
   }
 }
 
+/// Build errors
 typedef QrErrorBuilder = Widget Function(BuildContext context, Object? error);
 
 class _QrContentView extends StatelessWidget {

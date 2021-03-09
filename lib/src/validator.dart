@@ -4,7 +4,6 @@
  * See LICENSE for distribution and usage details.
  */
 
-import 'package:flutter/foundation.dart';
 import 'package:qr/qr.dart';
 
 import 'qr_versions.dart';
