@@ -16,7 +16,6 @@ import 'errors.dart';
 import 'paint_cache.dart';
 import 'qr_versions.dart';
 import 'types.dart';
-import 'types.dart';
 import 'validator.dart';
 
 // ignore_for_file: deprecated_member_use_from_same_package
@@ -279,8 +278,8 @@ class QrPainter extends CustomPainter {
 
   bool _isLogoArea(int x, int y) {
     //Find center of module count and portion to cut out of QR
-    var center = _qr.moduleCount / 2;
-    var canvasPortion = _qr.moduleCount * 0.15;
+    var center = _qr!.moduleCount / 2;
+    var canvasPortion = _qr!.moduleCount * 0.15;
 
     if (x > center - canvasPortion &&
         x < center + canvasPortion &&
@@ -386,7 +385,7 @@ class QrPainter extends CustomPainter {
       ui.Canvas canvas) {
     BorderRadius eyeBorderRadius;
     BorderRadius eyeballBorderRadius;
-    bool dashedBorder = false;
+    var dashedBorder = false;
     switch (position) {
       case FinderPatternPosition.topLeft:
         eyeBorderRadius = eyeStyle.shape.topLeft.eyeShape;
@@ -416,7 +415,7 @@ class QrPainter extends CustomPainter {
       var dashSpace = 5.0;
       var distance = 0.0;
       eyePath.close();
-      for (ui.PathMetric pathMetric in eyePath.computeMetrics()) {
+      for (var pathMetric in eyePath.computeMetrics()) {
         while (distance < pathMetric.length) {
           eyeDashPath.addPath(
             pathMetric.extractPath(distance, distance + dashWidth),
