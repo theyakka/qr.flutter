@@ -71,7 +71,7 @@ class QrPainter extends CustomPainter {
   final int errorCorrectionLevel; // the qr code error correction level
 
   /// The color of the non-squares (background).
-  final _emptyColor = Colors.transparent; // the other color
+  final Color _emptyColor = Colors.transparent; // the other color
 
   /// If set to false, the painter will leave a 1px gap between each of the
   /// squares.
