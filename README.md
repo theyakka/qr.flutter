@@ -22,8 +22,7 @@ Using issues creates a large amount of noise and results in real issues getting 
 # Installing
 
 **Version compatibility**: 4.0.0+ supports null safety and requires a version of Flutter that is compatible.
-Therefore, you will need to be using Flutter 2.0+ in order to use version 4.0+. If you're using an older version
-of flutter, please use a 3.x version.
+If you're using an incompatible version of flutter, please use a 3.x version of this library.
 
 You should add the following to your `pubspec.yaml` file:
 
