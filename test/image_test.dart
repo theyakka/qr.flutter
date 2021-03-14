@@ -120,15 +120,14 @@ void main() {
             data: 'This is a test image',
             version: QrVersions.auto,
             gapless: true,
-            foregroundColor: Colors.red,
             errorCorrectionLevel: QrErrorCorrectLevel.L,
             eyeStyle: const QrEyeStyle(
               eyeShape: QrEyeShape.circle,
-              color: Colors.green,
+              color: Colors.red,
             ),
             dataModuleStyle: const QrDataModuleStyle(
               dataModuleShape: QrDataModuleShape.circle,
-              color: Colors.blue,
+              color: Colors.red,
             ),
           ),
         ),
