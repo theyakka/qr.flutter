@@ -4,7 +4,7 @@
  * See LICENSE for distribution and usage details.
  */
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/rendering.dart' show ImageProvider;
 
 import 'qr_versions.dart';
 

@@ -4,12 +4,10 @@
  * See LICENSE for distribution and usage details.
  */
 
-import 'dart:async';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:qr/qr.dart';
 
 import 'errors.dart';

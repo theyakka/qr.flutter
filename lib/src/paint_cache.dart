@@ -4,11 +4,11 @@
  * See LICENSE for distribution and usage details.
  */
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/rendering.dart';
 
 import 'types.dart';
 
-///
+/// A cache for [Paint] instances.
 class PaintCache {
   final List<Paint> _pixelPaints = <Paint>[];
   final Map<String, Paint> _keyedPaints = <String, Paint>{};

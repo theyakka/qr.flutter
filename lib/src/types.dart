@@ -4,9 +4,7 @@
  * See LICENSE for distribution and usage details.
  */
 
-import 'dart:ui';
-
-import 'package:flutter/widgets.dart';
+import 'package:flutter/rendering.dart';
 
 /// Represents a specific element / part of a QR code. This is used to isolate
 /// the different parts so that we can style and modify specific parts
