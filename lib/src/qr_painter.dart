@@ -86,7 +86,7 @@ class QrPainter extends CustomPainter {
 
   /// The color of the non-squares (background).
   @Deprecated(
-      'You should us the background color value of your container widget')
+      'You should use the background color value of your container widget')
   final Color? emptyColor; // the other color
   /// If set to false, the painter will leave a 1px gap between each of the
   /// squares.
