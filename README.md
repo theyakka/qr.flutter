@@ -9,6 +9,7 @@ Please do not submit an issue for a "How do i ..?" or "What is the deal with ..?
 Using issues creates a large amount of noise and results in real issues getting fixed slower.
 
 # Features
+- Null safety
 - Built on [QR - Dart](https://github.com/kevmoo/qr.dart)
 - Automatic QR code version/type detection or manual entry 
 - Supports QR code versions 1 - 40
@@ -20,11 +21,15 @@ Using issues creates a large amount of noise and results in real issues getting 
 
 # Installing
 
+**Version compatibility**: 4.0.0+ supports null safety and requires a version of Flutter that is compatible.
+Therefore, you will need to be using Flutter 2.0+ in order to use version 4.0+. If you're using an older version
+of flutter, please use a 3.x version.
+
 You should add the following to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  qr_flutter: ^3.2.0
+  qr_flutter: ^4.0.0
 ```
 
 **Note**: If you're using the Flutter `master` channel, if you encounter build issues, or want to try the latest and greatest then you should use the `master` branch and not a specific release version. To do so, use the following configuration in your `pubspec.yaml`:
