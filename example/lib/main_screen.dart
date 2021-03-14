@@ -44,7 +44,6 @@ class _MainScreenState extends State<MainScreen> {
               dataModuleShape: QrDataModuleShape.circle,
               color: Color(0xff1a5441),
             ),
-            // size: 320.0,
             embeddedImage: snapshot.data,
             embeddedImageStyle: QrEmbeddedImageStyle(
               size: Size.square(60),
