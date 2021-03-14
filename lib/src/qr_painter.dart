@@ -6,7 +6,6 @@
 
 import 'dart:ui' as ui;
 
-import 'package:flutter/material.dart' show Colors;
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:qr/qr.dart';
@@ -70,9 +69,6 @@ class QrPainter extends CustomPainter {
   /// The error correction level of the QR code.
   final int errorCorrectionLevel; // the qr code error correction level
 
-  /// The color of the non-squares (background).
-  final Color _emptyColor = Colors.transparent; // the other color
-
   /// If set to false, the painter will leave a 1px gap between each of the
   /// squares.
   final bool gapless;
@@ -126,17 +122,11 @@ class QrPainter extends CustomPainter {
     // expand it to multiple later (e.g.: different colours).
     _paintCache.cache(
         Paint()..style = PaintingStyle.fill, QrCodeElement.codePixel);
-    // Cache the empty pixel paint object.
-    _paintCache.cache(
-        Paint()..style = PaintingStyle.fill, QrCodeElement.codePixelEmpty);
     // Cache the finder pattern painters. We'll keep one for each one in case
     // we want to provide customization options later.
     for (final position in FinderPatternPosition.values) {
       _paintCache.cache(Paint()..style = PaintingStyle.stroke,
           QrCodeElement.finderPatternOuter,
-          position: position);
-      _paintCache.cache(Paint()..style = PaintingStyle.stroke,
-          QrCodeElement.finderPatternInner,
           position: position);
       _paintCache.cache(
           Paint()..style = PaintingStyle.fill, QrCodeElement.finderPatternDot,
@@ -182,15 +172,13 @@ class QrPainter extends CustomPainter {
     final pixelPaint = _paintCache.firstPaint(QrCodeElement.codePixel);
 
     pixelPaint!.color = dataModuleStyle.color!;
-    Paint? emptyPixelPaint;
-    emptyPixelPaint = _paintCache.firstPaint(QrCodeElement.codePixelEmpty);
-    emptyPixelPaint!.color = _emptyColor;
 
     for (var x = 0; x < _qr!.moduleCount; x++) {
       for (var y = 0; y < _qr!.moduleCount; y++) {
         // draw the finder patterns independently
         if (_isFinderPatternPosition(x, y)) continue;
-        final paint = _qr!.isDark(y, x) ? pixelPaint : emptyPixelPaint;
+        final paint = _qr!.isDark(y, x) ? pixelPaint : null;
+        if (paint == null) continue;
         // paint a pixel
         left = paintMetrics.inset + (x * (paintMetrics.pixelSize + gap));
         top = paintMetrics.inset + (y * (paintMetrics.pixelSize + gap));
@@ -282,21 +270,12 @@ class QrPainter extends CustomPainter {
     outerPaint.strokeWidth = metrics.pixelSize;
     outerPaint.color = eyeStyle.color!;
 
-    final innerPaint = _paintCache.firstPaint(QrCodeElement.finderPatternInner,
-        position: position)!;
-    innerPaint.strokeWidth = metrics.pixelSize;
-    innerPaint.color = _emptyColor;
-
     final dotPaint = _paintCache.firstPaint(QrCodeElement.finderPatternDot,
         position: position);
 
     dotPaint!.color = eyeStyle.color!;
 
     final outerRect = Rect.fromLTWH(offset.dx, offset.dy, radius, radius);
-
-    final innerRadius = radius - (2 * metrics.pixelSize);
-    final innerRect = Rect.fromLTWH(offset.dx + metrics.pixelSize,
-        offset.dy + metrics.pixelSize, innerRadius, innerRadius);
 
     final gap = metrics.pixelSize * 2;
     final dotSize = radius - gap - (2 * strokeAdjust);
@@ -305,16 +284,11 @@ class QrPainter extends CustomPainter {
 
     if (eyeStyle.eyeShape == QrEyeShape.square) {
       canvas.drawRect(outerRect, outerPaint);
-      canvas.drawRect(innerRect, innerPaint);
       canvas.drawRect(dotRect, dotPaint);
     } else {
       final roundedOuterStrokeRect =
           RRect.fromRectAndRadius(outerRect, Radius.circular(radius));
       canvas.drawRRect(roundedOuterStrokeRect, outerPaint);
-
-      final roundedInnerStrokeRect =
-          RRect.fromRectAndRadius(outerRect, Radius.circular(innerRadius));
-      canvas.drawRRect(roundedInnerStrokeRect, innerPaint);
 
       final roundedDotStrokeRect =
           RRect.fromRectAndRadius(dotRect, Radius.circular(dotSize));
