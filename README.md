@@ -131,7 +131,6 @@ QrImage(
 ```
 
 
-
 # FAQ
 ## Has it been tested in production? Can I use it in production?
 

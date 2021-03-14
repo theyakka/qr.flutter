@@ -5,7 +5,6 @@
  */
 
 import 'dart:async';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -25,7 +24,7 @@ class _MainScreenState extends State<MainScreen> {
         // ignore: lines_longer_than_80_chars
         'Hey this is a QR code. Change this value in the main_screen.dart file.';
 
-    final qrFutureBuilder = FutureBuilder(
+    final qrFutureBuilder = FutureBuilder<ui.Image>(
       future: _loadOverlayImage(),
       builder: (ctx, snapshot) {
         final size = 280.0;

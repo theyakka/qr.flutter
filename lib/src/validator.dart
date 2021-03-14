@@ -4,7 +4,6 @@
  * See LICENSE for distribution and usage details.
  */
 
-import 'package:flutter/foundation.dart';
 import 'package:qr/qr.dart';
 
 import 'qr_versions.dart';
@@ -15,11 +14,11 @@ class QrValidator {
   /// resulting [QrValidationResult] object will hold the status of the QR code
   /// as well as the generated QR code data.
   static QrValidationResult validate({
-    @required String data,
+    required String data,
     int version = QrVersions.auto,
     int errorCorrectionLevel = QrErrorCorrectLevel.L,
   }) {
-    QrCode qrCode;
+    late final QrCode qrCode;
     try {
       if (version != QrVersions.auto) {
         qrCode = QrCode(version, errorCorrectionLevel);
@@ -48,16 +47,16 @@ class QrValidator {
 /// that was thrown.
 class QrValidationResult {
   /// Create a new validation result instance.
-  QrValidationResult({@required this.status, this.qrCode, this.error});
+  QrValidationResult({required this.status, this.qrCode, this.error});
 
   /// The status of the validation operation.
   QrValidationStatus status;
 
   /// The rendered QR code data / object.
-  QrCode qrCode;
+  QrCode? qrCode;
 
   /// The exception that was thrown in the event of a non-valid result (if any).
-  Exception error;
+  Exception? error;
 
   /// The validation result returned a status of valid;
   bool get isValid => status == QrValidationStatus.valid;

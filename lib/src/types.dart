@@ -64,10 +64,10 @@ class QrEyeStyle {
   const QrEyeStyle({this.eyeShape, this.color});
 
   /// Eye shape.
-  final QrEyeShape eyeShape;
+  final QrEyeShape? eyeShape;
 
   /// Color to tint the eye.
-  final Color color;
+  final Color? color;
 
   @override
   int get hashCode => eyeShape.hashCode ^ color.hashCode;
@@ -90,10 +90,10 @@ class QrDataModuleStyle {
   });
 
   /// Eye shape.
-  final QrDataModuleShape dataModuleShape;
+  final QrDataModuleShape? dataModuleShape;
 
   /// Color to tint the data modules.
-  final Color color;
+  final Color? color;
 
   @override
   int get hashCode => dataModuleShape.hashCode ^ color.hashCode;
@@ -118,13 +118,13 @@ class QrEmbeddedImageStyle {
   /// The size of the image. If one dimension is zero then the other dimension
   /// will be used to scale the zero dimension based on the original image
   /// size.
-  Size size;
+  Size? size;
 
   /// Color to tint the image.
-  Color color;
+  Color? color;
 
   /// Check to see if the style object has a non-null, non-zero size.
-  bool get hasDefinedSize => size != null && size.longestSide > 0;
+  bool get hasDefinedSize => size != null && size!.longestSide > 0;
 
   @override
   int get hashCode => size.hashCode ^ color.hashCode;
