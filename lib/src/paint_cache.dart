@@ -19,11 +19,8 @@ class PaintCache {
   }
 
   /// Save a [Paint] for the provided element and position into the cache.
-  void cache(
-    Paint paint,
-    QrCodeElement element, {
-    FinderPatternPosition? position,
-  }) {
+  void cache(Paint paint, QrCodeElement element,
+      {FinderPatternPosition? position}) {
     if (element == QrCodeElement.codePixel) {
       _pixelPaints.add(paint);
     } else {
@@ -45,10 +42,8 @@ class PaintCache {
   /// element and position. Note: Finder pattern elements can only have a max
   /// one [Paint] object per position. As such they will always return a [List]
   /// with a fixed size of `1`.
-  List<Paint?> paints(
-    QrCodeElement element, {
-    FinderPatternPosition? position,
-  }) {
+  List<Paint?> paints(QrCodeElement element,
+      {FinderPatternPosition? position}) {
     if (element == QrCodeElement.codePixel) {
       return _pixelPaints;
     } else {

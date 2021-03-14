@@ -422,11 +422,10 @@ class QrPainter extends CustomPainter {
 }
 
 class _PaintMetrics {
-  _PaintMetrics({
-    required this.containerSize,
-    required this.gapSize,
-    required this.moduleCount,
-  }) {
+  _PaintMetrics(
+      {required this.containerSize,
+      required this.gapSize,
+      required this.moduleCount}) {
     _calculateMetrics();
   }
 
