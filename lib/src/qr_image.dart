@@ -46,6 +46,8 @@ class QrImage extends StatefulWidget {
       color: Colors.black,
     ),
     this.embeddedImageEmitsError = false,
+    this.roundedImage = false,
+    this.borderColor = Colors.white,
   })  : assert(QrVersions.isSupportedVersion(version)),
         _data = data,
         _qrCode = null,
@@ -77,6 +79,8 @@ class QrImage extends StatefulWidget {
       color: Colors.black,
     ),
     this.embeddedImageEmitsError = false,
+    this.roundedImage = false,
+    this.borderColor = Colors.white,
   })  : assert(QrVersions.isSupportedVersion(version)),
         _data = null,
         _qrCode = qr,
@@ -84,6 +88,7 @@ class QrImage extends StatefulWidget {
 
   // The data passed to the widget
   final String? _data;
+
   // The QR code data passed to the widget
   final QrCode? _qrCode;
 
@@ -147,6 +152,13 @@ class QrImage extends StatefulWidget {
 
   /// Styling option for QR data module.
   final QrDataModuleStyle dataModuleStyle;
+
+  /// Rounded image option in the QR code. The image will
+  /// be added to the center of the QR code.
+  final bool roundedImage;
+
+  /// Rounded image option circular border color in the QR code.
+  final Color borderColor;
 
   @override
   _QrImageState createState() => _QrImageState();
@@ -215,14 +227,15 @@ class _QrImageState extends State<QrImage> {
 
   Widget _qrWidget(BuildContext context, ui.Image? image, double edgeLength) {
     final painter = QrPainter.withQr(
-      qr: _qr!,
-      color: widget.foregroundColor,
-      gapless: widget.gapless,
-      embeddedImageStyle: widget.embeddedImageStyle,
-      embeddedImage: image,
-      eyeStyle: widget.eyeStyle,
-      dataModuleStyle: widget.dataModuleStyle,
-    );
+        qr: _qr!,
+        color: widget.foregroundColor,
+        gapless: widget.gapless,
+        embeddedImageStyle: widget.embeddedImageStyle,
+        embeddedImage: image,
+        eyeStyle: widget.eyeStyle,
+        dataModuleStyle: widget.dataModuleStyle,
+        roundedImage: widget.roundedImage,
+        borderColor: widget.borderColor);
     return _QrContentView(
       edgeLength: edgeLength,
       backgroundColor: widget.backgroundColor,
@@ -250,6 +263,7 @@ class _QrImageState extends State<QrImage> {
   }
 
   late ImageStreamListener streamListener;
+
   Future<ui.Image> _loadQrImage(
       BuildContext buildContext, QrEmbeddedImageStyle? style) async {
     if (style != null) {}

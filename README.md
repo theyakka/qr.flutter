@@ -79,6 +79,8 @@ Depending on your data requirements you may want to tweak the QR code output. Th
 | `embeddedImageStyle` | QrEmbeddedImageStyle | Properties to style the embedded image. |
 | `embeddedImageEmitsError` | bool | If true, any failure to load the embedded image will trigger the `errorStateBuilder` or render an empty `Container`. If false, the QR code will be rendered and the embedded image will be ignored. |
 |`semanticsLabel`|String|`semanticsLabel` will be used by screen readers to describe the content of the QR code.|
+|`roundedImage`| bool | If true, image shows as a circular image with stock in the QR code.|
+|`borderColor`| Color | The rounded image stock color in the QR code.|
 
 # Examples
 
@@ -110,6 +112,23 @@ QrImage(
   embeddedImageStyle: QrEmbeddedImageStyle(
     size: Size(80, 80),
   ),
+)
+```
+
+A QR code with an rounded image (from your application's assets) will look like:
+
+```dart
+QrImage(
+  data: 'This QR code has an embedded image as well',
+  version: QrVersions.auto,
+  size: 320,
+  gapless: false,
+  embeddedImage: AssetImage('assets/images/my_embedded_image.png'),
+  embeddedImageStyle: QrEmbeddedImageStyle(
+    size: Size(80, 80),
+  ),
+  roundedImage: true,
+  borderColor: Colors.green,
 )
 ```
 

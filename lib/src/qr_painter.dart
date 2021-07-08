@@ -28,46 +28,50 @@ const Color? _qrDefaultColor = null;
 /// A [CustomPainter] object that you can use to paint a QR code.
 class QrPainter extends CustomPainter {
   /// Create a new QRPainter with passed options (or defaults).
-  QrPainter({
-    required String data,
-    required this.version,
-    this.errorCorrectionLevel = QrErrorCorrectLevel.L,
-    this.color = _qrDefaultColor,
-    this.emptyColor,
-    this.gapless = false,
-    this.embeddedImage,
-    this.embeddedImageStyle,
-    this.eyeStyle = const QrEyeStyle(
-      eyeShape: QrEyeShape.square,
-      color: Color(0xFF000000),
-    ),
-    this.dataModuleStyle = const QrDataModuleStyle(
-      dataModuleShape: QrDataModuleShape.square,
-      color: Color(0xFF000000),
-    ),
-  }) : assert(QrVersions.isSupportedVersion(version)) {
+  QrPainter(
+      {required String data,
+      required this.version,
+      this.errorCorrectionLevel = QrErrorCorrectLevel.L,
+      this.color = _qrDefaultColor,
+      this.emptyColor,
+      this.gapless = false,
+      this.embeddedImage,
+      this.embeddedImageStyle,
+      this.eyeStyle = const QrEyeStyle(
+        eyeShape: QrEyeShape.square,
+        color: Color(0xFF000000),
+      ),
+      this.dataModuleStyle = const QrDataModuleStyle(
+        dataModuleShape: QrDataModuleShape.square,
+        color: Color(0xFF000000),
+      ),
+      this.roundedImage,
+      this.borderColor})
+      : assert(QrVersions.isSupportedVersion(version)) {
     _init(data);
   }
 
   /// Create a new QrPainter with a pre-validated/created [QrCode] object. This
   /// constructor is useful when you have a custom validation / error handling
   /// flow or for when you need to pre-validate the QR data.
-  QrPainter.withQr({
-    required QrCode qr,
-    this.color = _qrDefaultColor,
-    this.emptyColor,
-    this.gapless = false,
-    this.embeddedImage,
-    this.embeddedImageStyle,
-    this.eyeStyle = const QrEyeStyle(
-      eyeShape: QrEyeShape.square,
-      color: Color(0xFF000000),
-    ),
-    this.dataModuleStyle = const QrDataModuleStyle(
-      dataModuleShape: QrDataModuleShape.square,
-      color: Color(0xFF000000),
-    ),
-  })  : _qr = qr,
+  QrPainter.withQr(
+      {required QrCode qr,
+      this.color = _qrDefaultColor,
+      this.emptyColor,
+      this.gapless = false,
+      this.embeddedImage,
+      this.embeddedImageStyle,
+      this.eyeStyle = const QrEyeStyle(
+        eyeShape: QrEyeShape.square,
+        color: Color(0xFF000000),
+      ),
+      this.dataModuleStyle = const QrDataModuleStyle(
+        dataModuleShape: QrDataModuleShape.square,
+        color: Color(0xFF000000),
+      ),
+      this.roundedImage,
+      this.borderColor})
+      : _qr = qr,
         version = qr.typeNumber,
         errorCorrectionLevel = qr.errorCorrectLevel {
     _calcVersion = version;
@@ -117,6 +121,10 @@ class QrPainter extends CustomPainter {
 
   /// Cache for all of the [Paint] objects.
   final _paintCache = PaintCache();
+
+  final bool? roundedImage;
+
+  final Color? borderColor;
 
   void _init(String data) {
     if (!QrVersions.isSupportedVersion(version)) {
@@ -381,6 +389,23 @@ class QrPainter extends CustomPainter {
         Size(embeddedImage!.width.toDouble(), embeddedImage!.height.toDouble());
     final src = Alignment.center.inscribe(srcSize, Offset.zero & srcSize);
     final dst = Alignment.center.inscribe(size, position & size);
+    if (roundedImage != null && roundedImage!) {
+      // The circle should be paint before or it will be hidden by the path
+      var paintCircle = Paint()..color = borderColor!;
+      var imagePath = Path()
+        ..addOval(Rect.fromLTWH(position.dx + 4.0, position.dy + 4.0,
+            size.width - 8.0, size.height - 8.0));
+      final ovalSRCSize = Size(embeddedImage!.width.toDouble() + 10,
+          embeddedImage!.height.toDouble() + 10);
+      final ovalSRC =
+          Alignment.center.inscribe(ovalSRCSize, Offset.zero & ovalSRCSize);
+      var path = Path()
+        ..addOval(
+            Rect.fromLTWH(position.dx, position.dy, size.width, size.height));
+      canvas.clipPath(path);
+      canvas.drawRect(ovalSRC, paintCircle);
+      canvas.clipPath(imagePath);
+    }
     canvas.drawImageRect(embeddedImage!, src, dst, paint);
   }
 
@@ -434,12 +459,15 @@ class _PaintMetrics {
   final double gapSize;
 
   late final double _pixelSize;
+
   double get pixelSize => _pixelSize;
 
   late final double _innerContentSize;
+
   double get innerContentSize => _innerContentSize;
 
   late final double _inset;
+
   double get inset => _inset;
 
   void _calculateMetrics() {
