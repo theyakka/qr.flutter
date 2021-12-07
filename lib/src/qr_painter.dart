@@ -169,9 +169,11 @@ class QrPainter extends CustomPainter {
       return;
     }
 
+    var qrImage = QrImage(_qr!);
+
     final paintMetrics = _PaintMetrics(
       containerSize: size.shortestSide,
-      moduleCount: _qr!.moduleCount,
+      moduleCount: qrImage.moduleCount,
       gapSize: (gapless ? 0 : _gapSize),
     );
 
@@ -206,21 +208,21 @@ class QrPainter extends CustomPainter {
       emptyPixelPaint = _paintCache.firstPaint(QrCodeElement.codePixelEmpty);
       emptyPixelPaint!.color = emptyColor!;
     }
-    for (var x = 0; x < _qr!.moduleCount; x++) {
-      for (var y = 0; y < _qr!.moduleCount; y++) {
+    for (var x = 0; x < qrImage.moduleCount; x++) {
+      for (var y = 0; y < qrImage.moduleCount; y++) {
         // draw the finder patterns independently
         if (_isFinderPatternPosition(x, y)) continue;
-        final paint = _qr!.isDark(y, x) ? pixelPaint : emptyPixelPaint;
+        final paint = qrImage.isDark(y, x) ? pixelPaint : emptyPixelPaint;
         if (paint == null) continue;
         // paint a pixel
         left = paintMetrics.inset + (x * (paintMetrics.pixelSize + gap));
         top = paintMetrics.inset + (y * (paintMetrics.pixelSize + gap));
         var pixelHTweak = 0.0;
         var pixelVTweak = 0.0;
-        if (gapless && _hasAdjacentHorizontalPixel(x, y, _qr!.moduleCount)) {
+        if (gapless && _hasAdjacentHorizontalPixel(qrImage, x, y)) {
           pixelHTweak = 0.5;
         }
-        if (gapless && _hasAdjacentVerticalPixel(x, y, _qr!.moduleCount)) {
+        if (gapless && _hasAdjacentVerticalPixel(qrImage, x, y)) {
           pixelVTweak = 0.5;
         }
         final squareRect = Rect.fromLTWH(
@@ -256,14 +258,14 @@ class QrPainter extends CustomPainter {
     }
   }
 
-  bool _hasAdjacentVerticalPixel(int x, int y, int moduleCount) {
-    if (y + 1 >= moduleCount) return false;
-    return _qr!.isDark(y + 1, x);
+  bool _hasAdjacentVerticalPixel(QrImage qrImage, int x, int y) {
+    if (y + 1 >= qrImage.moduleCount) return false;
+    return qrImage.isDark(y + 1, x);
   }
 
-  bool _hasAdjacentHorizontalPixel(int x, int y, int moduleCount) {
-    if (x + 1 >= moduleCount) return false;
-    return _qr!.isDark(y, x + 1);
+  bool _hasAdjacentHorizontalPixel(QrImage qrImage, int x, int y) {
+    if (x + 1 >= qrImage.moduleCount) return false;
+    return qrImage.isDark(y, x + 1);
   }
 
   bool _isFinderPatternPosition(int x, int y) {
