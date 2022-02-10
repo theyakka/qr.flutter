@@ -4,7 +4,7 @@
  * See LICENSE for distribution and usage details.
  */
 
-export 'package:qr/qr.dart';
+export 'package:qr/qr.dart' hide QrImage;
 
 export 'src/errors.dart';
 export 'src/qr_image.dart';
