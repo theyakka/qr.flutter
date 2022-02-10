@@ -67,7 +67,7 @@ class QrPainter extends CustomPainter {
       dataModuleShape: QrDataModuleShape.square,
       color: Color(0xFF000000),
     ),
-  })  : _qr = qr,
+  })  : _qr = QrImage(qr),
         version = qr.typeNumber,
         errorCorrectionLevel = qr.errorCorrectLevel {
     _calcVersion = version;
@@ -106,7 +106,7 @@ class QrPainter extends CustomPainter {
   final QrDataModuleStyle dataModuleStyle;
 
   /// The base QR code data
-  QrCode? _qr;
+  QrImage? _qr;
 
   /// This is the version (after calculating) that we will use if the user has
   /// requested the 'auto' version.
@@ -131,7 +131,9 @@ class QrPainter extends CustomPainter {
     if (!validationResult.isValid) {
       throw validationResult.error!;
     }
-    _qr = validationResult.qrCode;
+    final qrCode = QrCode(4, QrErrorCorrectLevel.L);
+    qrCode.addData(data);
+    _qr = QrImage(qrCode);
     _calcVersion = _qr!.typeNumber;
     _initPaints();
   }
