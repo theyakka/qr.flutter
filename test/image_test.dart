@@ -8,15 +8,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:qr/qr.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 void main() {
-  testWidgets('QrImage generates correct image', (tester) async {
+  testWidgets('QrImageView generates correct image', (tester) async {
     final qrImage = MaterialApp(
       home: Center(
         child: RepaintBoundary(
-          child: QrImage(
+          child: QrImageView(
             data: 'This is a test image',
             version: QrVersions.auto,
             gapless: true,
@@ -27,16 +26,17 @@ void main() {
     );
     await tester.pumpWidget(qrImage);
     await expectLater(
-      find.byType(QrImage),
+      find.byType(QrImageView),
       matchesGoldenFile('./.golden/qr_image_golden.png'),
     );
   });
 
-  testWidgets('QrImage generates correct image with eye style', (tester) async {
+  testWidgets('QrImageView generates correct image with eye style',
+      (tester) async {
     final qrImage = MaterialApp(
       home: Center(
         child: RepaintBoundary(
-          child: QrImage(
+          child: QrImageView(
             data: 'This is a test image',
             version: QrVersions.auto,
             gapless: true,
@@ -51,17 +51,17 @@ void main() {
     );
     await tester.pumpWidget(qrImage);
     await expectLater(
-      find.byType(QrImage),
+      find.byType(QrImageView),
       matchesGoldenFile('./.golden/qr_image_eye_styled_golden.png'),
     );
   });
 
-  testWidgets('QrImage generates correct image with data module style',
+  testWidgets('QrImageView generates correct image with data module style',
       (tester) async {
     final qrImage = MaterialApp(
       home: Center(
         child: RepaintBoundary(
-          child: QrImage(
+          child: QrImageView(
             data: 'This is a test image',
             version: QrVersions.auto,
             gapless: true,
@@ -76,17 +76,18 @@ void main() {
     );
     await tester.pumpWidget(qrImage);
     await expectLater(
-      find.byType(QrImage),
+      find.byType(QrImageView),
       matchesGoldenFile('./.golden/qr_image_data_module_styled_golden.png'),
     );
   });
 
-  testWidgets('QrImage generates correct image with eye and data module sytle',
+  testWidgets(
+      'QrImageView generates correct image with eye and data module sytle',
       (tester) async {
     final qrImage = MaterialApp(
       home: Center(
         child: RepaintBoundary(
-          child: QrImage(
+          child: QrImageView(
             data: 'This is a test image',
             version: QrVersions.auto,
             gapless: true,
@@ -105,18 +106,18 @@ void main() {
     );
     await tester.pumpWidget(qrImage);
     await expectLater(
-      find.byType(QrImage),
+      find.byType(QrImageView),
       matchesGoldenFile('./.golden/qr_image_eye_data_module_styled_golden.png'),
     );
   });
 
   testWidgets(
-      'QrImage does not apply eye and data module color when foreground '
+      'QrImageView does not apply eye and data module color when foreground '
       'color is also specified', (tester) async {
     final qrImage = MaterialApp(
       home: Center(
         child: RepaintBoundary(
-          child: QrImage(
+          child: QrImageView(
             data: 'This is a test image',
             version: QrVersions.auto,
             gapless: true,
@@ -136,18 +137,18 @@ void main() {
     );
     await tester.pumpWidget(qrImage);
     await expectLater(
-      find.byType(QrImage),
+      find.byType(QrImageView),
       matchesGoldenFile('./.golden/qr_image_foreground_colored_golden.png'),
     );
   });
 
-  testWidgets('QrImage generates correct image with logo', (tester) async {
+  testWidgets('QrImageView generates correct image with logo', (tester) async {
     await pumpWidgetWithImages(
       tester,
       MaterialApp(
         home: Center(
           child: RepaintBoundary(
-            child: QrImage(
+            child: QrImageView(
               data: 'This is a a qr code with a logo',
               version: QrVersions.auto,
               gapless: true,
@@ -163,7 +164,7 @@ void main() {
     await tester.pumpAndSettle();
 
     await expectLater(
-      find.byType(QrImage),
+      find.byType(QrImageView),
       matchesGoldenFile('./.golden/qr_image_logo_golden.png'),
     );
   });
