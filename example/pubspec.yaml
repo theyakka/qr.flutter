@@ -2,7 +2,6 @@ name: example
 description: >
   The QR.Flutter example app.
 version: 2.0.0
-author: Yakka, LLC <hello@yakka.agency>
 homepage: https://github.com/lukef/qr.flutter
 publish_to: none
 

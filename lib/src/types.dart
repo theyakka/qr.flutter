@@ -1,6 +1,6 @@
 /*
  * QR.Flutter
- * Copyright (c) 2019 the QR.Flutter authors.
+ * Copyright (c) 2022 the QR.Flutter authors.
  * See LICENSE for distribution and usage details.
  */
 
@@ -45,6 +45,9 @@ enum QrEyeShape {
   /// Use square eye frame.
   square,
 
+  /// Use squares with rounded corners
+  roundedRect,
+
   /// Use circular eye frame.
   circle,
 }
@@ -53,6 +56,9 @@ enum QrEyeShape {
 enum QrDataModuleShape {
   /// Use square dots.
   square,
+
+  /// Use squares with rounded corners
+  roundedRect,
 
   /// Use circular dots.
   circle,

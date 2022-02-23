@@ -1,6 +1,6 @@
 /*
  * QR.Flutter
- * Copyright (c) 2019 the QR.Flutter authors.
+ * Copyright (c) 2022 the QR.Flutter authors.
  * See LICENSE for distribution and usage details.
  */
 
@@ -18,12 +18,7 @@ import 'qr_versions.dart';
 import 'types.dart';
 import 'validator.dart';
 
-// ignore_for_file: deprecated_member_use_from_same_package
-
 const _finderPatternLimit = 7;
-
-// default color for the qr code pixels
-const Color? _qrDefaultColor = null;
 
 /// A [CustomPainter] object that you can use to paint a QR code.
 class QrPainter extends CustomPainter {
@@ -32,8 +27,6 @@ class QrPainter extends CustomPainter {
     required String data,
     required this.version,
     this.errorCorrectionLevel = QrErrorCorrectLevel.L,
-    this.color = _qrDefaultColor,
-    this.emptyColor,
     this.gapless = false,
     this.embeddedImage,
     this.embeddedImageStyle,
@@ -45,7 +38,7 @@ class QrPainter extends CustomPainter {
       dataModuleShape: QrDataModuleShape.square,
       color: Color(0xFF000000),
     ),
-  }) : assert(QrVersions.isSupportedVersion(version)) {
+  }) : assert(isSupportedVersion(version)) {
     _init(data);
   }
 
@@ -54,8 +47,6 @@ class QrPainter extends CustomPainter {
   /// flow or for when you need to pre-validate the QR data.
   QrPainter.withQr({
     required QrCode qr,
-    this.color = _qrDefaultColor,
-    this.emptyColor,
     this.gapless = false,
     this.embeddedImage,
     this.embeddedImageStyle,
@@ -80,14 +71,6 @@ class QrPainter extends CustomPainter {
   /// The error correction level of the QR code.
   final int errorCorrectionLevel; // the qr code error correction level
 
-  /// The color of the squares.
-  @Deprecated('use colors in eyeStyle and dataModuleStyle instead')
-  final Color? color; // the color of the dark squares
-
-  /// The color of the non-squares (background).
-  @Deprecated(
-      'You should use the background color value of your container widget')
-  final Color? emptyColor; // the other color
   /// If set to false, the painter will leave a 1px gap between each of the
   /// squares.
   final bool gapless;
@@ -116,17 +99,17 @@ class QrPainter extends CustomPainter {
   late final int _calcVersion;
 
   /// The size of the 'gap' between the pixels
-  final double _gapSize = 0.25;
+  final double _gapSize = 3;
 
   /// Cache for all of the [Paint] objects.
   final _paintCache = PaintCache();
 
   void _init(String data) {
-    if (!QrVersions.isSupportedVersion(version)) {
+    if (!isSupportedVersion(version)) {
       throw QrUnsupportedVersionException(version);
     }
     // configure and make the QR code data
-    final validationResult = QrValidator.validate(
+    final validationResult = validateData(
       data: data,
       version: version,
       errorCorrectionLevel: errorCorrectionLevel,
@@ -188,35 +171,25 @@ class QrPainter extends CustomPainter {
         FinderPatternPosition.topRight, canvas, paintMetrics);
 
     // DEBUG: draw the inner content boundary
-//    final paint = Paint()..style = ui.PaintingStyle.stroke;
-//    paint.strokeWidth = 1;
-//    paint.color = const Color(0x55222222);
-//    canvas.drawRect(
-//        Rect.fromLTWH(paintMetrics.inset, paintMetrics.inset,
-//            paintMetrics.innerContentSize, paintMetrics.innerContentSize),
-//        paint);
+    // final paint = Paint()..style = ui.PaintingStyle.stroke;
+    // paint.strokeWidth = 1;
+    // paint.color = const Color(0x55222222);
+    // canvas.drawRect(
+    //     Rect.fromLTWH(paintMetrics.inset, paintMetrics.inset,
+    //         paintMetrics.innerContentSize, paintMetrics.innerContentSize),
+    //     paint);
 
     double left;
     double top;
     final gap = !gapless ? _gapSize : 0;
     // get the painters for the pixel information
     final pixelPaint = _paintCache.firstPaint(QrCodeElement.codePixel);
-    if (color != null) {
-      pixelPaint!.color = color!;
-    } else {
-      pixelPaint!.color = dataModuleStyle.color!;
-    }
-    Paint? emptyPixelPaint;
-    if (emptyColor != null) {
-      emptyPixelPaint = _paintCache.firstPaint(QrCodeElement.codePixelEmpty);
-      emptyPixelPaint!.color = emptyColor!;
-    }
+    pixelPaint!.color = dataModuleStyle.color!;
     for (var x = 0; x < _qr!.moduleCount; x++) {
       for (var y = 0; y < _qr!.moduleCount; y++) {
         // draw the finder patterns independently
         if (_isFinderPatternPosition(x, y)) continue;
-        final paint = _qrImage.isDark(y, x) ? pixelPaint : emptyPixelPaint;
-        if (paint == null) continue;
+        if (!_qrImage.isDark(y, x)) continue;
         // paint a pixel
         left = paintMetrics.inset + (x * (paintMetrics.pixelSize + gap));
         top = paintMetrics.inset + (y * (paintMetrics.pixelSize + gap));
@@ -235,11 +208,17 @@ class QrPainter extends CustomPainter {
           paintMetrics.pixelSize + pixelVTweak,
         );
         if (dataModuleStyle.dataModuleShape == QrDataModuleShape.square) {
-          canvas.drawRect(squareRect, paint);
+          canvas.drawRect(squareRect, pixelPaint);
         } else {
-          final roundedRect = RRect.fromRectAndRadius(squareRect,
-              Radius.circular(paintMetrics.pixelSize + pixelHTweak));
-          canvas.drawRRect(roundedRect, paint);
+          Radius radius;
+          if (dataModuleStyle.dataModuleShape == QrDataModuleShape.circle) {
+            radius = Radius.circular(paintMetrics.pixelSize + pixelHTweak);
+          } else {
+            radius = Radius.elliptical(
+                paintMetrics.pixelSize * 0.4, paintMetrics.pixelSize * 0.4);
+          }
+          final roundedRect = RRect.fromRectAndRadius(squareRect, radius);
+          canvas.drawRRect(roundedRect, pixelPaint);
         }
       }
     }
@@ -306,24 +285,11 @@ class QrPainter extends CustomPainter {
     final outerPaint = _paintCache.firstPaint(QrCodeElement.finderPatternOuter,
         position: position)!;
     outerPaint.strokeWidth = metrics.pixelSize;
-    if (color != null) {
-      outerPaint.color = color!;
-    } else {
-      outerPaint.color = eyeStyle.color!;
-    }
-
-    final innerPaint = _paintCache.firstPaint(QrCodeElement.finderPatternInner,
-        position: position)!;
-    innerPaint.strokeWidth = metrics.pixelSize;
-    innerPaint.color = emptyColor ?? Color(0x00ffffff);
+    outerPaint.color = eyeStyle.color!;
 
     final dotPaint = _paintCache.firstPaint(QrCodeElement.finderPatternDot,
         position: position);
-    if (color != null) {
-      dotPaint!.color = color!;
-    } else {
-      dotPaint!.color = eyeStyle.color!;
-    }
+    dotPaint!.color = eyeStyle.color!;
 
     final outerRect = Rect.fromLTWH(offset.dx, offset.dy, radius, radius);
 
@@ -338,16 +304,17 @@ class QrPainter extends CustomPainter {
 
     if (eyeStyle.eyeShape == QrEyeShape.square) {
       canvas.drawRect(outerRect, outerPaint);
-      canvas.drawRect(innerRect, innerPaint);
       canvas.drawRect(dotRect, dotPaint);
     } else {
+      Radius rectRadius;
+      if (eyeStyle.eyeShape == QrEyeShape.circle) {
+        rectRadius = Radius.circular(radius);
+      } else {
+        rectRadius = Radius.elliptical(radius * 0.3, radius * 0.3);
+      }
       final roundedOuterStrokeRect =
-          RRect.fromRectAndRadius(outerRect, Radius.circular(radius));
+          RRect.fromRectAndRadius(outerRect, rectRadius);
       canvas.drawRRect(roundedOuterStrokeRect, outerPaint);
-
-      final roundedInnerStrokeRect =
-          RRect.fromRectAndRadius(outerRect, Radius.circular(innerRadius));
-      canvas.drawRRect(roundedInnerStrokeRect, innerPaint);
 
       final roundedDotStrokeRect =
           RRect.fromRectAndRadius(dotRect, Radius.circular(dotSize));
@@ -449,8 +416,8 @@ class _PaintMetrics {
 
   void _calculateMetrics() {
     final gapTotal = (moduleCount - 1) * gapSize;
-    var pixelSize = (containerSize - gapTotal) / moduleCount;
-    _pixelSize = (pixelSize * 2).roundToDouble() / 2;
+    _pixelSize = (containerSize - gapTotal) / moduleCount;
+    // _pixelSize = (containerSize - gapTotal) / moduleCount;
     _innerContentSize = (_pixelSize * moduleCount) + gapTotal;
     _inset = (containerSize - _innerContentSize) / 2;
   }

@@ -1,6 +1,6 @@
 /*
  * QR.Flutter
- * Copyright (c) 2019 the QR.Flutter authors.
+ * Copyright (c) 2022 the QR.Flutter authors.
  * See LICENSE for distribution and usage details.
  */
 
@@ -25,7 +25,6 @@ class QrImageView extends StatefulWidget {
     this.size,
     this.padding = const EdgeInsets.all(10.0),
     this.backgroundColor = Colors.transparent,
-    this.foregroundColor,
     this.version = QrVersions.auto,
     this.errorCorrectionLevel = QrErrorCorrectLevel.L,
     this.errorStateBuilder,
@@ -43,7 +42,7 @@ class QrImageView extends StatefulWidget {
       color: Colors.black,
     ),
     this.embeddedImageEmitsError = false,
-  })  : assert(QrVersions.isSupportedVersion(version)),
+  })  : assert(isSupportedVersion(version)),
         _data = data,
         _qrCode = null,
         super(key: key);
@@ -56,7 +55,6 @@ class QrImageView extends StatefulWidget {
     this.size,
     this.padding = const EdgeInsets.all(10.0),
     this.backgroundColor = Colors.transparent,
-    this.foregroundColor,
     this.version = QrVersions.auto,
     this.errorCorrectionLevel = QrErrorCorrectLevel.L,
     this.errorStateBuilder,
@@ -74,7 +72,7 @@ class QrImageView extends StatefulWidget {
       color: Colors.black,
     ),
     this.embeddedImageEmitsError = false,
-  })  : assert(QrVersions.isSupportedVersion(version)),
+  })  : assert(isSupportedVersion(version)),
         _data = null,
         _qrCode = qr,
         super(key: key);
@@ -86,10 +84,6 @@ class QrImageView extends StatefulWidget {
 
   /// The background color of the final QR code widget.
   final Color backgroundColor;
-
-  /// The foreground color of the final QR code widget.
-  @Deprecated('use colors in eyeStyle and dataModuleStyle instead')
-  final Color? foregroundColor;
 
   /// The QR code version to use.
   final int version;
@@ -159,7 +153,7 @@ class _QrImageViewState extends State<QrImageView> {
   @override
   Widget build(BuildContext context) {
     if (widget._data != null) {
-      _validationResult = QrValidator.validate(
+      _validationResult = validateData(
         data: widget._data!,
         version: widget.version,
         errorCorrectionLevel: widget.errorCorrectionLevel,
@@ -188,7 +182,7 @@ class _QrImageViewState extends State<QrImageView> {
           future: _loadQrImage(context, widget.embeddedImageStyle),
           builder: (ctx, snapshot) {
             if (snapshot.error != null) {
-              print("snapshot error: ${snapshot.error}");
+              // print("snapshot error: ${snapshot.error}");
               if (widget.embeddedImageEmitsError) {
                 return _errorWidget(context, constraints, snapshot.error);
               } else {
@@ -196,7 +190,7 @@ class _QrImageViewState extends State<QrImageView> {
               }
             }
             if (snapshot.hasData) {
-              print('loaded image');
+              // print('loaded image');
               final loadedImage = snapshot.data;
               return _qrWidget(context, loadedImage, widgetSize);
             } else {
@@ -213,7 +207,6 @@ class _QrImageViewState extends State<QrImageView> {
   Widget _qrWidget(BuildContext context, ui.Image? image, double edgeLength) {
     final painter = QrPainter.withQr(
       qr: _qr!,
-      color: widget.foregroundColor,
       gapless: widget.gapless,
       embeddedImageStyle: widget.embeddedImageStyle,
       embeddedImage: image,

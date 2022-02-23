@@ -1,6 +1,6 @@
 /*
  * QR.Flutter
- * Copyright (c) 2019 the QR.Flutter authors.
+ * Copyright (c) 2022 the QR.Flutter authors.
  * See LICENSE for distribution and usage details.
  */
 
@@ -29,19 +29,23 @@ class _MainScreenState extends State<MainScreen> {
       builder: (ctx, snapshot) {
         final size = 280.0;
         if (!snapshot.hasData) {
-          return Container(width: size, height: size);
+          return Container(
+            width: size,
+            height: size,
+          );
         }
         return CustomPaint(
           size: Size.square(size),
           painter: QrPainter(
             data: message,
             version: QrVersions.auto,
+            gapless: false,
             eyeStyle: const QrEyeStyle(
-              eyeShape: QrEyeShape.square,
+              eyeShape: QrEyeShape.roundedRect,
               color: Color(0xff128760),
             ),
             dataModuleStyle: const QrDataModuleStyle(
-              dataModuleShape: QrDataModuleShape.circle,
+              dataModuleShape: QrDataModuleShape.roundedRect,
               color: Color(0xff1a5441),
             ),
             // size: 320.0,
@@ -64,10 +68,7 @@ class _MainScreenState extends State<MainScreen> {
             children: <Widget>[
               Expanded(
                 child: Center(
-                  child: Container(
-                    width: 280,
-                    child: qrFutureBuilder,
-                  ),
+                  child: qrFutureBuilder,
                 ),
               ),
               Padding(

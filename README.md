@@ -28,7 +28,7 @@ You should add the following to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  qr_flutter: ^4.0.0
+  qr_flutter: ^5.0.0
 ```
 
 **Note**: If you're using the Flutter `master` channel, if you encounter build issues, or want to try the latest and greatest then you should use the `master` branch and not a specific release version. To do so, use the following configuration in your `pubspec.yaml`:
@@ -57,7 +57,7 @@ Next, to render a basic QR code you can use the following code (or something lik
 ```dart
 QrImage(
   data: "1234567890",
-  version: QrVersions.auto,
+  version: versionAuto,
   size: 200.0,
 ),
 ```
@@ -92,7 +92,7 @@ A basic QR code will look something like:
 ```dart
 QrImage(
   data: 'This is a simple QR code',
-  version: QrVersions.auto,
+  version: versionAuto,
   size: 320,
   gapless: false,
 )
@@ -103,7 +103,7 @@ A QR code with an image (from your application's assets) will look like:
 ```dart
 QrImage(
   data: 'This QR code has an embedded image as well',
-  version: QrVersions.auto,
+  version: versionAuto,
   size: 320,
   gapless: false,
   embeddedImage: AssetImage('assets/images/my_embedded_image.png'),
@@ -138,8 +138,7 @@ QrImage(
 # FAQ
 ## Has it been tested in production? Can I use it in production?
 
-Yep! It's stable and ready to rock. It's currently in use in quite a few production applications including:
-- Sixpoint: [Android](https://play.google.com/store/apps/details?id=com.sixpoint.sixpoint&hl=en_US) & [iOS](https://itunes.apple.com/us/app/sixpoint/id663008674?mt=8) 
+Yep! It's stable and ready to rock. It's currently in use in quite a few production applications.
 
 # Outro
 ## Credits

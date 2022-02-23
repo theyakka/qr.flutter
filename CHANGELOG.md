@@ -1,13 +1,15 @@
-# 4.0.1 
+# 5.0.0 
+- **BREAKING**: Rename `QrImage` to `QrImageView`.
+- **BREAKING**: Removed `QrVersions` class in favour of top-level `const` and methods.
+- **BREAKING**: 
 - Bump `qr` dependency (from `^2.0.0` to `^3.0.0`).
-- **BREAKING**: Rename `QrImage` to `QrImageView`
 
 # 4.0.0
-- Migrate to null safety
+- Migrate to null safety.
 
 # 3.2.0
-- Fix issue where finder patterns don't render correctly with the painter
-- Small fixes + optimizations
+- Fix issue where finder patterns don't render correctly with the painter.
+- Small fixes + optimizations.
 
 # 3.1.0
 - Fix issue with `emptyColor` rendering.
@@ -31,37 +33,37 @@
 - `qr.dart` is now exported so you don't need a second `import`.
 
 # 2.0.0
-- Flutter 1.2.1 compatibility
+- Flutter 1.2.1 compatibility.
 
 # 2.0.0-dev.1
 - Fixes issue caused by breaking change in Flutter (https://github.com/flutter/flutter/issues/26655).
 
 # 1.1.6
-- Adds analyzer configuration
-- Fixes linting issues
-- Migrate to Dart 2.x friendly syntax
-- Tidy some initialization logic / code
-- Bump copyright
+- Adds analyzer configuration.
+- Fixes linting issues.
+- Migrate to Dart 2.x friendly syntax.
+- Tidy some initialization logic / code.
+- Bump copyright.
 
 # 1.1.5
-- Add image data export functions (see `test/painter_tests.dart` for an example)
+- Add image data export functions (see `test/painter_tests.dart` for an example).
 
 # 1.1.4
-- Add gapless toggle
+- Add gapless toggle.
 
 # 1.1.3
-- Lower min sdk version to cater to some older versions of Flutter
+- Lower min sdk version to cater to some older versions of Flutter.
 
 # 1.1.2
-- The QrImage widget will now autosize if no size has been defined (thanks @romkor!)
-- Requires Dart 2 (as so does Flutter)
-- Dart 2 pubspec compatability changes
+- The QrImage widget will now autosize if no size has been defined (thanks @romkor!).
+- Requires Dart 2 (as so does Flutter).
+- Dart 2 pubspec compatability changes.
 
 # 1.1.1
-- Fixes and issue where the QR image won't get repainted even though the data has changed
+- Fixes and issue where the QR image won't get repainted even though the data has changed.
 
 # 1.1.0
-- Update to 1.0 release of the dart qr library
+- Update to 1.0 release of the dart qr library.
 
 # 1.0.0
-- Initial release
+- Initial release.
