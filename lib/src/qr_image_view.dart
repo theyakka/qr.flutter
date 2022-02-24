@@ -9,6 +9,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:qr/qr.dart';
+import 'package:qr_flutter/src/appearance.dart';
 
 import 'qr_painter.dart';
 import 'qr_versions.dart';
@@ -22,25 +23,14 @@ class QrImageView extends StatefulWidget {
   QrImageView({
     required String data,
     Key? key,
-    this.size,
-    this.padding = const EdgeInsets.all(10.0),
-    this.backgroundColor = Colors.transparent,
     this.version = QrVersions.auto,
     this.errorCorrectionLevel = QrErrorCorrectLevel.L,
+    this.appearance = const QrAppearance(),
+    this.size,
+    this.padding = const EdgeInsets.all(10.0),
     this.errorStateBuilder,
     this.constrainErrorBounds = true,
-    this.gapless = true,
-    this.embeddedImage,
-    this.embeddedImageStyle,
     this.semanticsLabel = 'qr code',
-    this.eyeStyle = const QrEyeStyle(
-      eyeShape: QrEyeShape.square,
-      color: Colors.black,
-    ),
-    this.dataModuleStyle = const QrDataModuleStyle(
-      dataModuleShape: QrDataModuleShape.square,
-      color: Colors.black,
-    ),
     this.embeddedImageEmitsError = false,
   })  : assert(isSupportedVersion(version)),
         _data = data,
@@ -52,25 +42,14 @@ class QrImageView extends StatefulWidget {
   QrImageView.withQr({
     required QrCode qr,
     Key? key,
-    this.size,
-    this.padding = const EdgeInsets.all(10.0),
-    this.backgroundColor = Colors.transparent,
     this.version = QrVersions.auto,
     this.errorCorrectionLevel = QrErrorCorrectLevel.L,
+    this.appearance = const QrAppearance(),
+    this.size,
+    this.padding = const EdgeInsets.all(10.0),
     this.errorStateBuilder,
     this.constrainErrorBounds = true,
-    this.gapless = true,
-    this.embeddedImage,
-    this.embeddedImageStyle,
     this.semanticsLabel = 'qr code',
-    this.eyeStyle = const QrEyeStyle(
-      eyeShape: QrEyeShape.square,
-      color: Colors.black,
-    ),
-    this.dataModuleStyle = const QrDataModuleStyle(
-      dataModuleShape: QrDataModuleShape.square,
-      color: Colors.black,
-    ),
     this.embeddedImageEmitsError = false,
   })  : assert(isSupportedVersion(version)),
         _data = null,
@@ -82,14 +61,14 @@ class QrImageView extends StatefulWidget {
   // The QR code data passed to the widget
   final QrCode? _qrCode;
 
-  /// The background color of the final QR code widget.
-  final Color backgroundColor;
-
   /// The QR code version to use.
   final int version;
 
   /// The QR code error correction level to use.
   final int errorCorrectionLevel;
+
+  /// Configuration options for modifying how the QR code looks.
+  final QrAppearance appearance;
 
   /// The external padding between the edge of the widget and the content.
   final EdgeInsets padding;
@@ -111,10 +90,6 @@ class QrImageView extends StatefulWidget {
   /// content widget and error widget will adhere to the size value.
   final bool constrainErrorBounds;
 
-  /// If set to false, each of the squares in the QR code will have a small
-  /// gap. Default is true.
-  final bool gapless;
-
   /// The image data to embed (as an overlay) in the QR code. The image will
   /// be added to the center of the QR code.
   final ImageProvider? embeddedImage;
@@ -132,12 +107,6 @@ class QrImageView extends StatefulWidget {
   /// the qr code.
   /// Default is 'qr code'.
   final String semanticsLabel;
-
-  /// Styling option for QR Eye ball and frame.
-  final QrEyeStyle eyeStyle;
-
-  /// Styling option for QR data module.
-  final QrDataModuleStyle dataModuleStyle;
 
   @override
   _QrImageViewState createState() => _QrImageViewState();
@@ -175,11 +144,11 @@ class _QrImageViewState extends State<QrImageView> {
       }
       // no error, build the regular widget
       final widgetSize = widget.size ?? constraints.biggest.shortestSide;
-      if (widget.embeddedImage != null) {
+      if (widget.appearance.embeddedImage != null) {
         // if requesting to embed an image then we need to load via a
         // FutureBuilder because the image provider will be async.
         return FutureBuilder<ui.Image>(
-          future: _loadQrImage(context, widget.embeddedImageStyle),
+          future: _loadQrImage(context, widget.appearance.embeddedImageStyle),
           builder: (ctx, snapshot) {
             if (snapshot.error != null) {
               // print("snapshot error: ${snapshot.error}");

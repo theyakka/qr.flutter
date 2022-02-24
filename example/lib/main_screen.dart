@@ -27,7 +27,7 @@ class _MainScreenState extends State<MainScreen> {
     final qrFutureBuilder = FutureBuilder<ui.Image>(
       future: _loadOverlayImage(),
       builder: (ctx, snapshot) {
-        final size = 280.0;
+        final size = 380.0;
         if (!snapshot.hasData) {
           return Container(
             width: size,

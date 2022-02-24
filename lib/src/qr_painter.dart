@@ -11,6 +11,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:qr/qr.dart';
+import 'package:qr_flutter/src/appearance.dart';
 
 import 'errors.dart';
 import 'paint_cache.dart';
@@ -26,18 +27,10 @@ class QrPainter extends CustomPainter {
   QrPainter({
     required String data,
     required this.version,
-    this.errorCorrectionLevel = QrErrorCorrectLevel.L,
-    this.gapless = false,
+    this.errorCorrectionLevel = QrErrorCorrectLevel.M,
+    this.appearance = const QrAppearance(),
     this.embeddedImage,
-    this.embeddedImageStyle,
-    this.eyeStyle = const QrEyeStyle(
-      eyeShape: QrEyeShape.square,
-      color: Color(0xFF000000),
-    ),
-    this.dataModuleStyle = const QrDataModuleStyle(
-      dataModuleShape: QrDataModuleShape.square,
-      color: Color(0xFF000000),
-    ),
+    this.embeddedImageStyle = const QrEmbeddedImageStyle(),
   }) : assert(isSupportedVersion(version)) {
     _init(data);
   }
@@ -47,17 +40,9 @@ class QrPainter extends CustomPainter {
   /// flow or for when you need to pre-validate the QR data.
   QrPainter.withQr({
     required QrCode qr,
-    this.gapless = false,
+    this.appearance = const QrAppearance(),
     this.embeddedImage,
-    this.embeddedImageStyle,
-    this.eyeStyle = const QrEyeStyle(
-      eyeShape: QrEyeShape.square,
-      color: Color(0xFF000000),
-    ),
-    this.dataModuleStyle = const QrDataModuleStyle(
-      dataModuleShape: QrDataModuleShape.square,
-      color: Color(0xFF000000),
-    ),
+    this.embeddedImageStyle = const QrEmbeddedImageStyle(),
   })  : _qr = qr,
         version = qr.typeNumber,
         errorCorrectionLevel = qr.errorCorrectLevel {
@@ -71,9 +56,8 @@ class QrPainter extends CustomPainter {
   /// The error correction level of the QR code.
   final int errorCorrectionLevel; // the qr code error correction level
 
-  /// If set to false, the painter will leave a 1px gap between each of the
-  /// squares.
-  final bool gapless;
+  /// Configuration options for modifying how the QR code looks.
+  final QrAppearance appearance;
 
   /// The image data to embed (as an overlay) in the QR code. The image will
   /// be added to the center of the QR code.
@@ -81,12 +65,6 @@ class QrPainter extends CustomPainter {
 
   /// Styling options for the image overlay.
   final QrEmbeddedImageStyle? embeddedImageStyle;
-
-  /// Styling option for QR Eye ball and frame.
-  final QrEyeStyle eyeStyle;
-
-  /// Styling option for QR data module.
-  final QrDataModuleStyle dataModuleStyle;
 
   /// The base QR code data
   QrCode? _qr;
@@ -97,9 +75,6 @@ class QrPainter extends CustomPainter {
   /// This is the version (after calculating) that we will use if the user has
   /// requested the 'auto' version.
   late final int _calcVersion;
-
-  /// The size of the 'gap' between the pixels
-  final double _gapSize = 3;
 
   /// Cache for all of the [Paint] objects.
   final _paintCache = PaintCache();
@@ -160,7 +135,7 @@ class QrPainter extends CustomPainter {
     final paintMetrics = _PaintMetrics(
       containerSize: size.shortestSide,
       moduleCount: _qr!.moduleCount,
-      gapSize: (gapless ? 0 : _gapSize),
+      gapSize: appearance.gapSize.toDouble(),
     );
 
     // draw the finder pattern elements
@@ -181,24 +156,26 @@ class QrPainter extends CustomPainter {
 
     double left;
     double top;
-    final gap = !gapless ? _gapSize : 0;
     // get the painters for the pixel information
     final pixelPaint = _paintCache.firstPaint(QrCodeElement.codePixel);
-    pixelPaint!.color = dataModuleStyle.color!;
+    pixelPaint!.color = appearance.markerStyle.color;
     for (var x = 0; x < _qr!.moduleCount; x++) {
       for (var y = 0; y < _qr!.moduleCount; y++) {
         // draw the finder patterns independently
         if (_isFinderPatternPosition(x, y)) continue;
         if (!_qrImage.isDark(y, x)) continue;
         // paint a pixel
-        left = paintMetrics.inset + (x * (paintMetrics.pixelSize + gap));
-        top = paintMetrics.inset + (y * (paintMetrics.pixelSize + gap));
+        left = paintMetrics.inset +
+            (x * (paintMetrics.pixelSize + appearance.gapSize));
+        top = paintMetrics.inset +
+            (y * (paintMetrics.pixelSize + appearance.gapSize));
         var pixelHTweak = 0.0;
         var pixelVTweak = 0.0;
-        if (gapless && _hasAdjacentHorizontalPixel(x, y, _qr!.moduleCount)) {
+        final isGapless = appearance.gapSize == 0;
+        if (isGapless && _hasAdjacentHorizontalPixel(x, y, _qr!.moduleCount)) {
           pixelHTweak = 0.5;
         }
-        if (gapless && _hasAdjacentVerticalPixel(x, y, _qr!.moduleCount)) {
+        if (isGapless && _hasAdjacentVerticalPixel(x, y, _qr!.moduleCount)) {
           pixelVTweak = 0.5;
         }
         final squareRect = Rect.fromLTWH(
@@ -207,11 +184,11 @@ class QrPainter extends CustomPainter {
           paintMetrics.pixelSize + pixelHTweak,
           paintMetrics.pixelSize + pixelVTweak,
         );
-        if (dataModuleStyle.dataModuleShape == QrDataModuleShape.square) {
+        if (appearance.moduleStyle.shape == QrDataModuleShape.square) {
           canvas.drawRect(squareRect, pixelPaint);
         } else {
           Radius radius;
-          if (dataModuleStyle.dataModuleShape == QrDataModuleShape.circle) {
+          if (appearance.moduleStyle.shape == QrDataModuleShape.circle) {
             radius = Radius.circular(paintMetrics.pixelSize + pixelHTweak);
           } else {
             radius = Radius.elliptical(
@@ -394,10 +371,11 @@ class QrPainter extends CustomPainter {
 }
 
 class _PaintMetrics {
-  _PaintMetrics(
-      {required this.containerSize,
-      required this.gapSize,
-      required this.moduleCount}) {
+  _PaintMetrics({
+    required this.containerSize,
+    required this.gapSize,
+    required this.moduleCount,
+  }) {
     _calculateMetrics();
   }
 
@@ -417,7 +395,6 @@ class _PaintMetrics {
   void _calculateMetrics() {
     final gapTotal = (moduleCount - 1) * gapSize;
     _pixelSize = (containerSize - gapTotal) / moduleCount;
-    // _pixelSize = (containerSize - gapTotal) / moduleCount;
     _innerContentSize = (_pixelSize * moduleCount) + gapTotal;
     _inset = (containerSize - _innerContentSize) / 2;
   }
