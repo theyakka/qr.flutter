@@ -36,8 +36,8 @@ class _MainScreenState extends State<MainScreen> {
           moduleStyle: QrDataModuleStyle(
             colors: QrColors.random([
               Color(0xFF999999),
-              Color(0xFFFF0000),
-              Color(0xFF00FF00),
+              Color(0xFFFF0066),
+              Color(0xFF00FFAE),
               Color(0xFF0000FF),
             ]),
             shape: QrDataModuleShape.circle,
