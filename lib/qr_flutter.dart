@@ -6,6 +6,8 @@
 
 export 'package:qr/qr.dart';
 
+export 'src/appearance.dart';
+export 'src/colors.dart';
 export 'src/errors.dart';
 export 'src/qr_image_view.dart';
 export 'src/qr_painter.dart';

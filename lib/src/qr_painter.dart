@@ -11,6 +11,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:qr/qr.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:qr_flutter/src/appearance.dart';
 
 import 'errors.dart';
@@ -31,7 +32,8 @@ class QrPainter extends CustomPainter {
     this.appearance = const QrAppearance(),
     this.embeddedImage,
     this.embeddedImageStyle = const QrEmbeddedImageStyle(),
-  }) : assert(isSupportedVersion(version)) {
+  })  : _isGapless = appearance.gapSize == 0,
+        assert(isSupportedVersion(version)) {
     _init(data);
   }
 
@@ -45,7 +47,8 @@ class QrPainter extends CustomPainter {
     this.embeddedImageStyle = const QrEmbeddedImageStyle(),
   })  : _qr = qr,
         version = qr.typeNumber,
-        errorCorrectionLevel = qr.errorCorrectLevel {
+        errorCorrectionLevel = qr.errorCorrectLevel,
+        _isGapless = appearance.gapSize == 0 {
     _calcVersion = version;
     _initPaints();
   }
@@ -78,6 +81,9 @@ class QrPainter extends CustomPainter {
 
   /// Cache for all of the [Paint] objects.
   final _paintCache = PaintCache();
+
+  /// Do we need to render gaps between the modules.
+  final bool _isGapless;
 
   void _init(String data) {
     if (!isSupportedVersion(version)) {
@@ -158,7 +164,6 @@ class QrPainter extends CustomPainter {
     double top;
     // get the painters for the pixel information
     final pixelPaint = _paintCache.firstPaint(QrCodeElement.codePixel);
-    pixelPaint!.color = appearance.markerStyle.color;
     for (var x = 0; x < _qr!.moduleCount; x++) {
       for (var y = 0; y < _qr!.moduleCount; y++) {
         // draw the finder patterns independently
@@ -169,27 +174,33 @@ class QrPainter extends CustomPainter {
             (x * (paintMetrics.pixelSize + appearance.gapSize));
         top = paintMetrics.inset +
             (y * (paintMetrics.pixelSize + appearance.gapSize));
-        var pixelHTweak = 0.0;
-        var pixelVTweak = 0.0;
-        final isGapless = appearance.gapSize == 0;
-        if (isGapless && _hasAdjacentHorizontalPixel(x, y, _qr!.moduleCount)) {
-          pixelHTweak = 0.5;
-        }
-        if (isGapless && _hasAdjacentVerticalPixel(x, y, _qr!.moduleCount)) {
-          pixelVTweak = 0.5;
-        }
         final squareRect = Rect.fromLTWH(
           left,
           top,
-          paintMetrics.pixelSize + pixelHTweak,
-          paintMetrics.pixelSize + pixelVTweak,
+          paintMetrics.pixelSize,
+          paintMetrics.pixelSize,
         );
-        if (appearance.moduleStyle.shape == QrDataModuleShape.square) {
+
+        var pixelColor = Color(0xFF000000);
+        final colors = appearance.moduleStyle.colors;
+        if (colors != null && colors.length > 0) {
+          if (colors.mode == null || colors.mode == ColorMode.random) {
+            pixelColor = colors.random()!;
+          } else {
+            pixelColor = colors.first!;
+          }
+        }
+        pixelPaint!.color = pixelColor;
+
+        if (appearance.moduleStyle.shape == null ||
+            appearance.moduleStyle.shape == QrDataModuleShape.square) {
           canvas.drawRect(squareRect, pixelPaint);
+        } else if (appearance.moduleStyle.shape == QrDataModuleShape.diamond) {
+          // const diamondRect = null;
         } else {
           Radius radius;
           if (appearance.moduleStyle.shape == QrDataModuleShape.circle) {
-            radius = Radius.circular(paintMetrics.pixelSize + pixelHTweak);
+            radius = Radius.circular(paintMetrics.pixelSize);
           } else {
             radius = Radius.elliptical(
                 paintMetrics.pixelSize * 0.4, paintMetrics.pixelSize * 0.4);
@@ -262,40 +273,61 @@ class QrPainter extends CustomPainter {
     final outerPaint = _paintCache.firstPaint(QrCodeElement.finderPatternOuter,
         position: position)!;
     outerPaint.strokeWidth = metrics.pixelSize;
-    outerPaint.color = eyeStyle.color!;
+    outerPaint.color = appearance.markerStyle.color;
 
     final dotPaint = _paintCache.firstPaint(QrCodeElement.finderPatternDot,
         position: position);
-    dotPaint!.color = eyeStyle.color!;
+    dotPaint!.color =
+        appearance.markerDotStyle?.color ?? appearance.markerStyle.color;
 
     final outerRect = Rect.fromLTWH(offset.dx, offset.dy, radius, radius);
-
-    final innerRadius = radius - (2 * metrics.pixelSize);
-    final innerRect = Rect.fromLTWH(offset.dx + metrics.pixelSize,
-        offset.dy + metrics.pixelSize, innerRadius, innerRadius);
-
     final gap = metrics.pixelSize * 2;
     final dotSize = radius - gap - (2 * strokeAdjust);
     final dotRect = Rect.fromLTWH(offset.dx + metrics.pixelSize + strokeAdjust,
         offset.dy + metrics.pixelSize + strokeAdjust, dotSize, dotSize);
 
-    if (eyeStyle.eyeShape == QrEyeShape.square) {
+    // draw the marker frame. NOTE: if the marker dot style is null (not
+    // specified) then we will draw the dot here also. The dot style, in this
+    // case, will mirror the style of the marker.
+    if (appearance.markerStyle.shape == QrMarkerShape.square) {
       canvas.drawRect(outerRect, outerPaint);
-      canvas.drawRect(dotRect, dotPaint);
+      // no marker dot style, draw the dot to match.
+      if (appearance.markerDotStyle == null) {
+        canvas.drawRect(dotRect, dotPaint);
+      }
     } else {
       Radius rectRadius;
-      if (eyeStyle.eyeShape == QrEyeShape.circle) {
+      Radius dotRadius;
+      if (appearance.markerStyle.shape == QrMarkerShape.circle) {
         rectRadius = Radius.circular(radius);
+        dotRadius = Radius.circular(dotSize);
       } else {
         rectRadius = Radius.elliptical(radius * 0.3, radius * 0.3);
+        dotRadius = Radius.elliptical(dotSize * 0.3, dotSize * 0.3);
       }
-      final roundedOuterStrokeRect =
-          RRect.fromRectAndRadius(outerRect, rectRadius);
-      canvas.drawRRect(roundedOuterStrokeRect, outerPaint);
+      canvas.drawRRect(
+          RRect.fromRectAndRadius(outerRect, rectRadius), outerPaint);
+      // no marker dot style, draw the dot to match.
+      if (appearance.markerDotStyle == null) {
+        canvas.drawRRect(RRect.fromRectAndRadius(dotRect, dotRadius), dotPaint);
+      }
+    }
 
-      final roundedDotStrokeRect =
-          RRect.fromRectAndRadius(dotRect, Radius.circular(dotSize));
-      canvas.drawRRect(roundedDotStrokeRect, dotPaint);
+    // if the marker dot style has been defined, we will draw the dot now.
+
+    var dotStyle = appearance.markerDotStyle;
+    if (dotStyle != null) {
+      if (dotStyle.shape == QrMarkerDotShape.square) {
+        canvas.drawRect(dotRect, dotPaint);
+      } else {
+        Radius dotRadius;
+        if (dotStyle.shape == QrMarkerDotShape.circle) {
+          dotRadius = Radius.circular(dotSize);
+        } else {
+          dotRadius = Radius.elliptical(dotSize * 0.3, dotSize * 0.3);
+        }
+        canvas.drawRRect(RRect.fromRectAndRadius(dotRect, dotRadius), dotPaint);
+      }
     }
   }
 
@@ -330,20 +362,22 @@ class QrPainter extends CustomPainter {
         Size(embeddedImage!.width.toDouble(), embeddedImage!.height.toDouble());
     final src = Alignment.center.inscribe(srcSize, Offset.zero & srcSize);
     final dst = Alignment.center.inscribe(size, position & size);
+    final imageStrokePaint = Paint()
+      ..color = Color(0xFF000000)
+      ..style = PaintingStyle.stroke;
+    canvas.drawRect(dst, imageStrokePaint);
     canvas.drawImageRect(embeddedImage!, src, dst, paint);
   }
 
   @override
   bool shouldRepaint(CustomPainter oldPainter) {
     if (oldPainter is QrPainter) {
+      // TODO - update
       return errorCorrectionLevel != oldPainter.errorCorrectionLevel ||
           _calcVersion != oldPainter._calcVersion ||
           _qr != oldPainter._qr ||
-          gapless != oldPainter.gapless ||
           embeddedImage != oldPainter.embeddedImage ||
-          embeddedImageStyle != oldPainter.embeddedImageStyle ||
-          eyeStyle != oldPainter.eyeStyle ||
-          dataModuleStyle != oldPainter.dataModuleStyle;
+          embeddedImageStyle != oldPainter.embeddedImageStyle;
     }
     return true;
   }

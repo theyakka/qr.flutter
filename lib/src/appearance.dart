@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:qr_flutter/src/colors.dart';
 
 /// Enumeration representing the finder pattern outer marker frame.
 enum QrMarkerShape {
@@ -26,6 +27,9 @@ enum QrMarkerDotShape {
 
 /// Enumeration representing the shape of Data modules inside QR.
 enum QrDataModuleShape {
+  /// Use diamond dots.
+  diamond,
+
   /// Use square dots.
   square,
 
@@ -101,17 +105,6 @@ class QrMarkerDotStyle {
 
   /// Color to tint the eye.
   final Color color;
-
-  @override
-  int get hashCode => shape.hashCode ^ color.hashCode;
-
-  @override
-  bool operator ==(Object other) {
-    if (other is QrMarkerDotStyle) {
-      return shape == other.shape && color == other.color;
-    }
-    return false;
-  }
 }
 
 /// Styling options for data module.
@@ -119,25 +112,14 @@ class QrDataModuleStyle {
   /// Create a new set of styling options for data modules.
   const QrDataModuleStyle({
     this.shape,
-    this.color,
+    this.colors,
   });
 
   /// Eye shape.
   final QrDataModuleShape? shape;
 
   /// Color to tint the data modules.
-  final Color? color;
-
-  @override
-  int get hashCode => shape.hashCode ^ color.hashCode;
-
-  @override
-  bool operator ==(Object other) {
-    if (other is QrDataModuleStyle) {
-      return shape == other.shape && color == other.color;
-    }
-    return false;
-  }
+  final QrColors? colors;
 }
 
 /// Styling options for any embedded image overlay
@@ -158,15 +140,4 @@ class QrEmbeddedImageStyle {
 
   /// Check to see if the style object has a non-null, non-zero size.
   bool get hasDefinedSize => size != null && size!.longestSide > 0;
-
-  @override
-  int get hashCode => size.hashCode ^ color.hashCode;
-
-  @override
-  bool operator ==(Object other) {
-    if (other is QrEmbeddedImageStyle) {
-      return size == other.size && color == other.color;
-    }
-    return false;
-  }
 }

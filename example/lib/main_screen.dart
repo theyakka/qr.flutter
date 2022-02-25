@@ -27,31 +27,43 @@ class _MainScreenState extends State<MainScreen> {
     final qrFutureBuilder = FutureBuilder<ui.Image>(
       future: _loadOverlayImage(),
       builder: (ctx, snapshot) {
-        final size = 380.0;
         if (!snapshot.hasData) {
-          return Container(
-            width: size,
-            height: size,
-          );
+          return Container();
         }
-        return CustomPaint(
-          size: Size.square(size),
-          painter: QrPainter(
-            data: message,
-            version: QrVersions.auto,
-            gapless: false,
-            eyeStyle: const QrEyeStyle(
-              eyeShape: QrEyeShape.roundedRect,
-              color: Color(0xff128760),
-            ),
-            dataModuleStyle: const QrDataModuleStyle(
-              dataModuleShape: QrDataModuleShape.roundedRect,
-              color: Color(0xff1a5441),
-            ),
-            // size: 320.0,
-            embeddedImage: snapshot.data,
-            embeddedImageStyle: QrEmbeddedImageStyle(
-              size: Size.square(60),
+
+        final appearance = QrAppearance(
+          gapSize: 1,
+          moduleStyle: QrDataModuleStyle(
+            colors: QrColors.random([
+              Color(0xFF999999),
+              Color(0xFFFF0000),
+              Color(0xFF00FF00),
+              Color(0xFF0000FF),
+            ]),
+            shape: QrDataModuleShape.circle,
+          ),
+          markerStyle: QrMarkerStyle(
+            color: Color(0xFF666666),
+            shape: QrMarkerShape.roundedRect,
+          ),
+          markerDotStyle: QrMarkerDotStyle(
+            color: Color(0xFF888888),
+            shape: QrMarkerDotShape.roundedRect,
+          ),
+        );
+
+        return AspectRatio(
+          aspectRatio: 1,
+          child: CustomPaint(
+            painter: QrPainter(
+              data: message,
+              version: QrVersions.auto,
+              errorCorrectionLevel: QrErrorCorrectLevel.L,
+              embeddedImage: snapshot.data,
+              embeddedImageStyle: QrEmbeddedImageStyle(
+                size: Size.square(60),
+              ),
+              appearance: appearance,
             ),
           ),
         );
@@ -64,6 +76,7 @@ class _MainScreenState extends State<MainScreen> {
         top: true,
         bottom: true,
         child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 30.0),
           child: Column(
             children: <Widget>[
               Expanded(
