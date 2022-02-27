@@ -48,6 +48,7 @@ class QrAppearance {
     this.markerStyle = const QrMarkerStyle(),
     this.markerDotStyle,
     this.moduleStyle = const QrDataModuleStyle(),
+    this.embeddedImageStyle,
   });
 
   /// The amount of space between the data modules. Defaults to zero (gapless).
@@ -64,6 +65,9 @@ class QrAppearance {
   /// The styling options for the individual data modules (squares) of the
   /// QR code.
   final QrDataModuleStyle moduleStyle;
+
+  /// The styling options for the embedded image (if any).
+  final QrEmbeddedImageStyle? embeddedImageStyle;
 }
 
 /// Styling options for the marker frame.
@@ -128,6 +132,7 @@ class QrEmbeddedImageStyle {
   const QrEmbeddedImageStyle({
     this.size,
     this.color,
+    this.drawOverModules = false,
   });
 
   /// The size of the image. If one dimension is zero then the other dimension
@@ -137,6 +142,10 @@ class QrEmbeddedImageStyle {
 
   /// Color to tint the image.
   final Color? color;
+
+  /// Whether any data module "pixels" should be drawn within the image
+  /// boundary.
+  final bool drawOverModules;
 
   /// Check to see if the style object has a non-null, non-zero size.
   bool get hasDefinedSize => size != null && size!.longestSide > 0;

@@ -50,6 +50,10 @@ class _MainScreenState extends State<MainScreen> {
             color: Color(0xFF888888),
             shape: QrMarkerDotShape.roundedRect,
           ),
+          embeddedImageStyle: QrEmbeddedImageStyle(
+            size: Size.square(60),
+            drawOverModules: false,
+          ),
         );
 
         return AspectRatio(
@@ -60,9 +64,6 @@ class _MainScreenState extends State<MainScreen> {
               version: QrVersions.auto,
               errorCorrectionLevel: QrErrorCorrectLevel.L,
               embeddedImage: snapshot.data,
-              embeddedImageStyle: QrEmbeddedImageStyle(
-                size: Size.square(60),
-              ),
               appearance: appearance,
             ),
           ),

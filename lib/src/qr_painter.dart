@@ -31,7 +31,6 @@ class QrPainter extends CustomPainter {
     this.errorCorrectionLevel = QrErrorCorrectLevel.M,
     this.appearance = const QrAppearance(),
     this.embeddedImage,
-    this.embeddedImageStyle = const QrEmbeddedImageStyle(),
   })  : _isGapless = appearance.gapSize == 0,
         assert(isSupportedVersion(version)) {
     _init(data);
@@ -44,7 +43,6 @@ class QrPainter extends CustomPainter {
     required QrCode qr,
     this.appearance = const QrAppearance(),
     this.embeddedImage,
-    this.embeddedImageStyle = const QrEmbeddedImageStyle(),
   })  : _qr = qr,
         version = qr.typeNumber,
         errorCorrectionLevel = qr.errorCorrectLevel,
@@ -65,9 +63,6 @@ class QrPainter extends CustomPainter {
   /// The image data to embed (as an overlay) in the QR code. The image will
   /// be added to the center of the QR code.
   final ui.Image? embeddedImage;
-
-  /// Styling options for the image overlay.
-  final QrEmbeddedImageStyle? embeddedImageStyle;
 
   /// The base QR code data
   QrCode? _qr;
@@ -138,6 +133,22 @@ class QrPainter extends CustomPainter {
       return;
     }
 
+    // calculate the image rect so we can draw it and check for overlaps (if
+    // necessary.
+    Rect? imageRect;
+    final image = embeddedImage;
+    if (image != null) {
+      final ogImageSize = Size(image.width.toDouble(), image.height.toDouble());
+      final imageSize = _scaledAspectSize(
+          size, ogImageSize, appearance.embeddedImageStyle?.size);
+      imageRect = Rect.fromLTWH(
+        (size.width - imageSize.width) / 2.0,
+        (size.height - imageSize.height) / 2.0,
+        imageSize.width,
+        imageSize.height,
+      );
+    }
+
     final paintMetrics = _PaintMetrics(
       containerSize: size.shortestSide,
       moduleCount: _qr!.moduleCount,
@@ -190,6 +201,14 @@ class QrPainter extends CustomPainter {
             pixelColor = colors.first!;
           }
         }
+
+        //
+        if (imageRect != null &&
+            appearance.embeddedImageStyle?.drawOverModules == false &&
+            squareRect.overlaps(imageRect)) {
+          continue;
+        }
+
         pixelPaint!.color = pixelColor;
 
         if (appearance.moduleStyle.shape == null ||
@@ -212,19 +231,8 @@ class QrPainter extends CustomPainter {
     }
 
     if (embeddedImage != null) {
-      final originalSize = Size(
-        embeddedImage!.width.toDouble(),
-        embeddedImage!.height.toDouble(),
-      );
-      final requestedSize =
-          embeddedImageStyle != null ? embeddedImageStyle!.size : null;
-      final imageSize = _scaledAspectSize(size, originalSize, requestedSize);
-      final position = Offset(
-        (size.width - imageSize.width) / 2.0,
-        (size.height - imageSize.height) / 2.0,
-      );
       // draw the image overlay.
-      _drawImageOverlay(canvas, position, imageSize, embeddedImageStyle);
+      _drawImageOverlay(canvas, imageRect, appearance.embeddedImageStyle);
     }
   }
 
@@ -349,7 +357,10 @@ class QrPainter extends CustomPainter {
   }
 
   void _drawImageOverlay(
-      Canvas canvas, Offset position, Size size, QrEmbeddedImageStyle? style) {
+      Canvas canvas, Rect? drawRect, QrEmbeddedImageStyle? style) {
+    if (drawRect == null) {
+      return;
+    }
     final paint = Paint()
       ..isAntiAlias = true
       ..filterQuality = FilterQuality.high;
@@ -361,11 +372,8 @@ class QrPainter extends CustomPainter {
     final srcSize =
         Size(embeddedImage!.width.toDouble(), embeddedImage!.height.toDouble());
     final src = Alignment.center.inscribe(srcSize, Offset.zero & srcSize);
-    final dst = Alignment.center.inscribe(size, position & size);
-    final imageStrokePaint = Paint()
-      ..color = Color(0xFF000000)
-      ..style = PaintingStyle.stroke;
-    canvas.drawRect(dst, imageStrokePaint);
+    final dst = Alignment.center.inscribe(
+        drawRect.size, Offset(drawRect.left, drawRect.top) & drawRect.size);
     canvas.drawImageRect(embeddedImage!, src, dst, paint);
   }
 
@@ -377,7 +385,8 @@ class QrPainter extends CustomPainter {
           _calcVersion != oldPainter._calcVersion ||
           _qr != oldPainter._qr ||
           embeddedImage != oldPainter.embeddedImage ||
-          embeddedImageStyle != oldPainter.embeddedImageStyle;
+          appearance.embeddedImageStyle !=
+              oldPainter.appearance.embeddedImageStyle;
     }
     return true;
   }
