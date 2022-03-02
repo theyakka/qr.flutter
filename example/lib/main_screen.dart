@@ -37,7 +37,7 @@ class _MainScreenState extends State<MainScreen> {
         }
 
         final appearance = QrAppearance(
-          gapSize: 0,
+          gapSize: 4,
           moduleStyle: QrDataModuleStyle(
             colors: QrColors.sequence([
               Color(0xFF0E664B),
@@ -45,7 +45,7 @@ class _MainScreenState extends State<MainScreen> {
               Color(0xFF2AB689),
               Color(0xFF7BD4AB),
             ], direction: Axis.vertical),
-            shape: QrDataModuleShape.roundedRect,
+            shape: QrDataModuleShape.square,
           ),
           markerStyle: QrMarkerStyle(
             color: Color(0xFF0E664B),

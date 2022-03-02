@@ -214,21 +214,11 @@ class QrPainter extends CustomPainter {
         top = paintMetrics.inset +
             (y * (paintMetrics.pixelSize + appearance.gapSize));
 
-        var pixelHTweak = 0.0;
-        var pixelVTweak = 0.0;
-        final isGapless = appearance.gapSize == 0;
-        if (isGapless && _hasAdjacentHorizontalPixel(x, y, _qr!.moduleCount)) {
-          pixelHTweak = 0.5;
-        }
-        if (isGapless && _hasAdjacentVerticalPixel(x, y, _qr!.moduleCount)) {
-          pixelVTweak = 0.5;
-        }
-
         final squareRect = Rect.fromLTWH(
           left,
           top,
-          paintMetrics.pixelSize + pixelHTweak,
-          paintMetrics.pixelSize + pixelVTweak,
+          paintMetrics.pixelSize,
+          paintMetrics.pixelSize,
         );
 
         var pixelColor = Color(0xFF000000);
@@ -247,6 +237,8 @@ class QrPainter extends CustomPainter {
         }
 
         pixelPaint!.color = pixelColor;
+        pixelPaint.isAntiAlias = !(_isGapless &&
+            appearance.moduleStyle.shape == QrDataModuleShape.square);
 
         if (appearance.moduleStyle.shape == null ||
             appearance.moduleStyle.shape == QrDataModuleShape.square) {
