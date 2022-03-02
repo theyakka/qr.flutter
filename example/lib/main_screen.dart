@@ -35,19 +35,19 @@ class _MainScreenState extends State<MainScreen> {
           gapSize: 1,
           moduleStyle: QrDataModuleStyle(
             colors: QrColors.random([
-              Color(0xFF999999),
-              Color(0xFFFF0066),
-              Color(0xFF00FFAE),
-              Color(0xFF0000FF),
+              Color(0xFF0E664B),
+              Color(0xFF008253),
+              Color(0xFF2AB689),
+              Color(0xFF7BD4AB),
             ]),
             shape: QrDataModuleShape.circle,
           ),
           markerStyle: QrMarkerStyle(
-            color: Color(0xFF666666),
+            color: Color(0xFF0E664B),
             shape: QrMarkerShape.roundedRect,
           ),
           markerDotStyle: QrMarkerDotStyle(
-            color: Color(0xFF888888),
+            color: Color(0xFF339C7A),
             shape: QrMarkerDotShape.roundedRect,
           ),
           embeddedImageStyle: QrEmbeddedImageStyle(
