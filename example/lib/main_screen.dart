@@ -10,6 +10,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// This is the screen that you'll see when the app starts
 class MainScreen extends StatefulWidget {
@@ -20,11 +21,10 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _tapCount = 0;
   Timer? _tapTimer;
+  String _instructions = "Scan the QR code for a message.";
 
   @override
   Widget build(BuildContext context) {
-    final instructions = "Scan the QR code for a message.";
-
     final codeMessage =
         // ignore: lines_longer_than_80_chars
         'How much wood would a woodchuck chuck if a woodchuck could chuck wood?';
@@ -37,14 +37,14 @@ class _MainScreenState extends State<MainScreen> {
         }
 
         final appearance = QrAppearance(
-          gapSize: 1,
+          gapSize: 0,
           moduleStyle: QrDataModuleStyle(
             colors: QrColors.sequence([
               Color(0xFF0E664B),
               Color(0xFF008253),
               Color(0xFF2AB689),
               Color(0xFF7BD4AB),
-            ]),
+            ], direction: Axis.vertical),
             shape: QrDataModuleShape.roundedRect,
           ),
           markerStyle: QrMarkerStyle(
@@ -99,7 +99,7 @@ class _MainScreenState extends State<MainScreen> {
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40)
                     .copyWith(bottom: 40),
-                child: Text(instructions),
+                child: Text(_instructions),
               ),
             ],
           ),
@@ -121,8 +121,18 @@ class _MainScreenState extends State<MainScreen> {
       _tapCount = 0;
     });
     _tapCount++;
+    if (_tapCount >= 5) {
+      setState(() {
+        _instructions = "Keep tapping ...";
+      });
+    }
     if (_tapCount == 10) {
+      setState(() {
+        _instructions = "Scan the QR code for a message.";
+      });
       _tapTimer?.cancel();
+      _tapCount = 0;
+      launch("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
     }
   }
 }

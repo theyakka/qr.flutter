@@ -101,13 +101,19 @@ class QrPainter extends CustomPainter {
     final moduleCount = _qr?.moduleCount;
     final colors = appearance.moduleStyle.colors;
     if (moduleCount != null && colors != null && colors.length > 0) {
-      var seqIdx = 0;
       final matrix = ColorMatrix(size: moduleCount);
-      for (var y = 0; y < _qr!.moduleCount; y++) {
-        for (var x = 0; x < _qr!.moduleCount; x++) {
+      for (var y = 0; y < moduleCount; y++) {
+        for (var x = 0; x < moduleCount; x++) {
           if (colors.mode != null && colors.mode == ColorMode.sequence) {
-            matrix.addAt(x, y, colors[seqIdx]);
-            seqIdx = seqIdx + 1 > colors.length - 1 ? 0 : seqIdx + 1;
+            final Axis? direction = colors.options[optionKeyDirection];
+            if (direction == Axis.horizontal) {
+              if (y > 0) {
+                print(y % 4);
+              }
+              matrix.addAt(y, x, colors[y % 4]);
+              continue;
+            }
+            matrix.addAt(x, y, colors[y % 4]);
           } else {
             matrix.addAt(x, y, colors.random()!);
           }
@@ -467,7 +473,7 @@ class _PaintMetrics {
 
 class ColorMatrix {
   ColorMatrix({required int size})
-      : _colors = List.filled(size, List.filled(size, null));
+      : _colors = List.generate(size, (index) => List.filled(size, null));
 
   final List<List<Color?>> _colors;
 
