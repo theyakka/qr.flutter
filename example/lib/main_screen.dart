@@ -21,7 +21,8 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _tapCount = 0;
   Timer? _tapTimer;
-  String _instructions = "Scan the QR code for a message.";
+  String _defaultInstructions = "Scan the QR code";
+  String _instructions = "Scan the QR code";
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +38,7 @@ class _MainScreenState extends State<MainScreen> {
         }
 
         final appearance = QrAppearance(
-          gapSize: 4,
+          gapSize: 2,
           moduleStyle: QrDataModuleStyle(
             colors: QrColors.sequence([
               Color(0xFF0E664B),
@@ -45,18 +46,19 @@ class _MainScreenState extends State<MainScreen> {
               Color(0xFF2AB689),
               Color(0xFF7BD4AB),
             ], direction: Axis.vertical),
-            shape: QrDataModuleShape.square,
+            shape: QrDataModuleShape.circle,
           ),
           markerStyle: QrMarkerStyle(
             color: Color(0xFF0E664B),
             shape: QrMarkerShape.roundedRect,
+            gap: 2,
           ),
           markerDotStyle: QrMarkerDotStyle(
             color: Color(0xFF339C7A),
             shape: QrMarkerDotShape.roundedRect,
           ),
           embeddedImageStyle: QrEmbeddedImageStyle(
-            size: Size.square(60),
+            size: Size.square(72),
             drawOverModules: false,
           ),
         );
@@ -128,7 +130,7 @@ class _MainScreenState extends State<MainScreen> {
     }
     if (_tapCount == 10) {
       setState(() {
-        _instructions = "Scan the QR code for a message.";
+        _instructions = _defaultInstructions;
       });
       _tapTimer?.cancel();
       _tapCount = 0;

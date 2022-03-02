@@ -5,6 +5,7 @@
  */
 
 import 'dart:async';
+import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -238,7 +239,8 @@ class QrPainter extends CustomPainter {
 
         pixelPaint!.color = pixelColor;
         pixelPaint.isAntiAlias = !(_isGapless &&
-            appearance.moduleStyle.shape == QrDataModuleShape.square);
+            (appearance.moduleStyle.shape == null ||
+                appearance.moduleStyle.shape == QrDataModuleShape.square));
 
         if (appearance.moduleStyle.shape == null ||
             appearance.moduleStyle.shape == QrDataModuleShape.square) {
@@ -318,10 +320,12 @@ class QrPainter extends CustomPainter {
         appearance.markerDotStyle?.color ?? appearance.markerStyle.color;
 
     final outerRect = Rect.fromLTWH(offset.dx, offset.dy, radius, radius);
-    final gap = metrics.pixelSize * 2;
-    final dotSize = radius - gap - (2 * strokeAdjust);
-    final dotRect = Rect.fromLTWH(offset.dx + metrics.pixelSize + strokeAdjust,
-        offset.dy + metrics.pixelSize + strokeAdjust, dotSize, dotSize);
+    final gap = metrics.pixelSize +
+        (max(1, appearance.markerStyle.gap) * metrics.pixelSize);
+    final dotSize = radius - gap;
+    final dotOffset = (radius - dotSize) / 2;
+    final dotRect = Rect.fromLTWH(
+        offset.dx + dotOffset, offset.dy + dotOffset, dotSize, dotSize);
 
     // draw the marker frame. NOTE: if the marker dot style is null (not
     // specified) then we will draw the dot here also. The dot style, in this
@@ -408,7 +412,13 @@ class QrPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldPainter) {
-    return _needsRepaint;
+    if (oldPainter is QrPainter) {
+      return oldPainter.appearance != appearance ||
+          oldPainter.version != version ||
+          oldPainter.errorCorrectionLevel != errorCorrectionLevel ||
+          oldPainter.embeddedImage != embeddedImage;
+    }
+    return true;
   }
 
   /// Returns a [ui.Picture] object containing the QR code data.

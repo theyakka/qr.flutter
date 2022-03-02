@@ -54,6 +54,16 @@ class QrColors {
   }
 
   Color operator [](int index) => colors[index];
+
+  @override
+  bool operator ==(Object other) {
+    return other.hashCode == hashCode;
+  }
+
+  @override
+  int get hashCode {
+    return colors.hashCode ^ mode.hashCode ^ options.hashCode;
+  }
 }
 
 /// How a set of colors will be applied to the QR code when it is painted.

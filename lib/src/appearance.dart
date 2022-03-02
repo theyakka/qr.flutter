@@ -68,6 +68,20 @@ class QrAppearance {
 
   /// The styling options for the embedded image (if any).
   final QrEmbeddedImageStyle? embeddedImageStyle;
+
+  @override
+  bool operator ==(Object other) {
+    return other.hashCode == hashCode;
+  }
+
+  @override
+  int get hashCode {
+    return gapSize.hashCode ^
+        markerStyle.hashCode ^
+        markerDotStyle.hashCode ^
+        moduleStyle.hashCode ^
+        embeddedImageStyle.hashCode;
+  }
 }
 
 /// Styling options for the marker frame.
@@ -76,6 +90,7 @@ class QrMarkerStyle {
   const QrMarkerStyle({
     this.shape = QrMarkerShape.square,
     this.color = const Color(0xFF000000),
+    this.gap = 2,
   });
 
   /// Eye shape.
@@ -84,13 +99,16 @@ class QrMarkerStyle {
   /// Color to tint the eye.
   final Color color;
 
+  /// The gap between the border and the inner "dot"
+  final int gap;
+
   @override
   int get hashCode => shape.hashCode ^ color.hashCode;
 
   @override
   bool operator ==(Object other) {
     if (other is QrMarkerStyle) {
-      return shape == other.shape && color == other.color;
+      return shape == other.shape && color == other.color && gap == other.gap;
     }
     return false;
   }
@@ -109,6 +127,16 @@ class QrMarkerDotStyle {
 
   /// Color to tint the eye.
   final Color color;
+
+  @override
+  bool operator ==(Object other) {
+    return other.hashCode == hashCode;
+  }
+
+  @override
+  int get hashCode {
+    return shape.hashCode ^ color.hashCode;
+  }
 }
 
 /// Styling options for data module.
@@ -124,6 +152,16 @@ class QrDataModuleStyle {
 
   /// Color to tint the data modules.
   final QrColors? colors;
+
+  @override
+  bool operator ==(Object other) {
+    return other.hashCode == hashCode;
+  }
+
+  @override
+  int get hashCode {
+    return shape.hashCode ^ colors.hashCode;
+  }
 }
 
 /// Styling options for any embedded image overlay
@@ -149,4 +187,14 @@ class QrEmbeddedImageStyle {
 
   /// Check to see if the style object has a non-null, non-zero size.
   bool get hasDefinedSize => size != null && size!.longestSide > 0;
+
+  @override
+  bool operator ==(Object other) {
+    return other.hashCode == hashCode;
+  }
+
+  @override
+  int get hashCode {
+    return size.hashCode ^ color.hashCode ^ drawOverModules.hashCode;
+  }
 }
