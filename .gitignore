@@ -12,3 +12,4 @@ packages
 .dart_tool
 pubspec.lock
 .temp
+/doc
