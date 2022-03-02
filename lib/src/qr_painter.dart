@@ -10,15 +10,9 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:qr/qr.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:qr_flutter/src/appearance.dart';
 
-import 'errors.dart';
 import 'paint_cache.dart';
-import 'qr_versions.dart';
-import 'types.dart';
-import 'validator.dart';
 
 const _finderPatternLimit = 7;
 
@@ -64,8 +58,12 @@ class QrPainter extends CustomPainter {
   /// be added to the center of the QR code.
   final ui.Image? embeddedImage;
 
+  bool _needsRepaint = true;
+
   /// The base QR code data
   QrCode? _qr;
+
+  ColorMatrix? _colorMatrix;
 
   /// QR Image renderer
   late QrImage _qrImage;
@@ -95,7 +93,28 @@ class QrPainter extends CustomPainter {
     }
     _qr = validationResult.qrCode;
     _calcVersion = _qr!.typeNumber;
+    _initColors();
     _initPaints();
+  }
+
+  void _initColors() {
+    final moduleCount = _qr?.moduleCount;
+    final colors = appearance.moduleStyle.colors;
+    if (moduleCount != null && colors != null && colors.length > 0) {
+      var seqIdx = 0;
+      final matrix = ColorMatrix(size: moduleCount);
+      for (var y = 0; y < _qr!.moduleCount; y++) {
+        for (var x = 0; x < _qr!.moduleCount; x++) {
+          if (colors.mode != null && colors.mode == ColorMode.sequence) {
+            matrix.addAt(x, y, colors[seqIdx]);
+            seqIdx = seqIdx + 1 > colors.length - 1 ? 0 : seqIdx + 1;
+          } else {
+            matrix.addAt(x, y, colors.random()!);
+          }
+        }
+      }
+      _colorMatrix = matrix;
+    }
   }
 
   void _initPaints() {
@@ -122,6 +141,7 @@ class QrPainter extends CustomPainter {
           Paint()..style = PaintingStyle.fill, QrCodeElement.finderPatternDot,
           position: position);
     }
+    _needsRepaint = false;
   }
 
   @override
@@ -173,10 +193,12 @@ class QrPainter extends CustomPainter {
 
     double left;
     double top;
+    // tracks where you are in the sequence of colors (if mode == sequence).
+    var seqIdx = 0;
     // get the painters for the pixel information
     final pixelPaint = _paintCache.firstPaint(QrCodeElement.codePixel);
-    for (var x = 0; x < _qr!.moduleCount; x++) {
-      for (var y = 0; y < _qr!.moduleCount; y++) {
+    for (var y = 0; y < _qr!.moduleCount; y++) {
+      for (var x = 0; x < _qr!.moduleCount; x++) {
         // draw the finder patterns independently
         if (_isFinderPatternPosition(x, y)) continue;
         if (!_qrImage.isDark(y, x)) continue;
@@ -185,21 +207,30 @@ class QrPainter extends CustomPainter {
             (x * (paintMetrics.pixelSize + appearance.gapSize));
         top = paintMetrics.inset +
             (y * (paintMetrics.pixelSize + appearance.gapSize));
+
+        var pixelHTweak = 0.0;
+        var pixelVTweak = 0.0;
+        final isGapless = appearance.gapSize == 0;
+        if (isGapless && _hasAdjacentHorizontalPixel(x, y, _qr!.moduleCount)) {
+          pixelHTweak = 0.5;
+        }
+        if (isGapless && _hasAdjacentVerticalPixel(x, y, _qr!.moduleCount)) {
+          pixelVTweak = 0.5;
+        }
+
         final squareRect = Rect.fromLTWH(
           left,
           top,
-          paintMetrics.pixelSize,
-          paintMetrics.pixelSize,
+          paintMetrics.pixelSize + pixelHTweak,
+          paintMetrics.pixelSize + pixelVTweak,
         );
 
         var pixelColor = Color(0xFF000000);
         final colors = appearance.moduleStyle.colors;
-        if (colors != null && colors.length > 0) {
-          if (colors.mode == null || colors.mode == ColorMode.random) {
-            pixelColor = colors.random()!;
-          } else {
-            pixelColor = colors.first!;
-          }
+        if (colors != null && colors.length > 1) {
+          pixelColor = _colorMatrix![x][y]!;
+        } else if (colors != null) {
+          pixelColor = colors.first!;
         }
 
         //
@@ -379,16 +410,7 @@ class QrPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldPainter) {
-    if (oldPainter is QrPainter) {
-      // TODO - update
-      return errorCorrectionLevel != oldPainter.errorCorrectionLevel ||
-          _calcVersion != oldPainter._calcVersion ||
-          _qr != oldPainter._qr ||
-          embeddedImage != oldPainter.embeddedImage ||
-          appearance.embeddedImageStyle !=
-              oldPainter.appearance.embeddedImageStyle;
-    }
-    return true;
+    return _needsRepaint;
   }
 
   /// Returns a [ui.Picture] object containing the QR code data.
@@ -441,4 +463,17 @@ class _PaintMetrics {
     _innerContentSize = (_pixelSize * moduleCount) + gapTotal;
     _inset = (containerSize - _innerContentSize) / 2;
   }
+}
+
+class ColorMatrix {
+  ColorMatrix({required int size})
+      : _colors = List.filled(size, List.filled(size, null));
+
+  final List<List<Color?>> _colors;
+
+  void addAt(int x, int y, Color color) {
+    _colors[x][y] = color;
+  }
+
+  List<Color?> operator [](int index) => _colors[index];
 }

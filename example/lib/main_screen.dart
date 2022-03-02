@@ -18,11 +18,16 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  int _tapCount = 0;
+  Timer? _tapTimer;
+
   @override
   Widget build(BuildContext context) {
-    final message =
+    final instructions = "Scan the QR code for a message.";
+
+    final codeMessage =
         // ignore: lines_longer_than_80_chars
-        'Hey this is a QR code. Change this value in the main_screen.dart file.';
+        'How much wood would a woodchuck chuck if a woodchuck could chuck wood?';
 
     final qrFutureBuilder = FutureBuilder<ui.Image>(
       future: _loadOverlayImage(),
@@ -34,13 +39,13 @@ class _MainScreenState extends State<MainScreen> {
         final appearance = QrAppearance(
           gapSize: 1,
           moduleStyle: QrDataModuleStyle(
-            colors: QrColors.random([
+            colors: QrColors.sequence([
               Color(0xFF0E664B),
               Color(0xFF008253),
               Color(0xFF2AB689),
               Color(0xFF7BD4AB),
             ]),
-            shape: QrDataModuleShape.circle,
+            shape: QrDataModuleShape.roundedRect,
           ),
           markerStyle: QrMarkerStyle(
             color: Color(0xFF0E664B),
@@ -56,15 +61,18 @@ class _MainScreenState extends State<MainScreen> {
           ),
         );
 
-        return AspectRatio(
-          aspectRatio: 1,
-          child: CustomPaint(
-            painter: QrPainter(
-              data: message,
-              version: QrVersions.auto,
-              errorCorrectionLevel: QrErrorCorrectLevel.L,
-              embeddedImage: snapshot.data,
-              appearance: appearance,
+        return GestureDetector(
+          onTap: onCodeTapped,
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: CustomPaint(
+              painter: QrPainter(
+                data: codeMessage,
+                version: QrVersions.auto,
+                errorCorrectionLevel: QrErrorCorrectLevel.L,
+                embeddedImage: snapshot.data,
+                appearance: appearance,
+              ),
             ),
           ),
         );
@@ -82,13 +90,16 @@ class _MainScreenState extends State<MainScreen> {
             children: <Widget>[
               Expanded(
                 child: Center(
-                  child: qrFutureBuilder,
+                  child: Container(
+                    constraints: BoxConstraints(maxWidth: 480, minWidth: 200),
+                    child: qrFutureBuilder,
+                  ),
                 ),
               ),
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40)
                     .copyWith(bottom: 40),
-                child: Text(message),
+                child: Text(instructions),
               ),
             ],
           ),
@@ -102,5 +113,16 @@ class _MainScreenState extends State<MainScreen> {
     final byteData = await rootBundle.load('assets/images/4.0x/logo_yakka.png');
     ui.decodeImageFromList(byteData.buffer.asUint8List(), completer.complete);
     return completer.future;
+  }
+
+  void onCodeTapped() {
+    _tapTimer?.cancel();
+    _tapTimer = Timer(Duration(seconds: 3), () {
+      _tapCount = 0;
+    });
+    _tapCount++;
+    if (_tapCount == 10) {
+      _tapTimer?.cancel();
+    }
   }
 }
