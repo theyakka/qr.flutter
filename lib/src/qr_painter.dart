@@ -108,9 +108,6 @@ class QrPainter extends CustomPainter {
           if (colors.mode != null && colors.mode == ColorMode.sequence) {
             final Axis? direction = colors.options[optionKeyDirection];
             if (direction == Axis.horizontal) {
-              if (y > 0) {
-                print(y % 4);
-              }
               matrix.addAt(y, x, colors[y % 4]);
               continue;
             }
