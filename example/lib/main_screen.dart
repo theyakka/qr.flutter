@@ -36,9 +36,8 @@ class _MainScreenState extends State<MainScreen> {
         if (!snapshot.hasData) {
           return Container();
         }
-
         final appearance = QrAppearance(
-          gapSize: 2,
+          gapSize: 0,
           moduleStyle: QrDataModuleStyle(
             colors: QrColors.random([
               Color(0xFF0E664B),
@@ -46,7 +45,7 @@ class _MainScreenState extends State<MainScreen> {
               Color(0xFF2AB689),
               Color(0xFF7BD4AB),
             ]),
-            shape: QrDataModuleShape.roundedRect,
+            shape: QrDataModuleShape.diamond,
           ),
           markerStyle: QrMarkerStyle(
             color: Color(0xFF0E664B),

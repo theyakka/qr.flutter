@@ -43,7 +43,6 @@ class QrPainter extends CustomPainter {
         version = qr.typeNumber,
         errorCorrectionLevel = qr.errorCorrectLevel,
         _isGapless = appearance.gapSize == 0 {
-    _calcVersion = version;
     _initColors();
     _initPaints();
   }
@@ -61,8 +60,6 @@ class QrPainter extends CustomPainter {
   /// be added to the center of the QR code.
   final ui.Image? embeddedImage;
 
-  bool _needsRepaint = true;
-
   /// The base QR code data
   QrCode? _qr;
 
@@ -70,10 +67,6 @@ class QrPainter extends CustomPainter {
 
   /// QR Image renderer
   late QrImage _qrImage;
-
-  /// This is the version (after calculating) that we will use if the user has
-  /// requested the 'auto' version.
-  late final int _calcVersion;
 
   /// Cache for all of the [Paint] objects.
   final _paintCache = PaintCache();
@@ -95,7 +88,6 @@ class QrPainter extends CustomPainter {
       throw validationResult.error!;
     }
     _qr = validationResult.qrCode;
-    _calcVersion = _qr!.typeNumber;
     _initColors();
     _initPaints();
   }
@@ -147,7 +139,6 @@ class QrPainter extends CustomPainter {
           Paint()..style = PaintingStyle.fill, QrCodeElement.finderPatternDot,
           position: position);
     }
-    _needsRepaint = false;
   }
 
   @override
@@ -200,7 +191,6 @@ class QrPainter extends CustomPainter {
     double left;
     double top;
     // tracks where you are in the sequence of colors (if mode == sequence).
-    var seqIdx = 0;
     // get the painters for the pixel information
     final pixelPaint = _paintCache.firstPaint(QrCodeElement.codePixel);
     for (var y = 0; y < _qr!.moduleCount; y++) {
@@ -245,7 +235,15 @@ class QrPainter extends CustomPainter {
             appearance.moduleStyle.shape == QrDataModuleShape.square) {
           canvas.drawRect(squareRect, pixelPaint);
         } else if (appearance.moduleStyle.shape == QrDataModuleShape.diamond) {
-          // const diamondRect = null;
+          final diamondPath = Path();
+          final midDelta = paintMetrics.pixelSize / 2;
+          diamondPath.addPolygon([
+            Offset(left, top + midDelta), // left
+            Offset(left + midDelta, top), // top
+            Offset(left + paintMetrics.pixelSize, top + midDelta), // right
+            Offset(left + midDelta, top + paintMetrics.pixelSize), // bottom
+          ], true);
+          canvas.drawPath(diamondPath, pixelPaint);
         } else {
           Radius radius;
           if (appearance.moduleStyle.shape == QrDataModuleShape.circle) {
