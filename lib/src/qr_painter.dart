@@ -9,12 +9,14 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import 'color_matrix.dart';
 import 'paint_cache.dart';
+import 'paint_metrics.dart';
 
 const _finderPatternLimit = 7;
 
@@ -144,10 +146,13 @@ class QrPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     // if the widget has a zero size side then we cannot continue painting.
-    if (size.shortestSide == 0) {
-      print("[QR] WARN: width or height is zero. You should set a 'size' value "
-          "or nest this painter in a Widget that defines a non-zero size");
-      return;
+    if (kDebugMode) {
+      if (size.shortestSide == 0) {
+        print(
+            "[QR] WARN: width or height is zero. You should set a 'size' value "
+            "or nest this painter in a Widget that defines a non-zero size");
+        return;
+      }
     }
 
     // calculate the image rect so we can draw it and check for overlaps (if
@@ -167,7 +172,7 @@ class QrPainter extends CustomPainter {
     }
 
     // do some pre-calculation / caching of units that we're going to reuse.
-    final paintMetrics = _PaintMetrics(
+    final paintMetrics = PaintMetrics(
       containerSize: size.shortestSide,
       moduleCount: _qr!.moduleCount,
       gapSize: appearance.gapSize.toDouble(),
@@ -206,7 +211,7 @@ class QrPainter extends CustomPainter {
           continue;
         }
         // determine what color the pixel should be and set up the paint colour.
-        var pixelColor = Color(0xFF000000);
+        var pixelColor = const Color(0xFF000000);
         final colors = appearance.moduleStyle.colors;
         if (colors != null && colors.length > 1) {
           pixelColor = _colorMatrix![x][y]!;
@@ -268,6 +273,10 @@ class QrPainter extends CustomPainter {
     return _qrImage.isDark(y, x + 1);
   }
 
+  /// Determines if the x / y position is in an area of the grid where one of
+  /// the primary finder patterns will be drawn. Larger qr codes will have
+  /// "embedded" finder patterns. This method does not include detection for
+  /// those.
   bool _isFinderPatternPosition(int x, int y) {
     final isTopLeft = (y < _finderPatternLimit && x < _finderPatternLimit);
     final isBottomLeft = (y < _finderPatternLimit &&
@@ -277,10 +286,11 @@ class QrPainter extends CustomPainter {
     return isTopLeft || isBottomLeft || isTopRight;
   }
 
+  /// Draws an "eyeball" finder pattern on to the canvas.
   void _drawFinderPatternItem(
     FinderPatternPosition position,
     Canvas canvas,
-    _PaintMetrics metrics,
+    PaintMetrics metrics,
   ) {
     final totalGap = (_finderPatternLimit - 1) * metrics.gapSize;
     final radius = ((_finderPatternLimit * metrics.pixelSize) + totalGap) -
@@ -346,7 +356,6 @@ class QrPainter extends CustomPainter {
     }
 
     // if the marker dot style has been defined, we will draw the dot now.
-
     var dotStyle = appearance.markerDotStyle;
     if (dotStyle != null) {
       if (dotStyle.shape == QrMarkerDotShape.square) {
@@ -402,12 +411,12 @@ class QrPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldPainter) {
-    if (oldPainter is QrPainter) {
-      return oldPainter.appearance != appearance ||
-          oldPainter.version != version ||
-          oldPainter.errorCorrectionLevel != errorCorrectionLevel ||
-          oldPainter.embeddedImage != embeddedImage;
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    if (oldDelegate is QrPainter) {
+      return oldDelegate.appearance != appearance ||
+          oldDelegate.version != version ||
+          oldDelegate.errorCorrectionLevel != errorCorrectionLevel ||
+          oldDelegate.embeddedImage != embeddedImage;
     }
     return true;
   }
@@ -431,35 +440,5 @@ class QrPainter extends CustomPainter {
       {ui.ImageByteFormat format = ui.ImageByteFormat.png}) async {
     final image = await toImage(size, format: format);
     return image.toByteData(format: format);
-  }
-}
-
-class _PaintMetrics {
-  _PaintMetrics({
-    required this.containerSize,
-    required this.gapSize,
-    required this.moduleCount,
-  }) {
-    _calculateMetrics();
-  }
-
-  final int moduleCount;
-  final double containerSize;
-  final double gapSize;
-
-  late final double _pixelSize;
-  double get pixelSize => _pixelSize;
-
-  late final double _innerContentSize;
-  double get innerContentSize => _innerContentSize;
-
-  late final double _inset;
-  double get inset => _inset;
-
-  void _calculateMetrics() {
-    final gapTotal = (moduleCount - 1) * gapSize;
-    _pixelSize = (containerSize - gapTotal) / moduleCount;
-    _innerContentSize = (_pixelSize * moduleCount) + gapTotal;
-    _inset = (containerSize - _innerContentSize) / 2;
   }
 }

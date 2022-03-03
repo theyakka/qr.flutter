@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/widgets.dart';
 
+/// Used to store / access the directional configuration for color lists that
+/// support directions.
 const String optionKeyDirection = "direction";
 
 /// Color configuration for the data module portion of the QR code.
@@ -34,25 +36,30 @@ class QrColors {
   final Map<String, dynamic> options;
 
   /// Get the first color in the list.
-  Color? get first => colors.length > 0 ? colors.first : null;
+  Color? get first => colors.isNotEmpty ? colors.first : null;
 
   /// Get the last color in the list.
-  Color? get last => colors.length > 0 ? colors.last : null;
+  Color? get last => colors.isNotEmpty ? colors.last : null;
 
+  /// Checks that the color list has a single element and returns that element.
   Color? get single => colors.single;
 
-  bool get hasColors => colors.isNotEmpty;
+  /// Checks to see if the color list is not empty.
+  bool get isNotEmpty => colors.isNotEmpty;
 
+  /// Returns the length of the color list.
   int get length => colors.length;
 
+  /// Returns a color from the color list at random.
   Color? random() {
-    if (colors.length == 0) {
+    if (colors.isEmpty) {
       return null;
     }
     final randInt = Random().nextInt(colors.length);
     return colors[randInt];
   }
 
+  /// Returns the color from the color list at the provided index.
   Color operator [](int index) => colors[index];
 
   @override

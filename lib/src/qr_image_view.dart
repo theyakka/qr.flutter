@@ -229,7 +229,7 @@ class _QrImageViewState extends State<QrImageView> {
 typedef QrErrorBuilder = Widget Function(BuildContext context, Object? error);
 
 class _QrContentView extends StatelessWidget {
-  _QrContentView({
+  const _QrContentView({
     required this.edgeLength,
     required this.child,
     this.padding,
@@ -253,7 +253,7 @@ class _QrContentView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Semantics(
       label: semanticsLabel,
-      child: Container(
+      child: SizedBox(
         width: edgeLength,
         height: edgeLength,
         child: Padding(

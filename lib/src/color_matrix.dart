@@ -1,7 +1,7 @@
 import 'dart:ui';
 
-/// Stores a two dimensional array of [Color] values to optimize the (re)rendering
-/// of the data modules when using random or sequenced colors.
+/// Stores a two dimensional array of [Color] values to optimize the
+/// (re)rendering of the data modules when using random or sequenced colors.
 class ColorMatrix {
   /// Creates a `size` x `size` matrix of [Color] values.
   ColorMatrix({required int size})
