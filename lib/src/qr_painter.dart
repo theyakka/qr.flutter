@@ -13,6 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
+import 'color_matrix.dart';
 import 'paint_cache.dart';
 
 const _finderPatternLimit = 7;
@@ -469,17 +470,4 @@ class _PaintMetrics {
     _innerContentSize = (_pixelSize * moduleCount) + gapTotal;
     _inset = (containerSize - _innerContentSize) / 2;
   }
-}
-
-class ColorMatrix {
-  ColorMatrix({required int size})
-      : _colors = List.generate(size, (index) => List.filled(size, null));
-
-  final List<List<Color?>> _colors;
-
-  void addAt(int x, int y, Color color) {
-    _colors[x][y] = color;
-  }
-
-  List<Color?> operator [](int index) => _colors[index];
 }
