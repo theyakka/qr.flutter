@@ -14,6 +14,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 /// This is the screen that you'll see when the app starts
 class MainScreen extends StatefulWidget {
+  const MainScreen({Key? key}) : super(key: key);
+
   @override
   _MainScreenState createState() => _MainScreenState();
 }
@@ -21,12 +23,12 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _tapCount = 0;
   Timer? _tapTimer;
-  String _defaultInstructions = "Scan the QR code";
+  final String _defaultInstructions = "Scan the QR code";
   String _instructions = "Scan the QR code";
 
   @override
   Widget build(BuildContext context) {
-    final codeMessage =
+    const codeMessage =
         // ignore: lines_longer_than_80_chars
         'How much wood would a woodchuck chuck if a woodchuck could chuck wood?';
 
@@ -40,23 +42,23 @@ class _MainScreenState extends State<MainScreen> {
           gapSize: 0,
           moduleStyle: QrDataModuleStyle(
             colors: QrColors.random([
-              Color(0xFF0E664B),
-              Color(0xFF008253),
-              Color(0xFF2AB689),
-              Color(0xFF7BD4AB),
+              const Color(0xFF0E664B),
+              const Color(0xFF008253),
+              const Color(0xFF2AB689),
+              const Color(0xFF7BD4AB),
             ]),
             shape: QrDataModuleShape.diamond,
           ),
-          markerStyle: QrMarkerStyle(
+          markerStyle: const QrMarkerStyle(
             color: Color(0xFF0E664B),
             shape: QrMarkerShape.circle,
             gap: 2,
           ),
-          markerDotStyle: QrMarkerDotStyle(
+          markerDotStyle: const QrMarkerDotStyle(
             color: Color(0xFF339C7A),
             shape: QrMarkerDotShape.circle,
           ),
-          embeddedImageStyle: QrEmbeddedImageStyle(
+          embeddedImageStyle: const QrEmbeddedImageStyle(
             size: Size.square(72),
             drawOverModules: false,
           ),
@@ -65,24 +67,20 @@ class _MainScreenState extends State<MainScreen> {
         return GestureDetector(
           onTap: onCodeTapped,
           child: AspectRatio(
-              aspectRatio: 1,
-              child: QrImageView(
+            aspectRatio: 1,
+            child: CustomPaint(
+              painter: QrPainter(
                 data: codeMessage,
+                version: QrVersions.auto,
+                errorCorrectionLevel: QrErrorCorrectLevel.L,
+                embeddedImage: snapshot.data,
                 appearance: appearance,
-              )),
+              ),
+            ),
+          ),
         );
       },
     );
-
-    // CustomPaint(
-    //   painter: QrPainter(
-    //     data: codeMessage,
-    //     version: QrVersions.auto,
-    //     errorCorrectionLevel: QrErrorCorrectLevel.L,
-    //     embeddedImage: snapshot.data,
-    //     appearance: appearance,
-    //   ),
-    // ),
 
     return Material(
       color: Colors.white,
@@ -90,20 +88,22 @@ class _MainScreenState extends State<MainScreen> {
         top: true,
         bottom: true,
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 30.0),
+          padding: const EdgeInsets.symmetric(horizontal: 30.0),
           child: Column(
             children: <Widget>[
               Expanded(
                 child: Center(
                   child: Container(
-                    constraints: BoxConstraints(maxWidth: 480, minWidth: 200),
+                    constraints:
+                        const BoxConstraints(maxWidth: 480, minWidth: 200),
                     child: qrFutureBuilder,
                   ),
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40)
-                    .copyWith(bottom: 40),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 20, horizontal: 40)
+                        .copyWith(bottom: 40),
                 child: Text(_instructions),
               ),
             ],
@@ -122,7 +122,7 @@ class _MainScreenState extends State<MainScreen> {
 
   void onCodeTapped() {
     _tapTimer?.cancel();
-    _tapTimer = Timer(Duration(seconds: 3), () {
+    _tapTimer = Timer(const Duration(seconds: 3), () {
       _tapCount = 0;
     });
     _tapCount++;

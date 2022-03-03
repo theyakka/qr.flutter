@@ -28,7 +28,7 @@ class ExampleApp extends StatelessWidget {
       title: 'QR.Flutter',
       theme: ThemeData.light(),
       debugShowCheckedModeBanner: false,
-      home: MainScreen(),
+      home: const MainScreen(),
     );
   }
 }
