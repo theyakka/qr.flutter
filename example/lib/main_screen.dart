@@ -66,20 +66,24 @@ class _MainScreenState extends State<MainScreen> {
         return GestureDetector(
           onTap: onCodeTapped,
           child: AspectRatio(
-            aspectRatio: 1,
-            child: CustomPaint(
-              painter: QrPainter(
+              aspectRatio: 1,
+              child: QrImageView(
                 data: codeMessage,
-                version: QrVersions.auto,
-                errorCorrectionLevel: QrErrorCorrectLevel.L,
-                embeddedImage: snapshot.data,
                 appearance: appearance,
-              ),
-            ),
-          ),
+              )),
         );
       },
     );
+
+    // CustomPaint(
+    //   painter: QrPainter(
+    //     data: codeMessage,
+    //     version: QrVersions.auto,
+    //     errorCorrectionLevel: QrErrorCorrectLevel.L,
+    //     embeddedImage: snapshot.data,
+    //     appearance: appearance,
+    //   ),
+    // ),
 
     return Material(
       color: Colors.white,
