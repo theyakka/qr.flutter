@@ -50,12 +50,12 @@ class _MainScreenState extends State<MainScreen> {
           ),
           markerStyle: QrMarkerStyle(
             color: Color(0xFF0E664B),
-            shape: QrMarkerShape.roundedRect,
+            shape: QrMarkerShape.circle,
             gap: 2,
           ),
           markerDotStyle: QrMarkerDotStyle(
             color: Color(0xFF339C7A),
-            shape: QrMarkerDotShape.roundedRect,
+            shape: QrMarkerDotShape.circle,
           ),
           embeddedImageStyle: QrEmbeddedImageStyle(
             size: Size.square(72),
