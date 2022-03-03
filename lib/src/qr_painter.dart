@@ -43,6 +43,7 @@ class QrPainter extends CustomPainter {
         errorCorrectionLevel = qr.errorCorrectLevel,
         _isGapless = appearance.gapSize == 0 {
     _calcVersion = version;
+    _initColors();
     _initPaints();
   }
 

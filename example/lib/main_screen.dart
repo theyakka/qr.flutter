@@ -40,13 +40,13 @@ class _MainScreenState extends State<MainScreen> {
         final appearance = QrAppearance(
           gapSize: 2,
           moduleStyle: QrDataModuleStyle(
-            colors: QrColors.sequence([
+            colors: QrColors.random([
               Color(0xFF0E664B),
               Color(0xFF008253),
               Color(0xFF2AB689),
               Color(0xFF7BD4AB),
-            ], direction: Axis.vertical),
-            shape: QrDataModuleShape.circle,
+            ]),
+            shape: QrDataModuleShape.roundedRect,
           ),
           markerStyle: QrMarkerStyle(
             color: Color(0xFF0E664B),

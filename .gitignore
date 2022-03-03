@@ -13,3 +13,4 @@ packages
 pubspec.lock
 .temp
 /doc
+.flutter-plugins-dependencies
