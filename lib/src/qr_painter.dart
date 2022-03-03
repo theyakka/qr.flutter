@@ -166,51 +166,46 @@ class QrPainter extends CustomPainter {
       );
     }
 
+    // do some pre-calculation / caching of units that we're going to reuse.
     final paintMetrics = _PaintMetrics(
       containerSize: size.shortestSide,
       moduleCount: _qr!.moduleCount,
       gapSize: appearance.gapSize.toDouble(),
     );
 
-    // draw the finder pattern elements
+    // draw the finder pattern elements.
     _drawFinderPatternItem(FinderPatternPosition.topLeft, canvas, paintMetrics);
     _drawFinderPatternItem(
         FinderPatternPosition.bottomLeft, canvas, paintMetrics);
     _drawFinderPatternItem(
         FinderPatternPosition.topRight, canvas, paintMetrics);
 
-    // DEBUG: draw the inner content boundary
-    // final paint = Paint()..style = ui.PaintingStyle.stroke;
-    // paint.strokeWidth = 1;
-    // paint.color = const Color(0x55222222);
-    // canvas.drawRect(
-    //     Rect.fromLTWH(paintMetrics.inset, paintMetrics.inset,
-    //         paintMetrics.innerContentSize, paintMetrics.innerContentSize),
-    //     paint);
-
-    double left;
-    double top;
+    // draw the data modules.
     // tracks where you are in the sequence of colors (if mode == sequence).
-    // get the painters for the pixel information
+    // get the painters for the pixel information.
     final pixelPaint = _paintCache.firstPaint(QrCodeElement.codePixel);
+    // the qr code is an x by y (square) grid.
     for (var y = 0; y < _qr!.moduleCount; y++) {
       for (var x = 0; x < _qr!.moduleCount; x++) {
-        // draw the finder patterns independently
+        // we draw the finder patterns independently, so skip this area.
         if (_isFinderPatternPosition(x, y)) continue;
+        // if the pixel is a light pixel then we don't draw anything. skip.
         if (!_qrImage.isDark(y, x)) continue;
-        // paint a pixel
-        left = paintMetrics.inset +
+        // calculate the pixel rect + offsets.
+        final left = paintMetrics.inset +
             (x * (paintMetrics.pixelSize + appearance.gapSize));
-        top = paintMetrics.inset +
+        final top = paintMetrics.inset +
             (y * (paintMetrics.pixelSize + appearance.gapSize));
-
-        final squareRect = Rect.fromLTWH(
-          left,
-          top,
-          paintMetrics.pixelSize,
-          paintMetrics.pixelSize,
-        );
-
+        final pixelBoundaryRect = Rect.fromLTWH(
+            left, top, paintMetrics.pixelSize, paintMetrics.pixelSize);
+        // check to see if the pixel boundary encroaches on the image. if so,
+        // we should avoid painting it if the `drawOverModules` flag is `false`.
+        if (imageRect != null &&
+            appearance.embeddedImageStyle?.drawOverModules == false &&
+            pixelBoundaryRect.overlaps(imageRect)) {
+          continue;
+        }
+        // determine what color the pixel should be and set up the paint colour.
         var pixelColor = Color(0xFF000000);
         final colors = appearance.moduleStyle.colors;
         if (colors != null && colors.length > 1) {
@@ -218,23 +213,20 @@ class QrPainter extends CustomPainter {
         } else if (colors != null) {
           pixelColor = colors.first!;
         }
-
-        //
-        if (imageRect != null &&
-            appearance.embeddedImageStyle?.drawOverModules == false &&
-            squareRect.overlaps(imageRect)) {
-          continue;
-        }
-
         pixelPaint!.color = pixelColor;
+        // if we're drawing gapless + square shaped then we should turn off
+        // antialiasing because it will render some antialias artifacts that
+        // make it look like there is a gap.
         pixelPaint.isAntiAlias = !(_isGapless &&
             (appearance.moduleStyle.shape == null ||
                 appearance.moduleStyle.shape == QrDataModuleShape.square));
-
+        // determine what path we need to render based on the module shape.
         if (appearance.moduleStyle.shape == null ||
             appearance.moduleStyle.shape == QrDataModuleShape.square) {
-          canvas.drawRect(squareRect, pixelPaint);
+          // square shape is simple.
+          canvas.drawRect(pixelBoundaryRect, pixelPaint);
         } else if (appearance.moduleStyle.shape == QrDataModuleShape.diamond) {
+          // create a diamond path and draw it.
           final diamondPath = Path();
           final midDelta = paintMetrics.pixelSize / 2;
           diamondPath.addPolygon([
@@ -245,6 +237,8 @@ class QrPainter extends CustomPainter {
           ], true);
           canvas.drawPath(diamondPath, pixelPaint);
         } else {
+          // we can tread circular and rounded rect the same because they just
+          // have a different radius.
           Radius radius;
           if (appearance.moduleStyle.shape == QrDataModuleShape.circle) {
             radius = Radius.circular(paintMetrics.pixelSize);
@@ -252,12 +246,12 @@ class QrPainter extends CustomPainter {
             radius = Radius.elliptical(
                 paintMetrics.pixelSize * 0.4, paintMetrics.pixelSize * 0.4);
           }
-          final roundedRect = RRect.fromRectAndRadius(squareRect, radius);
-          canvas.drawRRect(roundedRect, pixelPaint);
+          canvas.drawRRect(
+              RRect.fromRectAndRadius(pixelBoundaryRect, radius), pixelPaint);
         }
       }
     }
-
+    // draw the embedded image
     if (embeddedImage != null) {
       // draw the image overlay.
       _drawImageOverlay(canvas, imageRect, appearance.embeddedImageStyle);
