@@ -93,10 +93,12 @@ class _MainScreenState extends State<MainScreen> {
             children: <Widget>[
               Expanded(
                 child: Container(
-                  color: Colors.amber,
-                  padding: const EdgeInsets.all(30),
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
+                  constraints: const BoxConstraints(
+                    minWidth: 240,
+                    maxWidth: 480,
+                    minHeight: 240,
+                    maxHeight: 480,
+                  ),
                   child: qrFutureBuilder,
                 ),
               ),

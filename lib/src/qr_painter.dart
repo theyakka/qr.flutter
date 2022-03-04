@@ -150,6 +150,10 @@ class QrPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    // final bgPaint = Paint();
+    // bgPaint.color = Colors.green;
+    // canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), bgPaint);
+
     // if the widget has a zero size side then we cannot continue painting.
     if (kDebugMode) {
       if (size.shortestSide == 0) {
@@ -178,7 +182,7 @@ class QrPainter extends CustomPainter {
 
     // do some pre-calculation / caching of units that we're going to reuse.
     final paintMetrics = PaintMetrics(
-      containerSize: size.shortestSide,
+      containerSize: size,
       moduleCount: _qr!.moduleCount,
       gapSize: appearance.gapSize.toDouble(),
       inset: inset,
@@ -203,9 +207,9 @@ class QrPainter extends CustomPainter {
         // if the pixel is a light pixel then we don't draw anything. skip.
         if (!_qrImage.isDark(y, x)) continue;
         // calculate the pixel rect + offsets.
-        final left = paintMetrics.inset +
+        final left = paintMetrics.origin.dx +
             (x * (paintMetrics.pixelSize + appearance.gapSize));
-        final top = paintMetrics.inset +
+        final top = paintMetrics.origin.dy +
             (y * (paintMetrics.pixelSize + appearance.gapSize));
         final pixelBoundaryRect = Rect.fromLTWH(
             left, top, paintMetrics.pixelSize, paintMetrics.pixelSize);
@@ -292,35 +296,26 @@ class QrPainter extends CustomPainter {
     final radius = ((_finderPatternLimit * metrics.pixelSize) + totalGap) -
         metrics.pixelSize;
     final strokeAdjust = (metrics.pixelSize / 2.0);
-    final edgePos = metrics.containerSize - (radius + strokeAdjust);
-
-    Offset offset;
-    if (position == FinderPatternPosition.topLeft) {
-      offset = Offset(strokeAdjust + inset, strokeAdjust + inset);
-    } else if (position == FinderPatternPosition.bottomLeft) {
-      offset = Offset(strokeAdjust + inset, edgePos - inset);
-    } else {
-      offset = Offset(edgePos - inset, strokeAdjust + inset);
-    }
-
     // configure the paints
     final outerPaint = _paintCache.firstPaint(QrCodeElement.finderPatternOuter,
         position: position)!;
     outerPaint.strokeWidth = metrics.pixelSize;
     outerPaint.color = appearance.markerStyle.color;
-
     final dotPaint = _paintCache.firstPaint(QrCodeElement.finderPatternDot,
         position: position);
     dotPaint!.color =
         appearance.markerDotStyle?.color ?? appearance.markerStyle.color;
 
-    final outerRect = Rect.fromLTWH(offset.dx, offset.dy, radius, radius);
     final gap = metrics.pixelSize +
         (max(1, appearance.markerStyle.gap) * metrics.pixelSize);
-    final dotSize = radius - gap;
-    final dotOffset = (radius - dotSize) / 2;
-    final dotRect = Rect.fromLTWH(
-        offset.dx + dotOffset, offset.dy + dotOffset, dotSize, dotSize);
+    final markerFrameSize = radius - gap;
+    final markerFrameOffset = (radius - markerFrameSize) / 2;
+    final markerOffset =
+        metrics.finderPositionOffset(position, radius, strokeAdjust);
+    final outerRect =
+        Rect.fromLTWH(markerOffset.dx, markerOffset.dy, radius, radius);
+    final markerFrameRect = Rect.fromLTWH(markerOffset.dx + markerFrameOffset,
+        markerOffset.dy + markerFrameOffset, markerFrameSize, markerFrameSize);
 
     // draw the marker frame. NOTE: if the marker dot style is null (not
     // specified) then we will draw the dot here also. The dot style, in this
@@ -329,23 +324,25 @@ class QrPainter extends CustomPainter {
       canvas.drawRect(outerRect, outerPaint);
       // no marker dot style, draw the dot to match.
       if (appearance.markerDotStyle == null) {
-        canvas.drawRect(dotRect, dotPaint);
+        canvas.drawRect(markerFrameRect, dotPaint);
       }
     } else {
       Radius rectRadius;
       Radius dotRadius;
       if (appearance.markerStyle.shape == QrMarkerShape.circle) {
         rectRadius = Radius.circular(radius);
-        dotRadius = Radius.circular(dotSize);
+        dotRadius = Radius.circular(markerFrameSize);
       } else {
         rectRadius = Radius.elliptical(radius * 0.3, radius * 0.3);
-        dotRadius = Radius.elliptical(dotSize * 0.3, dotSize * 0.3);
+        dotRadius =
+            Radius.elliptical(markerFrameSize * 0.3, markerFrameSize * 0.3);
       }
       canvas.drawRRect(
           RRect.fromRectAndRadius(outerRect, rectRadius), outerPaint);
       // no marker dot style, draw the dot to match.
       if (appearance.markerDotStyle == null) {
-        canvas.drawRRect(RRect.fromRectAndRadius(dotRect, dotRadius), dotPaint);
+        canvas.drawRRect(
+            RRect.fromRectAndRadius(markerFrameRect, dotRadius), dotPaint);
       }
     }
 
@@ -353,15 +350,17 @@ class QrPainter extends CustomPainter {
     var dotStyle = appearance.markerDotStyle;
     if (dotStyle != null) {
       if (dotStyle.shape == QrMarkerDotShape.square) {
-        canvas.drawRect(dotRect, dotPaint);
+        canvas.drawRect(markerFrameRect, dotPaint);
       } else {
         Radius dotRadius;
         if (dotStyle.shape == QrMarkerDotShape.circle) {
-          dotRadius = Radius.circular(dotSize);
+          dotRadius = Radius.circular(markerFrameSize);
         } else {
-          dotRadius = Radius.elliptical(dotSize * 0.3, dotSize * 0.3);
+          dotRadius =
+              Radius.elliptical(markerFrameSize * 0.3, markerFrameSize * 0.3);
         }
-        canvas.drawRRect(RRect.fromRectAndRadius(dotRect, dotRadius), dotPaint);
+        canvas.drawRRect(
+            RRect.fromRectAndRadius(markerFrameRect, dotRadius), dotPaint);
       }
     }
   }
