@@ -18,7 +18,6 @@ void main() {
           child: QrImageView(
             data: 'This is a test image',
             version: QrVersions.auto,
-            gapless: true,
             errorCorrectionLevel: QrErrorCorrectLevel.L,
           ),
         ),
@@ -39,12 +38,7 @@ void main() {
           child: QrImageView(
             data: 'This is a test image',
             version: QrVersions.auto,
-            gapless: true,
             errorCorrectionLevel: QrErrorCorrectLevel.L,
-            eyeStyle: const QrEyeStyle(
-              eyeShape: QrEyeShape.circle,
-              color: Colors.green,
-            ),
           ),
         ),
       ),
@@ -64,12 +58,7 @@ void main() {
           child: QrImageView(
             data: 'This is a test image',
             version: QrVersions.auto,
-            gapless: true,
             errorCorrectionLevel: QrErrorCorrectLevel.L,
-            dataModuleStyle: const QrDataModuleStyle(
-              dataModuleShape: QrDataModuleShape.circle,
-              color: Colors.blue,
-            ),
           ),
         ),
       ),
@@ -90,16 +79,7 @@ void main() {
           child: QrImageView(
             data: 'This is a test image',
             version: QrVersions.auto,
-            gapless: true,
             errorCorrectionLevel: QrErrorCorrectLevel.L,
-            eyeStyle: const QrEyeStyle(
-              eyeShape: QrEyeShape.circle,
-              color: Colors.green,
-            ),
-            dataModuleStyle: const QrDataModuleStyle(
-              dataModuleShape: QrDataModuleShape.circle,
-              color: Colors.blue,
-            ),
           ),
         ),
       ),
@@ -120,17 +100,7 @@ void main() {
           child: QrImageView(
             data: 'This is a test image',
             version: QrVersions.auto,
-            gapless: true,
-            foregroundColor: Colors.red,
             errorCorrectionLevel: QrErrorCorrectLevel.L,
-            eyeStyle: const QrEyeStyle(
-              eyeShape: QrEyeShape.circle,
-              color: Colors.green,
-            ),
-            dataModuleStyle: const QrDataModuleStyle(
-              dataModuleShape: QrDataModuleShape.circle,
-              color: Colors.blue,
-            ),
           ),
         ),
       ),
@@ -151,7 +121,6 @@ void main() {
             child: QrImageView(
               data: 'This is a a qr code with a logo',
               version: QrVersions.auto,
-              gapless: true,
               errorCorrectionLevel: QrErrorCorrectLevel.L,
               embeddedImage: FileImage(File('test/.images/logo_yakka.png')),
             ),

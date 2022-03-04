@@ -64,18 +64,20 @@ class _MainScreenState extends State<MainScreen> {
           ),
         );
 
+        QrPainter painter = QrPainter(
+          data: codeMessage,
+          version: QrVersions.auto,
+          errorCorrectionLevel: QrErrorCorrectLevel.L,
+          embeddedImage: snapshot.data,
+          appearance: appearance,
+        );
+
         return GestureDetector(
           onTap: onCodeTapped,
           child: AspectRatio(
             aspectRatio: 1,
             child: CustomPaint(
-              painter: QrPainter(
-                data: codeMessage,
-                version: QrVersions.auto,
-                errorCorrectionLevel: QrErrorCorrectLevel.L,
-                embeddedImage: snapshot.data,
-                appearance: appearance,
-              ),
+              painter: painter,
             ),
           ),
         );
