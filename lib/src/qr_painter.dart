@@ -263,16 +263,6 @@ class QrPainter extends CustomPainter {
     }
   }
 
-  bool _hasAdjacentVerticalPixel(int x, int y, int moduleCount) {
-    if (y + 1 >= moduleCount) return false;
-    return _qrImage.isDark(y + 1, x);
-  }
-
-  bool _hasAdjacentHorizontalPixel(int x, int y, int moduleCount) {
-    if (x + 1 >= moduleCount) return false;
-    return _qrImage.isDark(y, x + 1);
-  }
-
   /// Determines if the x / y position is in an area of the grid where one of
   /// the primary finder patterns will be drawn. Larger qr codes will have
   /// "embedded" finder patterns. This method does not include detection for
@@ -422,7 +412,10 @@ class QrPainter extends CustomPainter {
   }
 
   /// Returns a [ui.Picture] object containing the QR code data.
-  ui.Picture toPicture(double size) {
+  ui.Picture toPicture({
+    required double size,
+    EdgeInsets padding = EdgeInsets.zero,
+  }) {
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
     paint(canvas, Size(size, size));
@@ -432,7 +425,7 @@ class QrPainter extends CustomPainter {
   /// Returns the raw QR code [ui.Image] object.
   Future<ui.Image> toImage(double size,
       {ui.ImageByteFormat format = ui.ImageByteFormat.png}) async {
-    return await toPicture(size).toImage(size.toInt(), size.toInt());
+    return await toPicture(size: size).toImage(size.toInt(), size.toInt());
   }
 
   /// Returns the raw QR code image byte data.
