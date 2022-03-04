@@ -149,7 +149,6 @@ class _QrImageViewState extends State<QrImageView> {
           future: _loadQrImage(context, widget.appearance.embeddedImageStyle),
           builder: (ctx, snapshot) {
             if (snapshot.error != null) {
-              // print("snapshot error: ${snapshot.error}");
               if (widget.embeddedImageEmitsError) {
                 return _errorWidget(context, constraints, snapshot.error);
               } else {
@@ -157,7 +156,6 @@ class _QrImageViewState extends State<QrImageView> {
               }
             }
             if (snapshot.hasData) {
-              // print('loaded image');
               final loadedImage = snapshot.data;
               return _qrWidget(context, loadedImage, widgetSize);
             } else {
