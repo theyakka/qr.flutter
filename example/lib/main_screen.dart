@@ -126,9 +126,12 @@ class _MainScreenState extends State<MainScreen> {
     _tapTimer?.cancel();
     _tapTimer = Timer(const Duration(seconds: 3), () {
       _tapCount = 0;
+      setState(() {
+        _instructions = _defaultInstructions;
+      });
     });
     _tapCount++;
-    if (_tapCount >= 5) {
+    if (_tapCount == 5) {
       setState(() {
         _instructions = "Keep tapping ...";
       });

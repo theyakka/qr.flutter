@@ -163,5 +163,8 @@ Future<void> pumpWidgetWithImages(
 }
 
 Widget buildTestableWidget(Widget widget) {
-  return MediaQuery(data: MediaQueryData(), child: MaterialApp(home: widget));
+  return MediaQuery(
+    data: const MediaQueryData(),
+    child: MaterialApp(home: widget),
+  );
 }
