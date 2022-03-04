@@ -39,7 +39,7 @@ class _MainScreenState extends State<MainScreen> {
           return Container();
         }
         final appearance = QrAppearance(
-          gapSize: 0,
+          gapSize: 2,
           moduleStyle: QrDataModuleStyle(
             colors: QrColors.random([
               const Color(0xFF0E664B),
@@ -47,16 +47,16 @@ class _MainScreenState extends State<MainScreen> {
               const Color(0xFF2AB689),
               const Color(0xFF7BD4AB),
             ]),
-            shape: QrDataModuleShape.diamond,
+            shape: QrDataModuleShape.square,
           ),
           markerStyle: const QrMarkerStyle(
             color: Color(0xFF0E664B),
-            shape: QrMarkerShape.circle,
+            shape: QrMarkerShape.square,
             gap: 2,
           ),
           markerDotStyle: const QrMarkerDotStyle(
             color: Color(0xFF339C7A),
-            shape: QrMarkerDotShape.circle,
+            shape: QrMarkerDotShape.square,
           ),
           embeddedImageStyle: const QrEmbeddedImageStyle(
             size: Size.square(72),
@@ -76,9 +76,7 @@ class _MainScreenState extends State<MainScreen> {
           onTap: onCodeTapped,
           child: AspectRatio(
             aspectRatio: 1,
-            child: CustomPaint(
-              painter: painter,
-            ),
+            child: CustomPaint(painter: painter),
           ),
         );
       },
@@ -94,12 +92,12 @@ class _MainScreenState extends State<MainScreen> {
           child: Column(
             children: <Widget>[
               Expanded(
-                child: Center(
-                  child: Container(
-                    constraints:
-                        const BoxConstraints(maxWidth: 480, minWidth: 200),
-                    child: qrFutureBuilder,
-                  ),
+                child: Container(
+                  color: Colors.amber,
+                  padding: const EdgeInsets.all(30),
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  child: qrFutureBuilder,
                 ),
               ),
               Padding(

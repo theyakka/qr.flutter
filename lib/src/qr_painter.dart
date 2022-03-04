@@ -10,8 +10,8 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import 'color_matrix.dart';
@@ -29,6 +29,7 @@ class QrPainter extends CustomPainter {
     this.errorCorrectionLevel = QrErrorCorrectLevel.M,
     this.appearance = const QrAppearance(),
     this.embeddedImage,
+    this.inset = 0,
   })  : _isGapless = appearance.gapSize == 0,
         assert(isSupportedVersion(version)) {
     _init(data);
@@ -41,6 +42,7 @@ class QrPainter extends CustomPainter {
     required QrCode qr,
     this.appearance = const QrAppearance(),
     this.embeddedImage,
+    this.inset = 0,
   })  : _qr = qr,
         version = qr.typeNumber,
         errorCorrectionLevel = qr.errorCorrectLevel,
@@ -61,6 +63,9 @@ class QrPainter extends CustomPainter {
   /// The image data to embed (as an overlay) in the QR code. The image will
   /// be added to the center of the QR code.
   final ui.Image? embeddedImage;
+
+  /// The amount that the code contents should be inset from the edges.
+  final double inset;
 
   /// The base QR code data
   QrCode? _qr;
@@ -176,6 +181,7 @@ class QrPainter extends CustomPainter {
       containerSize: size.shortestSide,
       moduleCount: _qr!.moduleCount,
       gapSize: appearance.gapSize.toDouble(),
+      inset: inset,
     );
 
     // draw the finder pattern elements.
@@ -286,17 +292,15 @@ class QrPainter extends CustomPainter {
     final radius = ((_finderPatternLimit * metrics.pixelSize) + totalGap) -
         metrics.pixelSize;
     final strokeAdjust = (metrics.pixelSize / 2.0);
-    final edgePos =
-        (metrics.inset + metrics.innerContentSize) - (radius + strokeAdjust);
+    final edgePos = metrics.containerSize - (radius + strokeAdjust);
 
     Offset offset;
     if (position == FinderPatternPosition.topLeft) {
-      offset =
-          Offset(metrics.inset + strokeAdjust, metrics.inset + strokeAdjust);
+      offset = Offset(strokeAdjust + inset, strokeAdjust + inset);
     } else if (position == FinderPatternPosition.bottomLeft) {
-      offset = Offset(metrics.inset + strokeAdjust, edgePos);
+      offset = Offset(strokeAdjust + inset, edgePos - inset);
     } else {
-      offset = Offset(edgePos, metrics.inset + strokeAdjust);
+      offset = Offset(edgePos - inset, strokeAdjust + inset);
     }
 
     // configure the paints

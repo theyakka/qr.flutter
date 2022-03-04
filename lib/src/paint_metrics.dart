@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 /// Storage class for pre-calculated values that are re-used across different
 /// paint sub-processes.
 class PaintMetrics {
@@ -7,6 +9,7 @@ class PaintMetrics {
     required this.containerSize,
     required this.gapSize,
     required this.moduleCount,
+    this.inset = 0,
   }) {
     _calculateMetrics();
   }
@@ -20,19 +23,18 @@ class PaintMetrics {
   /// The size of the gap to draw between the data pixels.
   final double gapSize;
 
+  /// The amount that the code contents should be inset from the edges.
+  final double inset;
+
   late final double _pixelSize;
   double get pixelSize => _pixelSize;
 
   late final double _innerContentSize;
   double get innerContentSize => _innerContentSize;
 
-  late final double _inset;
-  double get inset => _inset;
-
   void _calculateMetrics() {
     final gapTotal = (moduleCount - 1) * gapSize;
-    _pixelSize = (containerSize - gapTotal) / moduleCount;
+    _pixelSize = (containerSize - (2 * inset) - gapTotal) / moduleCount;
     _innerContentSize = (_pixelSize * moduleCount) + gapTotal;
-    _inset = (containerSize - _innerContentSize) / 2;
   }
 }
