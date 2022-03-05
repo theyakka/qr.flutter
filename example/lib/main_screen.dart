@@ -43,7 +43,7 @@ class _MainScreenState extends State<MainScreen> {
           return Container();
         }
         final appearance = QrAppearance(
-          gapSize: 2,
+          gapSize: 1,
           moduleStyle: QrDataModuleStyle(
             colors: QrColors.random([
               const Color(0xFF0E664B),
@@ -51,16 +51,16 @@ class _MainScreenState extends State<MainScreen> {
               const Color(0xFF2AB689),
               const Color(0xFF7BD4AB),
             ]),
-            shape: QrDataModuleShape.square,
+            shape: QrDataModuleShape.circle,
           ),
           markerStyle: const QrMarkerStyle(
             color: Color(0xFF0E664B),
-            shape: QrMarkerShape.square,
+            shape: QrMarkerShape.roundedRect,
             gap: 2,
           ),
           markerDotStyle: const QrMarkerDotStyle(
             color: Color(0xFF339C7A),
-            shape: QrMarkerDotShape.square,
+            shape: QrMarkerDotShape.roundedRect,
           ),
           embeddedImageStyle: const QrEmbeddedImageStyle(
             size: Size.square(72),
