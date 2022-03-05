@@ -5,12 +5,15 @@
  */
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'save_file.dart' if (dart.library.html) 'save_file_web.dart';
 
 /// This is the screen that you'll see when the app starts
 class MainScreen extends StatefulWidget {
@@ -25,6 +28,7 @@ class _MainScreenState extends State<MainScreen> {
   Timer? _tapTimer;
   final String _defaultInstructions = "Scan the QR code";
   String _instructions = "Scan the QR code";
+  late QrPainter _painter;
 
   @override
   Widget build(BuildContext context) {
@@ -64,10 +68,10 @@ class _MainScreenState extends State<MainScreen> {
           ),
         );
 
-        QrPainter painter = QrPainter(
+        _painter = QrPainter(
           data: codeMessage,
           version: QrVersions.auto,
-          errorCorrectionLevel: QrErrorCorrectLevel.L,
+          errorCorrectionLevel: QrErrorCorrectLevel.M,
           embeddedImage: snapshot.data,
           appearance: appearance,
         );
@@ -76,7 +80,7 @@ class _MainScreenState extends State<MainScreen> {
           onTap: onCodeTapped,
           child: AspectRatio(
             aspectRatio: 1,
-            child: CustomPaint(painter: painter),
+            child: CustomPaint(painter: _painter),
           ),
         );
       },
@@ -104,10 +108,21 @@ class _MainScreenState extends State<MainScreen> {
               ),
               Padding(
                 padding:
-                    const EdgeInsets.symmetric(vertical: 20, horizontal: 40)
-                        .copyWith(bottom: 40),
+                    const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
                 child: Text(_instructions),
               ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 40),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(
+                        onPressed: onImageButtonPressed,
+                        child: const Text("Save as image"))
+                  ],
+                ),
+              )
             ],
           ),
         ),
@@ -120,6 +135,19 @@ class _MainScreenState extends State<MainScreen> {
     final byteData = await rootBundle.load('assets/images/4.0x/logo_yakka.png');
     ui.decodeImageFromList(byteData.buffer.asUint8List(), completer.complete);
     return completer.future;
+  }
+
+  void onImageButtonPressed() async {
+    final imageData = await _painter.toImageData(
+      400,
+      background: const Color(0xFFFFFFFF),
+      inset: 20,
+    );
+    final bytes = imageData?.buffer.asUint8List();
+    if (bytes != null) {
+      final base64 = base64Encode(bytes);
+      saveData(bytes, "image_file.png");
+    }
   }
 
   void onCodeTapped() {

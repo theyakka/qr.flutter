@@ -5,6 +5,7 @@
  */
 
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
@@ -150,9 +151,16 @@ class QrPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    // final bgPaint = Paint();
-    // bgPaint.color = Colors.green;
-    // canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), bgPaint);
+    _paintWithOverrides(canvas, size, null, null);
+  }
+
+  void _paintWithOverrides(
+      Canvas canvas, Size size, Color? background, double? customInset) {
+    if (background != null) {
+      final bgPaint = Paint();
+      bgPaint.color = background;
+      canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), bgPaint);
+    }
 
     // if the widget has a zero size side then we cannot continue painting.
     if (kDebugMode) {
@@ -185,7 +193,7 @@ class QrPainter extends CustomPainter {
       containerSize: size,
       moduleCount: _qr!.moduleCount,
       gapSize: appearance.gapSize.toDouble(),
-      inset: inset,
+      inset: customInset ?? inset,
     );
 
     // draw the finder pattern elements.
@@ -415,26 +423,38 @@ class QrPainter extends CustomPainter {
   }
 
   /// Returns a [ui.Picture] object containing the QR code data.
-  ui.Picture toPicture({
+  Future<ui.Picture> toPicture({
     required double size,
-    EdgeInsets padding = EdgeInsets.zero,
-  }) {
+    Color? background,
+    double? inset,
+  }) async {
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
-    paint(canvas, Size(size, size));
+    _paintWithOverrides(canvas, Size(size, size), background, inset);
     return recorder.endRecording();
   }
 
   /// Returns the raw QR code [ui.Image] object.
-  Future<ui.Image> toImage(double size,
-      {ui.ImageByteFormat format = ui.ImageByteFormat.png}) async {
-    return await toPicture(size: size).toImage(size.toInt(), size.toInt());
+  Future<ui.Image> toImage(
+    double size, {
+    ui.ImageByteFormat format = ui.ImageByteFormat.png,
+    Color? background,
+    double? inset,
+  }) async {
+    final picture =
+        await toPicture(size: size, background: background, inset: inset);
+    return picture.toImage(size.toInt(), size.toInt());
   }
 
   /// Returns the raw QR code image byte data.
-  Future<ByteData?> toImageData(double size,
-      {ui.ImageByteFormat format = ui.ImageByteFormat.png}) async {
-    final image = await toImage(size, format: format);
+  Future<ByteData?> toImageData(
+    double size, {
+    ui.ImageByteFormat format = ui.ImageByteFormat.png,
+    Color? background,
+    double? inset,
+  }) async {
+    final image = await toImage(size,
+        format: format, background: background, inset: inset);
     return image.toByteData(format: format);
   }
 }
