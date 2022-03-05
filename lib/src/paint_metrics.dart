@@ -29,14 +29,22 @@ class PaintMetrics {
   final double inset;
 
   late final double _pixelSize;
+
+  /// The size of each pixel on the QR code grid.
   double get pixelSize => _pixelSize;
 
   late final double _innerContentSize;
+
+  /// The size that all of the content will fill within the viewport.
   double get innerContentSize => _innerContentSize;
 
   late final Offset _origin;
+
+  /// The top, left (x, y) position of the content within the viewport.
   Offset get origin => _origin;
 
+  /// Gets the top, left (x, y) values for the finder pattern element at
+  /// the specified finder pattern position.
   Offset finderPositionOffset(
     FinderPatternPosition position,
     double markerSize,
