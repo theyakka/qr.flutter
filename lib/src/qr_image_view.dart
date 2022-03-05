@@ -9,8 +9,8 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:qr/qr.dart';
-import 'package:qr_flutter/src/appearance.dart';
 
+import 'appearance.dart';
 import 'qr_painter.dart';
 import 'qr_versions.dart';
 import 'validator.dart';

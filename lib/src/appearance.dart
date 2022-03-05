@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
-import 'package:qr_flutter/src/colors.dart';
+
+import 'colors.dart';
 
 /// Enumeration representing the finder pattern outer marker frame.
 enum QrMarkerShape {
