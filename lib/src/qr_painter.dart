@@ -45,6 +45,7 @@ class QrPainter extends CustomPainter {
       dataModuleShape: QrDataModuleShape.square,
       color: Color(0xFF000000),
     ),
+    this.showDataModulesBehindEmbeddedImage = true
   }) : assert(QrVersions.isSupportedVersion(version)) {
     _init(data);
   }
@@ -67,6 +68,7 @@ class QrPainter extends CustomPainter {
       dataModuleShape: QrDataModuleShape.square,
       color: Color(0xFF000000),
     ),
+    this.showDataModulesBehindEmbeddedImage = true
   })  : _qr = qr,
         version = qr.typeNumber,
         errorCorrectionLevel = qr.errorCorrectLevel {
@@ -104,6 +106,9 @@ class QrPainter extends CustomPainter {
 
   /// Styling option for QR data module.
   final QrDataModuleStyle dataModuleStyle;
+
+  ///Whether to paint or not the data modules behind the embedded image
+  final bool showDataModulesBehindEmbeddedImage;
 
   /// The base QR code data
   QrCode? _qr;
@@ -211,6 +216,29 @@ class QrPainter extends CustomPainter {
       emptyPixelPaint = _paintCache.firstPaint(QrCodeElement.codePixelEmpty);
       emptyPixelPaint!.color = emptyColor!;
     }
+
+    //Determine the coordinates of the embedded image so we'll know where to place
+    //it and where not to paint qrcode's dataModules
+    Offset position = Offset(0, 0);
+    Size imageSize = Size(0, 0);
+    Rect imageRect = Rect.zero;
+    if (embeddedImage != null) {
+      final originalSize = Size(
+        embeddedImage!.width.toDouble(),
+        embeddedImage!.height.toDouble(),
+      );
+      final requestedSize =
+      embeddedImageStyle != null ? embeddedImageStyle!.size : null;
+      imageSize = _scaledAspectSize(size, originalSize, requestedSize);
+      position = Offset(
+        (size.width - imageSize.width) / 2.0,
+        (size.height - imageSize.height) / 2.0,
+      );
+
+      imageRect = Rect.fromLTWH(position.dx, position.dy,
+          imageSize.width, imageSize.height);
+    }
+
     for (var x = 0; x < _qr!.moduleCount; x++) {
       for (var y = 0; y < _qr!.moduleCount; y++) {
         // draw the finder patterns independently
@@ -234,6 +262,12 @@ class QrPainter extends CustomPainter {
           paintMetrics.pixelSize + pixelHTweak,
           paintMetrics.pixelSize + pixelVTweak,
         );
+
+        //If dataModule is inside innerContent (image) area -> don't paint it
+        if(!showDataModulesBehindEmbeddedImage &&
+          imageRect.overlaps(squareRect)
+        ) continue;
+
         if (dataModuleStyle.dataModuleShape == QrDataModuleShape.square) {
           canvas.drawRect(squareRect, paint);
         } else {
@@ -245,17 +279,6 @@ class QrPainter extends CustomPainter {
     }
 
     if (embeddedImage != null) {
-      final originalSize = Size(
-        embeddedImage!.width.toDouble(),
-        embeddedImage!.height.toDouble(),
-      );
-      final requestedSize =
-          embeddedImageStyle != null ? embeddedImageStyle!.size : null;
-      final imageSize = _scaledAspectSize(size, originalSize, requestedSize);
-      final position = Offset(
-        (size.width - imageSize.width) / 2.0,
-        (size.height - imageSize.height) / 2.0,
-      );
       // draw the image overlay.
       _drawImageOverlay(canvas, position, imageSize, embeddedImageStyle);
     }
