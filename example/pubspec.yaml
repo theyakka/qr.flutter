@@ -13,6 +13,7 @@ dependencies:
   flutter:
     sdk: flutter
   url_launcher: ^6.0.0
+  path_provider: ^2.0.0
   qr_flutter:
     path: ../
 
