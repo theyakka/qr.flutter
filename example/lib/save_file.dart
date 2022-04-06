@@ -9,7 +9,11 @@ void saveData(List<int> data, String filename) async {
   final result = await platform.invokeMapMethod("getDownloads");
   if (result != null) {
     String absPath = result["absPath"];
-    String path = "$absPath/$filename";
+    if (!absPath.endsWith("/")) {
+      absPath += "/";
+    }
+    print(absPath);
+    String path = "$absPath$filename";
     final file = File(path);
     try {
       await file.writeAsBytes(data);
