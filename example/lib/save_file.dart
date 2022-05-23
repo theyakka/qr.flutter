@@ -1,8 +1,7 @@
-import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
 
 void saveData(List<int> data, String filename) async {
   const platform = MethodChannel("app.yakka.example/dirChannel");
@@ -12,13 +11,17 @@ void saveData(List<int> data, String filename) async {
     if (!absPath.endsWith("/")) {
       absPath += "/";
     }
-    print(absPath);
+    if (kDebugMode) {
+      print(absPath);
+    }
     String path = "$absPath$filename";
     final file = File(path);
     try {
       await file.writeAsBytes(data);
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
   }
 }

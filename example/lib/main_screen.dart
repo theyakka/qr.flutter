@@ -5,7 +5,6 @@
  */
 
 import 'dart:async';
-import 'dart:convert';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -26,8 +25,8 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _tapCount = 0;
   Timer? _tapTimer;
-  final String _defaultInstructions = "Scan the QR code";
-  String _instructions = "Scan the QR code";
+  final String _defaultInstructions = "Use your camera to scan the QR code for a simple message.";
+  String _instructions = "Use your camera to scan the QR code for a simple message.";
   late QrPainter _painter;
 
   @override
@@ -108,21 +107,21 @@ class _MainScreenState extends State<MainScreen> {
               ),
               Padding(
                 padding:
-                    const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
-                child: Text(_instructions),
+                    const EdgeInsets.only(left: 20, right: 20, bottom: 100),
+                child: Text(_instructions, textAlign: TextAlign.center),
               ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 40),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextButton(
-                        onPressed: onImageButtonPressed,
-                        child: const Text("Save as image"))
-                  ],
-                ),
-              )
+              // Padding(
+              //   padding: const EdgeInsets.only(bottom: 40),
+              //   child: Row(
+              //     crossAxisAlignment: CrossAxisAlignment.center,
+              //     mainAxisAlignment: MainAxisAlignment.center,
+              //     children: [
+              //       TextButton(
+              //           onPressed: onImageButtonPressed,
+              //           child: const Text("Save as image"))
+              //     ],
+              //   ),
+              // )
             ],
           ),
         ),
@@ -145,7 +144,6 @@ class _MainScreenState extends State<MainScreen> {
     );
     final bytes = imageData?.buffer.asUint8List();
     if (bytes != null) {
-      final base64 = base64Encode(bytes);
       saveData(bytes, "image_file.png");
     }
   }
@@ -170,7 +168,7 @@ class _MainScreenState extends State<MainScreen> {
       });
       _tapTimer?.cancel();
       _tapCount = 0;
-      launch("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+      launchUrl(Uri.parse("https://www.youtube.com/watch?v=dQw4w9WgXcQ"));
     }
   }
 }
