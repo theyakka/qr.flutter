@@ -139,7 +139,6 @@ QrImage(
 ## Has it been tested in production? Can I use it in production?
 
 Yep! It's stable and ready to rock. It's currently in use in quite a few production applications including:
-- Sixpoint: [Android](https://play.google.com/store/apps/details?id=com.sixpoint.sixpoint&hl=en_US) & [iOS](https://itunes.apple.com/us/app/sixpoint/id663008674?mt=8) 
 
 # Outro
 ## Credits
