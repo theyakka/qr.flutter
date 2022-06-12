@@ -139,6 +139,7 @@ QrImage(
 ## Has it been tested in production? Can I use it in production?
 
 Yep! It's stable and ready to rock. It's currently in use in quite a few production applications including:
+- [Open Edisu](https://github.com/ilovelinux/open_edisu): [Android](https://play.google.com/store/apps/details?id=com.ilovelinux.openedisu)
 
 # Outro
 ## Credits
