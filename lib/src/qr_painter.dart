@@ -81,7 +81,9 @@ class QrPainter extends CustomPainter {
   /// Do we need to render gaps between the modules.
   final bool _isGapless;
 
-  void _init(String data) {
+  int _dataHash = -1;
+
+  void  _init(String data) {
     if (!isSupportedVersion(version)) {
       throw QrUnsupportedVersionException(version);
     }
@@ -94,6 +96,7 @@ class QrPainter extends CustomPainter {
     if (!validationResult.isValid) {
       throw validationResult.error!;
     }
+    _dataHash = data.hashCode;
     _qr = validationResult.qrCode;
     _initColors();
     _initPaints();
@@ -413,10 +416,10 @@ class QrPainter extends CustomPainter {
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
     if (oldDelegate is QrPainter) {
-      return oldDelegate.appearance != appearance ||
-          oldDelegate.version != version ||
-          oldDelegate.errorCorrectionLevel != errorCorrectionLevel ||
-          oldDelegate.embeddedImage != embeddedImage;
+      final shouldRepaint = oldDelegate.hashCode != hashCode;
+      print("hcc: $hashCode, ${oldDelegate.hashCode}");
+      print("sr: $shouldRepaint");
+      return shouldRepaint;
     }
     return true;
   }
@@ -455,5 +458,37 @@ class QrPainter extends CustomPainter {
     final image = await toImage(size,
         format: format, background: background, inset: inset);
     return image.toByteData(format: format);
+  }
+
+  int get qrhash {
+    if (_qr == null) {
+      return -1;
+    }
+    return _qr!.moduleCount.hashCode ^ _qr!.errorCorrectLevel.hashCode ^
+      _qr!.typeNumber.hashCode ^ _dataHash;
+  }
+
+  @override
+  int get hashCode {
+    final hashCode = appearance.hashCode ^ version.hashCode ^
+        errorCorrectionLevel.hashCode ^
+        inset.hashCode ^ qrhash ^ _colorMatrix.hashCode ^
+        _qrImage.hashCode ^ _isGapless.hashCode;
+    print("hc: $hashCode");
+    print("$hashCode : 1=${appearance.hashCode}");
+    print("$hashCode : 2=${version.hashCode}");
+    print("$hashCode : 3=${errorCorrectionLevel.hashCode}");
+    print("$hashCode : 4=${embeddedImage.hashCode}");
+    print("$hashCode : 5=${inset.hashCode}");
+    print("$hashCode : 6=$qrhash");
+    print("$hashCode : 7=${_colorMatrix.hashCode}");
+    print("$hashCode : 8=${_qrImage.hashCode}");
+    print("$hashCode : 9=${_isGapless.hashCode}");
+    return hashCode;
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other.hashCode == hashCode;
   }
 }

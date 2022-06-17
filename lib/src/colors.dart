@@ -1,10 +1,15 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 /// Used to store / access the directional configuration for color lists that
 /// support directions.
 const String optionKeyDirection = "direction";
+
+int colorHash(Color color) {
+  return color.red ^ color.green ^ color.blue ^ color.alpha;
+}
 
 /// Color configuration for the data module portion of the QR code.
 class QrColors {
@@ -64,12 +69,20 @@ class QrColors {
 
   @override
   bool operator ==(Object other) {
-    return other.hashCode == hashCode;
+    if (other is QrColors) {
+      return other.hashCode == hashCode &&
+          mapEquals<String, dynamic>(options, other.options);
+    }
+    return false;
   }
 
   @override
   int get hashCode {
-    return colors.hashCode ^ mode.hashCode ^ options.hashCode;
+    var colorsHash= -1;
+    for (var c in colors) {
+      colorsHash ^= colorHash(c);
+    }
+    return mode.hashCode ^ colorsHash;
   }
 }
 

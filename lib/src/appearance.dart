@@ -77,11 +77,8 @@ class QrAppearance {
 
   @override
   int get hashCode {
-    return gapSize.hashCode ^
-        markerStyle.hashCode ^
-        markerDotStyle.hashCode ^
-        moduleStyle.hashCode ^
-        embeddedImageStyle.hashCode;
+    return gapSize.hashCode ^ markerStyle.hashCode ^ markerDotStyle.hashCode ^
+        embeddedImageStyle.hashCode ^ moduleStyle.hashCode;
   }
 }
 
@@ -104,14 +101,12 @@ class QrMarkerStyle {
   final int gap;
 
   @override
-  int get hashCode => shape.hashCode ^ color.hashCode;
+  int get hashCode => shape.hashCode ^ gap.hashCode ^ color.red.hashCode ^
+      color.green.hashCode ^ color.blue.hashCode ^ color.alpha.hashCode;
 
   @override
   bool operator ==(Object other) {
-    if (other is QrMarkerStyle) {
-      return shape == other.shape && color == other.color && gap == other.gap;
-    }
-    return false;
+    return other.hashCode == hashCode;
   }
 }
 
@@ -136,7 +131,8 @@ class QrMarkerDotStyle {
 
   @override
   int get hashCode {
-    return shape.hashCode ^ color.hashCode;
+    return shape.hashCode ^ color.red.hashCode ^
+        color.green.hashCode ^ color.blue.hashCode ^ color.alpha.hashCode;
   }
 }
 
