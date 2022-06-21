@@ -37,7 +37,7 @@ dependencies:
 dependencies:
   qr_flutter:
     git:
-      url: git://github.com/lukef/qr.flutter.git
+      url: https://github.com/theyakka/qr.flutter.git
 ```
 
 Keep in mind the `master` branch could be unstable.
@@ -55,12 +55,14 @@ import 'package:qr_flutter/qr_flutter.dart';
 Next, to render a basic QR code you can use the following code (or something like it):
 
 ```dart
-QrImage(
+QrImageView(
   data: "1234567890",
   version: QrVersions.auto,
   size: 200.0,
 ),
 ```
+
+**BREAKING CHANGE**: `QrImage` was renamed to `QrImageView` in version **4.0.1**!
 
 Depending on your data requirements you may want to tweak the QR code output. The following options are available:
 
@@ -90,7 +92,7 @@ Also, the following examples give you a quick overview on how to use the library
 A basic QR code will look something like:
 
 ```dart
-QrImage(
+QrImageView(
   data: 'This is a simple QR code',
   version: QrVersions.auto,
   size: 320,
@@ -101,7 +103,7 @@ QrImage(
 A QR code with an image (from your application's assets) will look like:
 
 ```dart
-QrImage(
+QrImageView(
   data: 'This QR code has an embedded image as well',
   version: QrVersions.auto,
   size: 320,
@@ -116,7 +118,7 @@ QrImage(
 To show an error state in the event that the QR code can't be validated:
 
 ```dart
-QrImage(
+QrImageView(
   data: 'This QR code will show the error state instead',
   version: 1,
   size: 320,
