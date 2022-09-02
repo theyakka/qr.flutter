@@ -116,6 +116,9 @@ class QrPainter extends CustomPainter {
   /// The base QR code data
   QrCode? _qr;
 
+  /// QR Image renderer
+  late QrImage _qrImage;
+
   /// This is the version (after calculating) that we will use if the user has
   /// requested the 'auto' version.
   late final int _calcVersion;
@@ -145,6 +148,8 @@ class QrPainter extends CustomPainter {
   }
 
   void _initPaints() {
+    // Initialize `QrImage` for rendering
+    _qrImage = QrImage(_qr!);
     // Cache the pixel paint object. For now there is only one but we might
     // expand it to multiple later (e.g.: different colours).
     _paintCache.cache(
@@ -220,7 +225,7 @@ class QrPainter extends CustomPainter {
         if (_isFinderPatternPosition(x, y)) continue;
         // Exclude if pixel is in image gap space
         if (blendEmbeddedImage && _isLogoArea(x, y)) continue;
-        final paint = _qr!.isDark(y, x) ? pixelPaint : emptyPixelPaint;
+        final paint = _qrImage.isDark(y, x) ? pixelPaint : emptyPixelPaint;
         if (paint == null) continue;
         // paint a pixel
         left = paintMetrics.inset + (x * (paintMetrics.pixelSize + gap));
@@ -268,24 +273,12 @@ class QrPainter extends CustomPainter {
 
   bool _hasAdjacentVerticalPixel(int x, int y, int moduleCount) {
     if (y + 1 >= moduleCount) return false;
-    return _qr!.isDark(y + 1, x);
+    return _qrImage.isDark(y + 1, x);
   }
 
   bool _hasAdjacentHorizontalPixel(int x, int y, int moduleCount) {
     if (x + 1 >= moduleCount) return false;
     return _qr!.isDark(y, x + 1);
-  }
-
-  bool _isLogoArea(int x, int y) {
-    //Find center of module count and portion to cut out of QR
-    var center = _qr!.moduleCount / 2;
-    var canvasPortion = _qr!.moduleCount * 0.15;
-
-    if (x > center - canvasPortion &&
-        x < center + canvasPortion &&
-        y > center - canvasPortion &&
-        y < center + canvasPortion) return true;
-    return false;
   }
 
   bool _isFinderPatternPosition(int x, int y) {

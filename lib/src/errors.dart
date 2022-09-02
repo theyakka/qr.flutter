@@ -32,7 +32,7 @@ class QrUnsupportedVersionException implements Exception {
 }
 
 /// An exception that is thrown when something goes wrong with the
-/// [ImageProvider] for the embedded image of a QrImage or QrPainter.
+/// [ImageProvider] for the embedded image of a QrImageView or QrPainter.
 class QrEmbeddedImageException implements Exception {
   /// Create a new QrEmbeddedImageException.
   factory QrEmbeddedImageException(String message) {
