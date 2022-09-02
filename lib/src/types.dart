@@ -74,11 +74,16 @@ class QrEyeShapeStyle {
   /// This field is ignored for the eyeball
   final bool dashedBorder;
 
+  /// Optional eyeball color 
+  final Color? eyeBallColor;
+
   /// Create A new Shape style
   const QrEyeShapeStyle(
       {this.dashedBorder = false,
       this.eyeShape = BorderRadius.zero,
-      this.eyeballShape = BorderRadius.zero});
+      this.eyeballShape = BorderRadius.zero,
+      this.eyeBallColor,
+      });
 
   /// Sets the style to none
   static const none = QrEyeShapeStyle(

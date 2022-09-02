@@ -377,24 +377,31 @@ class QrPainter extends CustomPainter {
       ui.Canvas canvas) {
     BorderRadius eyeBorderRadius;
     BorderRadius eyeballBorderRadius;
+    Color? eyeBallColor;
     var dashedBorder = false;
     switch (position) {
       case FinderPatternPosition.topLeft:
         eyeBorderRadius = eyeStyle.shape.topLeft.eyeShape;
         eyeballBorderRadius = eyeStyle.shape.topLeft.eyeballShape;
         dashedBorder = eyeStyle.shape.topLeft.dashedBorder;
+        eyeBallColor = eyeStyle.shape.topLeft.eyeBallColor;
         break;
       case FinderPatternPosition.topRight:
         eyeBorderRadius = eyeStyle.shape.topRight.eyeShape;
         eyeballBorderRadius = eyeStyle.shape.topRight.eyeballShape;
         dashedBorder = eyeStyle.shape.topRight.dashedBorder;
+        eyeBallColor = eyeStyle.shape.topRight.eyeBallColor;
         break;
       case FinderPatternPosition.bottomLeft:
         eyeBorderRadius = eyeStyle.shape.bottomLeft.eyeShape;
         eyeballBorderRadius = eyeStyle.shape.bottomLeft.eyeballShape;
         dashedBorder = eyeStyle.shape.bottomLeft.dashedBorder;
+        eyeBallColor = eyeStyle.shape.bottomLeft.eyeBallColor;
         break;
     }
+
+    dotPaint.color = eyeBallColor ??=  dotPaint.color;
+
     var eyePath = drawRRect(outerRect.left, outerRect.top, outerRect.width,
         outerRect.height, eyeBorderRadius, outerPaint.strokeWidth);
     var eyeBallPath = drawRRect(dotRect.left, dotRect.top, dotRect.width,
