@@ -5,7 +5,6 @@
  */
 
 import 'dart:async';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/services.dart';
@@ -278,7 +277,7 @@ class QrPainter extends CustomPainter {
 
   bool _hasAdjacentHorizontalPixel(int x, int y, int moduleCount) {
     if (x + 1 >= moduleCount) return false;
-    return _qr!.isDark(y, x + 1);
+    return _qrImage.isDark(y, x + 1);
   }
 
   bool _isFinderPatternPosition(int x, int y) {
@@ -462,6 +461,18 @@ class QrPainter extends CustomPainter {
       final ratio = maxSide / originalSize.longestSide;
       return Size(ratio * originalSize.width, ratio * originalSize.height);
     }
+  }
+
+  bool _isLogoArea(int x, int y) {
+    //Find center of module count and portion to cut out of QR
+    var center = _qr!.moduleCount / 2;
+    var canvasPortion = _qr!.moduleCount * 0.15;
+
+    if (x > center - canvasPortion &&
+        x < center + canvasPortion &&
+        y > center - canvasPortion &&
+        y < center + canvasPortion) return true;
+    return false;
   }
 
   void _drawImageOverlay(
