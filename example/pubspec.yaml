@@ -7,14 +7,17 @@ homepage: https://github.com/lukef/qr.flutter
 publish_to: none
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
-  flutter: ">=1.7.0"
+  sdk: ">=2.17.1 <3.0.0"
+  flutter: ">=1.16.0"
 
 dependencies:
   flutter:
     sdk: flutter
   qr_flutter:
     path: ../
+  mobile_scanner: ^2.0.0
+  pdf: ^3.8.3
+
 
 dev_dependencies:
   flutter_test:
