@@ -44,7 +44,6 @@ class _MainScreenState extends State<MainScreen> {
               dataModuleShape: QrDataModuleShape.circle,
               color: Color(0xff1a5441),
             ),
-            // size: 320.0,
             embeddedImage: snapshot.data,
             embeddedImageStyle: QrEmbeddedImageStyle(
               size: Size.square(60),
@@ -60,22 +59,38 @@ class _MainScreenState extends State<MainScreen> {
         top: true,
         bottom: true,
         child: Container(
-          child: Column(
-            children: <Widget>[
-              Expanded(
-                child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Center(
                   child: Container(
                     width: 280,
                     child: qrFutureBuilder,
                   ),
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40)
-                    .copyWith(bottom: 40),
-                child: Text(message),
-              ),
-            ],
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40)
+                      .copyWith(bottom: 40),
+                  child: Text(message),
+                ),
+                QrImageView(
+                  data: 'This QR code has an embedded image as well',
+                  version: QrVersions.auto,
+                  size: 320,
+                  gapless: false,
+                  embeddedImage:
+                      AssetImage('assets/images/my_embedded_image.png'),
+                  embeddedImageStyle: QrEmbeddedImageStyle(
+                    size: Size(80, 80),
+                  ),
+                ),
+                QrImageView(
+                  data: message,
+                  size: 200.0,
+                  version: QrVersions.auto,
+                ),
+              ],
+            ),
           ),
         ),
       ),

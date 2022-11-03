@@ -55,12 +55,56 @@ import 'package:qr_flutter/qr_flutter.dart';
 Next, to render a basic QR code you can use the following code (or something like it):
 
 ```dart
-QrImage(
-  data: "1234567890",
-  version: QrVersions.auto,
-  size: 200.0,
+QrImageView(
+data: message,
+size: 200.0,
+version: QrVersions.auto,
 ),
 ```
+
+You can also use CustomPaint
+``` dart
+ final qrFutureBuilder = FutureBuilder<ui.Image>(
+      future: _loadOverlayImage(),
+      builder: (ctx, snapshot) {
+        final size = 280.0;
+        if (!snapshot.hasData) {
+          return Container(width: size, height: size);
+        }
+        return CustomPaint(
+          size: Size.square(size),
+          painter: QrPainter(
+            data: message,
+            version: QrVersions.auto,
+            eyeStyle: const QrEyeStyle(
+              eyeShape: QrEyeShape.square,
+              color: Color(0xff128760),
+            ),
+            dataModuleStyle: const QrDataModuleStyle(
+              dataModuleShape: QrDataModuleShape.circle,
+              color: Color(0xff1a5441),
+            ),
+            // size: 320.0,
+            embeddedImage: snapshot.data,
+            embeddedImageStyle: QrEmbeddedImageStyle(
+              size: Size.square(60),
+            ),
+          ),
+        );
+      },
+    );
+```
+To read an image and decode it
+
+``` dart
+ Future<ui.Image> _loadOverlayImage() async {
+    final completer = Completer<ui.Image>();
+    final byteData = await rootBundle.load('assets/images/4.0x/logo_yakka.png');
+    ui.decodeImageFromList(byteData.buffer.asUint8List(), completer.complete);
+    return completer.future;
+  }
+```
+
 
 Depending on your data requirements you may want to tweak the QR code output. The following options are available:
 
@@ -90,49 +134,29 @@ Also, the following examples give you a quick overview on how to use the library
 A basic QR code will look something like:
 
 ```dart
-QrImage(
-  data: 'This is a simple QR code',
-  version: QrVersions.auto,
-  size: 320,
-  gapless: false,
-)
+QrImageView(
+data: message,
+ size: 200.0,
+ version: QrVersions.auto,
+),
 ```
 
 A QR code with an image (from your application's assets) will look like:
 
 ```dart
-QrImage(
-  data: 'This QR code has an embedded image as well',
-  version: QrVersions.auto,
-  size: 320,
-  gapless: false,
-  embeddedImage: AssetImage('assets/images/my_embedded_image.png'),
-  embeddedImageStyle: QrEmbeddedImageStyle(
-    size: Size(80, 80),
-  ),
-)
+QrImageView(
+ data: 'This QR code has an embedded image as well',
+ version: QrVersions.auto,
+ size: 320,
+ gapless: false,
+ embeddedImage:
+ AssetImage('assets/images/my_embedded_image.png'),
+ embeddedImageStyle: QrEmbeddedImageStyle(
+ size: Size(80, 80),
+ ),
+),
 ```
 
-To show an error state in the event that the QR code can't be validated:
-
-```dart
-QrImage(
-  data: 'This QR code will show the error state instead',
-  version: 1,
-  size: 320,
-  gapless: false,
-  errorStateBuilder: (cxt, err) {
-    return Container(
-      child: Center(
-        child: Text(
-          "Uh oh! Something went wrong...",
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
-  },
-)
-```
 
 
 # FAQ
