@@ -7,6 +7,7 @@
 import 'dart:async';
 import 'dart:ui' as ui;
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:qr/qr.dart';
@@ -276,19 +277,40 @@ class QrPainter extends CustomPainter {
           case QrDataModuleShape.square:
             canvas.drawRect(squareRect, paint);
             break;
-          // case QrDataModuleShape.squareRounded:
-          //   final roundedOuterStrokeRect = RRect.fromRectAndCorners(
-          //     squareRect,
-          //     bottomLeft:
-          //         Radius.circular(_isFinderPatternPosition(x, y) ? 3 : 0),
-          //     topLeft: Radius.circular(0),
-          //     bottomRight: Radius.circular(0),
-          //     topRight: Radius.circular(0),
-          //   );
-          //   // RRect.fromRectAndRadius(squareRect, Radius.circular(0));
-          //   canvas.drawRRect(roundedOuterStrokeRect, paint);
-          //   // canvas.drawRect(squareRect, paint);
-          //   break;
+          case QrDataModuleShape.squareRounded:
+            double bottomLeft = 0;
+            double bottomRight = 0;
+            double topLeft = 0;
+            double topRight = 0;
+            if (_qrImage.isDark(y, x)) {
+              bottomLeft = dataModuleStyle.radius;
+              bottomRight = dataModuleStyle.radius;
+              topLeft = dataModuleStyle.radius;
+              topRight = dataModuleStyle.radius;
+              if (true) {
+                if (y - 1 >= 0 && _qrImage.isDark(y - 1, x)) {
+                  topLeft = topRight = 0;
+                }
+                if (y + 1 < _qrImage.moduleCount && _qrImage.isDark(y + 1, x)) {
+                  bottomRight = bottomLeft = 0;
+                }
+                if (x + 1 < _qrImage.moduleCount && _qrImage.isDark(y, x + 1)) {
+                  bottomRight = topRight = 0;
+                }
+                if (x - 1 >= 0 && _qrImage.isDark(y, x - 1)) {
+                  topLeft = bottomLeft = 0;
+                }
+              }
+            }
+            final roundedRect = RRect.fromRectAndCorners(
+              squareRect,
+              bottomLeft: Radius.circular(bottomLeft),
+              bottomRight: Radius.circular(bottomRight),
+              topLeft: Radius.circular(topLeft),
+              topRight: Radius.circular(topRight),
+            );
+            canvas.drawRRect(roundedRect, paint);
+            break;
           case QrDataModuleShape.circle:
             final roundedRect = RRect.fromRectAndRadius(squareRect,
                 Radius.circular(paintMetrics.pixelSize + pixelHTweak));
@@ -303,6 +325,34 @@ class QrPainter extends CustomPainter {
     }
 
     if (embeddedImage != null) {
+      /// background
+      final originalSizeBackground = Size(
+        embeddedImage!.width.toDouble() + 10,
+        embeddedImage!.height.toDouble() + 10,
+      );
+      final requestedSizeBackground = embeddedImageStyle != null
+          ? Size(
+              embeddedImageStyle!.size!.width + 10,
+              embeddedImageStyle!.size!.height + 10,
+            )
+          : null;
+      final imageSizeBackground = _scaledAspectSize(
+          size, originalSizeBackground, requestedSizeBackground);
+      final positionBackground = Offset(
+        (size.width - imageSizeBackground.width) / 2.0,
+        (size.height - imageSizeBackground.height) / 2.0,
+      );
+      // draw the image overlay.
+      _drawImageOverlay(
+        canvas,
+        positionBackground,
+        imageSizeBackground,
+        QrEmbeddedImageStyle(
+          color: embeddedImageStyle!.color ?? Colors.white,
+        ),
+      );
+
+      /// image
       final originalSize = Size(
         embeddedImage!.width.toDouble(),
         embeddedImage!.height.toDouble(),
@@ -315,7 +365,7 @@ class QrPainter extends CustomPainter {
         (size.height - imageSize.height) / 2.0,
       );
       // draw the image overlay.
-      _drawImageOverlay(canvas, position, imageSize, embeddedImageStyle);
+      _drawImageOverlay(canvas, position, imageSize, null);
     }
   }
 

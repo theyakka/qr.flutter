@@ -55,6 +55,9 @@ enum QrDataModuleShape {
   /// Use square dots.
   square,
 
+  /// Use square rounded eye frame.
+  squareRounded,
+
   /// Use circular dots.
   circle,
 }
@@ -93,6 +96,7 @@ class QrDataModuleStyle {
   const QrDataModuleStyle({
     this.dataModuleShape,
     this.color,
+    this.radius = 0,
   });
 
   /// Eye shape.
@@ -100,6 +104,9 @@ class QrDataModuleStyle {
 
   /// Color to tint the data modules.
   final Color? color;
+
+  /// radius
+  final double radius;
 
   @override
   int get hashCode => dataModuleShape.hashCode ^ color.hashCode;
