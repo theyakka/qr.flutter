@@ -56,9 +56,9 @@ Next, to render a basic QR code you can use the following code (or something lik
 
 ```dart
 QrImageView(
-data: message,
-size: 200.0,
-version: QrVersions.auto,
+   data: message,
+   size: 200.0,
+   version: QrVersions.auto,
 ),
 ```
 
@@ -135,9 +135,9 @@ A basic QR code will look something like:
 
 ```dart
 QrImageView(
-data: message,
- size: 200.0,
- version: QrVersions.auto,
+  data: message,
+  size: 200.0,
+  version: QrVersions.auto,
 ),
 ```
 
@@ -145,15 +145,15 @@ A QR code with an image (from your application's assets) will look like:
 
 ```dart
 QrImageView(
- data: 'This QR code has an embedded image as well',
- version: QrVersions.auto,
- size: 320,
- gapless: false,
- embeddedImage:
- AssetImage('assets/images/my_embedded_image.png'),
- embeddedImageStyle: QrEmbeddedImageStyle(
- size: Size(80, 80),
- ),
+  data: 'This QR code has an embedded image as well',
+  version: QrVersions.auto,
+  size: 320,
+  gapless: false,
+  embeddedImage:
+      AssetImage('assets/images/my_embedded_image.png'),
+  embeddedImageStyle: QrEmbeddedImageStyle(
+     size: Size(80, 80),
+  ),
 ),
 ```
 
