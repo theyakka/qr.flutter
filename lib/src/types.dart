@@ -6,6 +6,7 @@
 
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 /// Represents a specific element / part of a QR code. This is used to isolate
@@ -61,13 +62,17 @@ enum QrDataModuleShape {
 /// Styling options for finder pattern eye.
 class QrEyeStyle {
   /// Create a new set of styling options for QR Eye.
-  const QrEyeStyle({this.eyeShape, this.color, this.borderRadius = 0});
+  const QrEyeStyle({
+    this.eyeShape = QrEyeShape.square,
+    this.color = Colors.black,
+    this.borderRadius = 0,
+  });
 
   /// Eye shape.
-  final QrEyeShape? eyeShape;
+  final QrEyeShape eyeShape;
 
   /// Color to tint the eye.
-  final Color? color;
+  final Color color;
 
   /// Border radius
   final double borderRadius;
@@ -88,16 +93,16 @@ class QrEyeStyle {
 class QrDataModuleStyle {
   /// Create a new set of styling options for data modules.
   const QrDataModuleStyle({
-    this.dataModuleShape,
-    this.color,
+    this.dataModuleShape = QrDataModuleShape.square,
+    this.color = Colors.black,
     this.borderRadius = 0,
   });
 
   /// Eye shape.
-  final QrDataModuleShape? dataModuleShape;
+  final QrDataModuleShape dataModuleShape;
 
   /// Color to tint the data modules.
-  final Color? color;
+  final Color color;
 
   /// Border radius
   final double borderRadius;
@@ -120,6 +125,8 @@ class QrEmbeddedImageStyle {
   QrEmbeddedImageStyle({
     this.size,
     this.color,
+    this.safeArea = false,
+    this.safeAreaMultiplier = 1,
   });
 
   /// The size of the image. If one dimension is zero then the other dimension
@@ -129,6 +136,13 @@ class QrEmbeddedImageStyle {
 
   /// Color to tint the image.
   Color? color;
+
+  /// Hide data modules behind embedded image.
+  /// Data modules are not displayed inside area
+  bool safeArea;
+
+  /// Safe area size multiplier.
+  double safeAreaMultiplier;
 
   /// Check to see if the style object has a non-null, non-zero size.
   bool get hasDefinedSize => size != null && size!.longestSide > 0;

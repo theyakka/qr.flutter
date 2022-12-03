@@ -22,7 +22,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     final message =
         // ignore: lines_longer_than_80_chars
-        '12345678901234567890';
+        '09876543210987654321';
 
     final qrFutureBuilder = FutureBuilder<ui.Image>(
       future: _loadOverlayImage(),
@@ -39,18 +39,20 @@ class _MainScreenState extends State<MainScreen> {
             gapless: true,
             eyeStyle: const QrEyeStyle(
               eyeShape: QrEyeShape.square,
-              color: Color(0xff128760),
+              //color: Color(0xff128760),
               borderRadius: 10,
             ),
             dataModuleStyle: const QrDataModuleStyle(
               dataModuleShape: QrDataModuleShape.square,
-              color: Color(0xff1a5441),
+              //color: Color(0xff1a5441),
               borderRadius: 5,
             ),
             // size: 320.0,
             embeddedImage: snapshot.data,
             embeddedImageStyle: QrEmbeddedImageStyle(
-              size: Size.square(60),
+              size: Size.square(50),
+              safeArea: true,
+              safeAreaMultiplier: 1.1,
             ),
           ),
         );
@@ -69,7 +71,26 @@ class _MainScreenState extends State<MainScreen> {
                 child: Center(
                   child: Container(
                     width: 280,
-                    child: qrFutureBuilder,
+                    child: QrImageView(
+                      data: message,
+                      version: QrVersions.auto,
+                      eyeStyle: const QrEyeStyle(
+                        eyeShape: QrEyeShape.square,
+                        color: Color(0xff128760),
+                        borderRadius: 10,
+                      ),
+                      dataModuleStyle: const QrDataModuleStyle(
+                        dataModuleShape: QrDataModuleShape.square,
+                        color: Color(0xff1a5441),
+                        borderRadius: 5,
+                      ),
+                      embeddedImage: AssetImage('assets/images/4.0x/logo_yakka.png'),
+                      embeddedImageStyle: QrEmbeddedImageStyle(
+                        size: Size.square(50),
+                        safeArea: true,
+                        safeAreaMultiplier: 1.1,
+                      ),
+                    ),
                   ),
                 ),
               ),
