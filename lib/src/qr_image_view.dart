@@ -43,6 +43,7 @@ class QrImageView extends StatefulWidget {
       color: Colors.black,
     ),
     this.embeddedImageEmitsError = false,
+    this.gradient,
   })  : assert(QrVersions.isSupportedVersion(version)),
         _data = data,
         _qrCode = null,
@@ -74,6 +75,7 @@ class QrImageView extends StatefulWidget {
       color: Colors.black,
     ),
     this.embeddedImageEmitsError = false,
+    this.gradient,
   })  : assert(QrVersions.isSupportedVersion(version)),
         _data = null,
         _qrCode = qr,
@@ -90,6 +92,9 @@ class QrImageView extends StatefulWidget {
   /// The foreground color of the final QR code widget.
   @Deprecated('use colors in eyeStyle and dataModuleStyle instead')
   final Color? foregroundColor;
+
+  /// The gradient for all (dataModule and eye)
+  final Gradient? gradient;
 
   /// The QR code version to use.
   final int version;
@@ -219,6 +224,7 @@ class _QrImageViewState extends State<QrImageView> {
       embeddedImage: image,
       eyeStyle: widget.eyeStyle,
       dataModuleStyle: widget.dataModuleStyle,
+      gradient: widget.gradient
     );
     return _QrContentView(
       edgeLength: edgeLength,

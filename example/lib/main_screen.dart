@@ -22,9 +22,9 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     final message =
         // ignore: lines_longer_than_80_chars
-        '09876543210987654321';
+        'Hey this is a QR code. Change this value in the main_screen.dart file.';
 
-    final qrFutureBuilder = FutureBuilder<ui.Image>(
+    /*final qrFutureBuilder = FutureBuilder<ui.Image>(
       future: _loadOverlayImage(),
       builder: (ctx, snapshot) {
         final size = 280.0;
@@ -57,7 +57,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
         );
       },
-    );
+    );*/
 
     return Material(
       color: Colors.white,
@@ -74,21 +74,30 @@ class _MainScreenState extends State<MainScreen> {
                     child: QrImageView(
                       data: message,
                       version: QrVersions.auto,
+                      gradient: LinearGradient(
+                        begin: Alignment.bottomLeft,
+                        end: Alignment.topRight,
+                        colors: [Color(0xff289f70), Color(0xff134b38)],
+                        stops: [0.4, 1]
+                      ),
                       eyeStyle: const QrEyeStyle(
                         eyeShape: QrEyeShape.square,
-                        color: Color(0xff128760),
+                        //color: Color(0xff128760),
                         borderRadius: 10,
                       ),
                       dataModuleStyle: const QrDataModuleStyle(
                         dataModuleShape: QrDataModuleShape.square,
-                        color: Color(0xff1a5441),
+                        //color: Color(0xff1a5441),
                         borderRadius: 5,
                       ),
-                      embeddedImage: AssetImage('assets/images/4.0x/logo_yakka.png'),
+                      embeddedImage: AssetImage('assets/images/4.0x/logo_yakka_transparent.png'),
                       embeddedImageStyle: QrEmbeddedImageStyle(
-                        size: Size.square(50),
+                        size: Size.square(40),
+                        color: Colors.white,
                         safeArea: true,
                         safeAreaMultiplier: 1.1,
+                        embeddedImageShape: EmbeddedImageShape.square,
+                        borderRadius: 10
                       ),
                     ),
                   ),

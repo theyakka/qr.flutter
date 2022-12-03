@@ -59,6 +59,15 @@ enum QrDataModuleShape {
   circle,
 }
 
+/// Enumeration representing the shape behind embedded picture
+enum EmbeddedImageShape {
+  /// Use square.
+  square,
+
+  /// Use circular.
+  circle,
+}
+
 /// Styling options for finder pattern eye.
 class QrEyeStyle {
   /// Create a new set of styling options for QR Eye.
@@ -127,22 +136,34 @@ class QrEmbeddedImageStyle {
     this.color,
     this.safeArea = false,
     this.safeAreaMultiplier = 1,
+    this.embeddedImageShape,
+    this.shapeColor = Colors.black,
+    this.borderRadius = 0,
   });
 
   /// The size of the image. If one dimension is zero then the other dimension
   /// will be used to scale the zero dimension based on the original image
   /// size.
-  Size? size;
+  final Size? size;
 
   /// Color to tint the image.
-  Color? color;
+  final Color? color;
 
   /// Hide data modules behind embedded image.
   /// Data modules are not displayed inside area
-  bool safeArea;
+  final bool safeArea;
 
   /// Safe area size multiplier.
-  double safeAreaMultiplier;
+  final double safeAreaMultiplier;
+
+  /// Shape background embedded image
+  final EmbeddedImageShape? embeddedImageShape;
+
+  /// Border radius shape
+  final double borderRadius;
+
+  /// Color background
+  final Color shapeColor;
 
   /// Check to see if the style object has a non-null, non-zero size.
   bool get hasDefinedSize => size != null && size!.longestSide > 0;

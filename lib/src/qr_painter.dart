@@ -38,6 +38,7 @@ class QrPainter extends CustomPainter {
     this.embeddedImageStyle,
     this.eyeStyle = const QrEyeStyle(),
     this.dataModuleStyle = const QrDataModuleStyle(),
+    this.gradient,
   }) : assert(QrVersions.isSupportedVersion(version)) {
     _init(data);
   }
@@ -54,6 +55,7 @@ class QrPainter extends CustomPainter {
     this.embeddedImageStyle,
     this.eyeStyle = const QrEyeStyle(),
     this.dataModuleStyle = const QrDataModuleStyle(),
+    this.gradient,
   })  : _qr = qr,
         version = qr.typeNumber,
         errorCorrectionLevel = qr.errorCorrectLevel {
@@ -70,6 +72,9 @@ class QrPainter extends CustomPainter {
   /// The color of the squares.
   @Deprecated('use colors in eyeStyle and dataModuleStyle instead')
   final Color? color; // the color of the dark squares
+
+  /// The gradient for all (dataModule and eye)
+  final Gradient? gradient;
 
   /// The color of the non-squares (background).
   @Deprecated(
@@ -212,6 +217,42 @@ class QrPainter extends CustomPainter {
           embeddedImageSize.height * safeAreaMultiplier,
         );
       }
+
+      if(embeddedImageStyle?.embeddedImageShape != null) {
+        final color = gradient != null
+            ? Color(0xFF000000)
+            : embeddedImageStyle?.shapeColor
+            ?? Color(0xFF000000);
+
+        final squareRect = Rect.fromLTWH(
+          embeddedImagePosition.dx,
+          embeddedImagePosition.dy,
+          embeddedImageSize.width,
+          embeddedImageSize.height,
+        );
+
+        final paint = Paint()..color = color;
+
+        switch(embeddedImageStyle?.embeddedImageShape) {
+          case EmbeddedImageShape.square:
+            final radius = embeddedImageStyle?.borderRadius != null
+                ? Radius.circular(embeddedImageStyle!.borderRadius)
+                : Radius.zero;
+            final roundedRect = RRect.fromRectAndRadius(
+              squareRect,
+              radius,
+            );
+            canvas.drawRRect(roundedRect, paint);
+            break;
+          case EmbeddedImageShape.circle:
+            final roundedRect = RRect.fromRectAndRadius(squareRect,
+                Radius.circular(squareRect.width / 2));
+            canvas.drawRRect(roundedRect, paint);
+            break;
+          default:
+            break;
+        }
+      }
     }
 
     final gap = !gapless ? _gapSize : 0;
@@ -220,7 +261,8 @@ class QrPainter extends CustomPainter {
     if (color != null) {
       pixelPaint!.color = color!;
     } else {
-      pixelPaint!.color = dataModuleStyle.color;
+      pixelPaint!.color = gradient != null
+          ? Color(0xFF000000) : dataModuleStyle.color;
     }
     Paint? emptyPixelPaint;
     if (emptyColor != null) {
@@ -237,7 +279,7 @@ class QrPainter extends CustomPainter {
         final squareRect = _createDataModuleRect(paintMetrics, x, y, gap);
         // check safeArea
         if(embeddedImageStyle?.safeArea == true
-            && safeAreaRect!.overlaps(squareRect)) continue;
+            && safeAreaRect?.overlaps(squareRect) == true) continue;
         switch(dataModuleStyle.dataModuleShape) {
           case QrDataModuleShape.square:
             if(dataModuleStyle.borderRadius > 0) {
@@ -296,6 +338,15 @@ class QrPainter extends CustomPainter {
             break;
         }
       }
+    }
+
+    // set gradient for all
+    if(gradient != null) {
+      final paint = Paint();
+      paint.shader = gradient!
+          .createShader(Rect.fromLTWH(0, 0, size.width, size.height));
+      paint.blendMode = BlendMode.plus;
+      canvas.drawPaint(paint);
     }
 
     if (embeddedImage != null) {
@@ -376,7 +427,8 @@ class QrPainter extends CustomPainter {
     if (color != null) {
       outerPaint.color = color!;
     } else {
-      outerPaint.color = eyeStyle.color;
+      outerPaint.color = gradient != null
+          ? Color(0xFF000000) : eyeStyle.color;
     }
 
     final innerPaint = _paintCache.firstPaint(QrCodeElement.finderPatternInner,
@@ -389,7 +441,8 @@ class QrPainter extends CustomPainter {
     if (color != null) {
       dotPaint!.color = color!;
     } else {
-      dotPaint!.color = eyeStyle.color;
+      dotPaint!.color = gradient != null
+          ? Color(0xFF000000) : eyeStyle.color;
     }
 
     final outerRect = Rect.fromLTWH(offset.dx, offset.dy, radius, radius);
