@@ -35,7 +35,7 @@ class QrPainter extends CustomPainter {
     this.emptyColor,
     this.gapless = false,
     this.embeddedImage,
-    this.embeddedImageStyle,
+    this.embeddedImageStyle = const QrEmbeddedImageStyle(),
     this.eyeStyle = const QrEyeStyle(),
     this.dataModuleStyle = const QrDataModuleStyle(),
     this.gradient,
@@ -52,7 +52,7 @@ class QrPainter extends CustomPainter {
     this.emptyColor,
     this.gapless = false,
     this.embeddedImage,
-    this.embeddedImageStyle,
+    this.embeddedImageStyle = const QrEmbeddedImageStyle(),
     this.eyeStyle = const QrEyeStyle(),
     this.dataModuleStyle = const QrDataModuleStyle(),
     this.gradient,
@@ -89,7 +89,7 @@ class QrPainter extends CustomPainter {
   final ui.Image? embeddedImage;
 
   /// Styling options for the image overlay.
-  final QrEmbeddedImageStyle? embeddedImageStyle;
+  final QrEmbeddedImageStyle embeddedImageStyle;
 
   /// Styling option for QR Eye ball and frame.
   final QrEyeStyle eyeStyle;
@@ -197,15 +197,14 @@ class QrPainter extends CustomPainter {
         embeddedImage!.width.toDouble(),
         embeddedImage!.height.toDouble(),
       );
-      final requestedSize = embeddedImageStyle != null
-          ? embeddedImageStyle!.size : null;
+      final requestedSize = embeddedImageStyle.size;
       embeddedImageSize = _scaledAspectSize(size, originalSize, requestedSize);
       embeddedImagePosition = Offset(
         (size.width - embeddedImageSize.width) / 2.0,
         (size.height - embeddedImageSize.height) / 2.0,
       );
-      if(embeddedImageStyle?.safeArea == true) {
-        final safeAreaMultiplier = embeddedImageStyle?.safeAreaMultiplier ?? 1;
+      if(embeddedImageStyle.safeArea) {
+        final safeAreaMultiplier = embeddedImageStyle.safeAreaMultiplier;
         safeAreaPosition = Offset(
           (size.width - embeddedImageSize.width * safeAreaMultiplier) / 2.0,
           (size.height - embeddedImageSize.height * safeAreaMultiplier) / 2.0,
@@ -218,11 +217,10 @@ class QrPainter extends CustomPainter {
         );
       }
 
-      if(embeddedImageStyle?.embeddedImageShape != null) {
+      if(embeddedImageStyle.embeddedImageShape != null) {
+        // If gradient != null, then paint it black
         final color = gradient != null
-            ? Color(0xFF000000)
-            : embeddedImageStyle?.shapeColor
-            ?? Color(0xFF000000);
+            ? Color(0xff000000) : embeddedImageStyle.shapeColor;
 
         final squareRect = Rect.fromLTWH(
           embeddedImagePosition.dx,
@@ -233,16 +231,17 @@ class QrPainter extends CustomPainter {
 
         final paint = Paint()..color = color;
 
-        switch(embeddedImageStyle?.embeddedImageShape) {
+        switch(embeddedImageStyle.embeddedImageShape) {
           case EmbeddedImageShape.square:
-            final radius = embeddedImageStyle?.borderRadius != null
-                ? Radius.circular(embeddedImageStyle!.borderRadius)
-                : Radius.zero;
-            final roundedRect = RRect.fromRectAndRadius(
-              squareRect,
-              radius,
-            );
-            canvas.drawRRect(roundedRect, paint);
+            if(embeddedImageStyle.borderRadius > 0) {
+              final roundedRect = RRect.fromRectAndRadius(
+                squareRect,
+                Radius.circular(embeddedImageStyle.borderRadius),
+              );
+              canvas.drawRRect(roundedRect, paint);
+            } else {
+              canvas.drawRect(squareRect, paint);
+            }
             break;
           case EmbeddedImageShape.circle:
             final roundedRect = RRect.fromRectAndRadius(squareRect,
@@ -261,8 +260,9 @@ class QrPainter extends CustomPainter {
     if (color != null) {
       pixelPaint!.color = color!;
     } else {
+      // If gradient != null, then paint it black
       pixelPaint!.color = gradient != null
-          ? Color(0xFF000000) : dataModuleStyle.color;
+          ? Color(0xff000000) : dataModuleStyle.color;
     }
     Paint? emptyPixelPaint;
     if (emptyColor != null) {
@@ -278,7 +278,7 @@ class QrPainter extends CustomPainter {
         // paint a pixel
         final squareRect = _createDataModuleRect(paintMetrics, x, y, gap);
         // check safeArea
-        if(embeddedImageStyle?.safeArea == true
+        if(embeddedImageStyle.safeArea
             && safeAreaRect?.overlaps(squareRect) == true) continue;
         switch(dataModuleStyle.dataModuleShape) {
           case QrDataModuleShape.square:
@@ -342,11 +342,11 @@ class QrPainter extends CustomPainter {
 
     // set gradient for all
     if(gradient != null) {
-      final paint = Paint();
-      paint.shader = gradient!
+      final paintGradient = Paint();
+      paintGradient.shader = gradient!
           .createShader(Rect.fromLTWH(0, 0, size.width, size.height));
-      paint.blendMode = BlendMode.plus;
-      canvas.drawPaint(paint);
+      paintGradient.blendMode = BlendMode.values[12];
+      canvas.drawPaint(paintGradient);
     }
 
     if (embeddedImage != null) {
@@ -427,8 +427,9 @@ class QrPainter extends CustomPainter {
     if (color != null) {
       outerPaint.color = color!;
     } else {
+      // If gradient != null, then paint it black
       outerPaint.color = gradient != null
-          ? Color(0xFF000000) : eyeStyle.color;
+          ? Color(0xff000000) : eyeStyle.color;
     }
 
     final innerPaint = _paintCache.firstPaint(QrCodeElement.finderPatternInner,
@@ -441,8 +442,9 @@ class QrPainter extends CustomPainter {
     if (color != null) {
       dotPaint!.color = color!;
     } else {
+      // If gradient != null, then paint it black
       dotPaint!.color = gradient != null
-          ? Color(0xFF000000) : eyeStyle.color;
+          ? Color(0xff000000) : eyeStyle.color;
     }
 
     final outerRect = Rect.fromLTWH(offset.dx, offset.dy, radius, radius);

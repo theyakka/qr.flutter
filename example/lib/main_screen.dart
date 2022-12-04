@@ -78,16 +78,15 @@ class _MainScreenState extends State<MainScreen> {
                         begin: Alignment.bottomLeft,
                         end: Alignment.topRight,
                         colors: [Color(0xff289f70), Color(0xff134b38)],
-                        stops: [0.4, 1]
                       ),
                       eyeStyle: const QrEyeStyle(
                         eyeShape: QrEyeShape.square,
-                        //color: Color(0xff128760),
+                        color: Color(0xff128760),
                         borderRadius: 10,
                       ),
                       dataModuleStyle: const QrDataModuleStyle(
                         dataModuleShape: QrDataModuleShape.square,
-                        //color: Color(0xff1a5441),
+                        color: Color(0xff1a5441),
                         borderRadius: 5,
                       ),
                       embeddedImage: AssetImage('assets/images/4.0x/logo_yakka_transparent.png'),
@@ -97,7 +96,8 @@ class _MainScreenState extends State<MainScreen> {
                         safeArea: true,
                         safeAreaMultiplier: 1.1,
                         embeddedImageShape: EmbeddedImageShape.square,
-                        borderRadius: 10
+                        shapeColor: Color(0xff128760),
+                        borderRadius: 10,
                       ),
                     ),
                   ),

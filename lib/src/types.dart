@@ -131,7 +131,7 @@ class QrDataModuleStyle {
 /// Styling options for any embedded image overlay
 class QrEmbeddedImageStyle {
   /// Create a new set of styling options.
-  QrEmbeddedImageStyle({
+  const QrEmbeddedImageStyle({
     this.size,
     this.color,
     this.safeArea = false,
