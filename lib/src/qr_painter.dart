@@ -346,7 +346,15 @@ class QrPainter extends CustomPainter {
       paintGradient.shader = gradient!
           .createShader(Rect.fromLTWH(0, 0, size.width, size.height));
       paintGradient.blendMode = BlendMode.values[12];
-      canvas.drawPaint(paintGradient);
+      canvas.drawRect(
+        Rect.fromLTWH(
+          paintMetrics.inset,
+          paintMetrics.inset,
+          paintMetrics.innerContentSize,
+          paintMetrics.innerContentSize,
+        ),
+        paintGradient,
+      );
     }
 
     if (embeddedImage != null) {
