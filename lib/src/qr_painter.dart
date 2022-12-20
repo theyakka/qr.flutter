@@ -212,8 +212,8 @@ class QrPainter extends CustomPainter {
         // paint a pixel
         left = paintMetrics.inset + (x * (paintMetrics.pixelSize + gap));
         top = paintMetrics.inset + (y * (paintMetrics.pixelSize + gap));
-        var pixelHTweak = 0.0;
-        var pixelVTweak = 0.0;
+        var pixelHTweak = dataModuleStyle.pixelTweak ?? 0;
+        var pixelVTweak = dataModuleStyle.pixelTweak ?? 0;
         if (gapless && _hasAdjacentHorizontalPixel(x, y, _qr!.moduleCount)) {
           pixelHTweak = 0.5;
         }
@@ -230,7 +230,9 @@ class QrPainter extends CustomPainter {
           canvas.drawRect(squareRect, paint);
         } else {
           final roundedRect = RRect.fromRectAndRadius(
-              squareRect, Radius.circular(paintMetrics.pixelSize + pixelHTweak));
+              squareRect,
+              Radius.circular(
+                  dataModuleStyle.borderRadius ?? (paintMetrics.pixelSize + pixelHTweak)));
           canvas.drawRRect(roundedRect, paint);
         }
       }
@@ -314,8 +316,7 @@ class QrPainter extends CustomPainter {
 
     final innerRadius = radius - (2 * metrics.pixelSize);
     final innerRect = Rect.fromLTWH(
-        offset.dx + metrics.pixelSize, offset.dy + metrics.pixelSize,
-        innerRadius, innerRadius);
+        offset.dx + metrics.pixelSize, offset.dy + metrics.pixelSize, innerRadius, innerRadius);
 
     final gap = metrics.pixelSize * 2;
     final dotSize = radius - gap - (2 * strokeAdjust);

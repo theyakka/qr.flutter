@@ -73,8 +73,7 @@ class QrEyeStyle {
   final double? squareRadius;
 
   @override
-  int get hashCode => eyeShape.hashCode ^ color.hashCode
-  ^ squareRadius.hashCode;
+  int get hashCode => eyeShape.hashCode ^ color.hashCode ^ squareRadius.hashCode;
 
   @override
   bool operator ==(Object other) {
@@ -93,6 +92,8 @@ class QrDataModuleStyle {
   const QrDataModuleStyle({
     this.dataModuleShape,
     this.color,
+    this.borderRadius,
+    this.pixelTweak,
   });
 
   /// Eye shape.
@@ -101,13 +102,21 @@ class QrDataModuleStyle {
   /// Color to tint the data modules.
   final Color? color;
 
+  /// Border radius.
+  final double? borderRadius;
+  final double? pixelTweak;
+
   @override
-  int get hashCode => dataModuleShape.hashCode ^ color.hashCode;
+  int get hashCode =>
+      dataModuleShape.hashCode ^ color.hashCode ^ borderRadius.hashCode ^ pixelTweak.hashCode;
 
   @override
   bool operator ==(Object other) {
     if (other is QrDataModuleStyle) {
-      return dataModuleShape == other.dataModuleShape && color == other.color;
+      return dataModuleShape == other.dataModuleShape &&
+          color == other.color &&
+          borderRadius == other.borderRadius &&
+          pixelTweak == other.pixelTweak;
     }
     return false;
   }
