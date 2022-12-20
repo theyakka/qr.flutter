@@ -61,7 +61,7 @@ enum QrDataModuleShape {
 /// Styling options for finder pattern eye.
 class QrEyeStyle {
   /// Create a new set of styling options for QR Eye.
-  const QrEyeStyle({this.eyeShape, this.color});
+  const QrEyeStyle({this.eyeShape, this.color, this.squareRadius});
 
   /// Eye shape.
   final QrEyeShape? eyeShape;
@@ -69,13 +69,18 @@ class QrEyeStyle {
   /// Color to tint the eye.
   final Color? color;
 
+  /// Border radius of square eye
+  final double? squareRadius;
+
   @override
-  int get hashCode => eyeShape.hashCode ^ color.hashCode;
+  int get hashCode => eyeShape.hashCode ^ color.hashCode ^ squareRadius.hashCode;
 
   @override
   bool operator ==(Object other) {
     if (other is QrEyeStyle) {
-      return eyeShape == other.eyeShape && color == other.color;
+      return eyeShape == other.eyeShape &&
+          color == other.color &&
+          squareRadius == other.squareRadius;
     }
     return false;
   }
@@ -87,6 +92,8 @@ class QrDataModuleStyle {
   const QrDataModuleStyle({
     this.dataModuleShape,
     this.color,
+    this.borderRadius,
+    this.pixelTweak,
   });
 
   /// Eye shape.
@@ -95,13 +102,21 @@ class QrDataModuleStyle {
   /// Color to tint the data modules.
   final Color? color;
 
+  /// Border radius.
+  final double? borderRadius;
+  final double? pixelTweak;
+
   @override
-  int get hashCode => dataModuleShape.hashCode ^ color.hashCode;
+  int get hashCode =>
+      dataModuleShape.hashCode ^ color.hashCode ^ borderRadius.hashCode ^ pixelTweak.hashCode;
 
   @override
   bool operator ==(Object other) {
     if (other is QrDataModuleStyle) {
-      return dataModuleShape == other.dataModuleShape && color == other.color;
+      return dataModuleShape == other.dataModuleShape &&
+          color == other.color &&
+          borderRadius == other.borderRadius &&
+          pixelTweak == other.pixelTweak;
     }
     return false;
   }
