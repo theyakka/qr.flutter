@@ -267,6 +267,7 @@ class QrPainter extends CustomPainter {
     final outsideBorderRadius = Radius
         .circular(dataModuleStyle.outsideBorderRadius);
     final isRoundedOutsideCorners = dataModuleStyle.roundedOutsideCorners;
+    final maxIndexPixel = _qrImage.moduleCount - 1;
 
     for (var x = 0; x < _qr!.moduleCount; x++) {
       for (var y = 0; y < _qr!.moduleCount; y++) {
@@ -298,13 +299,13 @@ class QrPainter extends CustomPainter {
                       _createDataModuleRect(paintMetrics, x, y - 1, gap))
                       ?? false)
                   : false;
-              final isDarkRight = x < _qrImage.moduleCount - 1
+              final isDarkRight = x < maxIndexPixel
                   ? _qrImage.isDark(y, x + 1)
                   && !(safeAreaRect?.overlaps(
                       _createDataModuleRect(paintMetrics, x + 1, y, gap))
                       ?? false)
                   : false;
-              final isDarkBottom = y < _qrImage.moduleCount - 1
+              final isDarkBottom = y < maxIndexPixel
                   ? _qrImage.isDark(y + 1, x)
                   && !(safeAreaRect?.overlaps(
                       _createDataModuleRect(paintMetrics, x, y + 1, gap))
@@ -314,12 +315,12 @@ class QrPainter extends CustomPainter {
               if(!isDark && isRoundedOutsideCorners) {
                 final isDarkTopLeft = x > 0 && y > 0
                     ? _qrImage.isDark(y - 1, x - 1) : false;
-                final isDarkTopRight = x < _qrImage.moduleCount - 1 && y > 0
+                final isDarkTopRight = x < maxIndexPixel && y > 0
                     ? _qrImage.isDark(y - 1, x + 1) : false;
-                final isDarkBottomLeft = x > 0 && y < _qrImage.moduleCount - 1
+                final isDarkBottomLeft = x > 0 && y < maxIndexPixel
                     ? _qrImage.isDark(y + 1, x - 1) : false;
-                final isDarkBottomRight = x < _qrImage.moduleCount - 1
-                    && y < _qrImage.moduleCount - 1
+                final isDarkBottomRight = x < maxIndexPixel
+                    && y < maxIndexPixel
                     ? _qrImage.isDark(y + 1, x + 1) : false;
 
                 final roundedRect = RRect.fromRectAndCorners(
@@ -337,14 +338,13 @@ class QrPainter extends CustomPainter {
                       ? outsideBorderRadius
                       : Radius.zero,
                 );
-                final paint = Paint();
                 canvas.drawPath(
                   Path.combine(
-                    PathOperation.xor,
+                    PathOperation.difference,
                     Path()..addRect(squareRect),
                     Path()..addRRect(roundedRect)..close(),
                   ),
-                  paint,
+                  pixelPaint,
                 );
               } else {
                 final roundedRect = RRect.fromRectAndCorners(
@@ -362,7 +362,7 @@ class QrPainter extends CustomPainter {
                       ? Radius.zero
                       : borderRadius,
                 );
-                canvas.drawRRect(roundedRect, pixelPaint);
+                canvas.drawRRect(roundedRect, paint);
               }
             } else {
               canvas.drawRect(squareRect, paint);
