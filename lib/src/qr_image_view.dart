@@ -21,11 +21,10 @@ class QrImageView extends StatefulWidget {
   /// using the default options).
   QrImageView({
     required String data,
-    Key? key,
+    super.key,
     this.size,
     this.padding = const EdgeInsets.all(10.0),
     this.backgroundColor = Colors.transparent,
-    this.foregroundColor,
     this.version = QrVersions.auto,
     this.errorCorrectionLevel = QrErrorCorrectLevel.L,
     this.errorStateBuilder,
@@ -43,20 +42,20 @@ class QrImageView extends StatefulWidget {
       color: Colors.black,
     ),
     this.embeddedImageEmitsError = false,
+    @Deprecated('use colors in eyeStyle and dataModuleStyle instead')
+    this.foregroundColor,
   })  : assert(QrVersions.isSupportedVersion(version)),
         _data = data,
-        _qrCode = null,
-        super(key: key);
+        _qrCode = null;
 
   /// Create a new QR code using the [QrCode] data and the passed options (or
   /// using the default options).
   QrImageView.withQr({
     required QrCode qr,
-    Key? key,
+    super.key,
     this.size,
     this.padding = const EdgeInsets.all(10.0),
     this.backgroundColor = Colors.transparent,
-    this.foregroundColor,
     this.version = QrVersions.auto,
     this.errorCorrectionLevel = QrErrorCorrectLevel.L,
     this.errorStateBuilder,
@@ -74,22 +73,20 @@ class QrImageView extends StatefulWidget {
       color: Colors.black,
     ),
     this.embeddedImageEmitsError = false,
+    @Deprecated('use colors in eyeStyle and dataModuleStyle instead')
+    this.foregroundColor,
   })  : assert(QrVersions.isSupportedVersion(version)),
         _data = null,
-        _qrCode = qr,
-        super(key: key);
+        _qrCode = qr;
 
   // The data passed to the widget
   final String? _data;
+
   // The QR code data passed to the widget
   final QrCode? _qrCode;
 
   /// The background color of the final QR code widget.
   final Color backgroundColor;
-
-  /// The foreground color of the final QR code widget.
-  @Deprecated('use colors in eyeStyle and dataModuleStyle instead')
-  final Color? foregroundColor;
 
   /// The QR code version to use.
   final int version;
@@ -145,8 +142,12 @@ class QrImageView extends StatefulWidget {
   /// Styling option for QR data module.
   final QrDataModuleStyle dataModuleStyle;
 
+  /// The foreground color of the final QR code widget.
+  @Deprecated('use colors in eyeStyle and dataModuleStyle instead')
+  final Color? foregroundColor;
+
   @override
-  _QrImageViewState createState() => _QrImageViewState();
+  State<QrImageView> createState() => _QrImageViewState();
 }
 
 class _QrImageViewState extends State<QrImageView> {
@@ -174,44 +175,47 @@ class _QrImageViewState extends State<QrImageView> {
       _validationResult =
           QrValidationResult(status: QrValidationStatus.valid, qrCode: _qr);
     }
-    return LayoutBuilder(builder: (context, constraints) {
-      // validation failed, show an error state widget if builder is present.
-      if (!_validationResult.isValid) {
-        return _errorWidget(context, constraints, _validationResult.error);
-      }
-      // no error, build the regular widget
-      final widgetSize = widget.size ?? constraints.biggest.shortestSide;
-      if (widget.embeddedImage != null) {
-        // if requesting to embed an image then we need to load via a
-        // FutureBuilder because the image provider will be async.
-        return FutureBuilder<ui.Image>(
-          future: _loadQrImage(context, widget.embeddedImageStyle),
-          builder: (ctx, snapshot) {
-            if (snapshot.error != null) {
-              print("snapshot error: ${snapshot.error}");
-              if (widget.embeddedImageEmitsError) {
-                return _errorWidget(context, constraints, snapshot.error);
-              } else {
-                return _qrWidget(context, null, widgetSize);
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        // validation failed, show an error state widget if builder is present.
+        if (!_validationResult.isValid) {
+          return _errorWidget(context, constraints, _validationResult.error);
+        }
+        // no error, build the regular widget
+        final double widgetSize =
+            widget.size ?? constraints.biggest.shortestSide;
+        if (widget.embeddedImage != null) {
+          // if requesting to embed an image then we need to load via a
+          // FutureBuilder because the image provider will be async.
+          return FutureBuilder<ui.Image>(
+            future: _loadQrImage(context, widget.embeddedImageStyle),
+            builder: (BuildContext ctx, AsyncSnapshot<ui.Image> snapshot) {
+              if (snapshot.error != null) {
+                print('snapshot error: ${snapshot.error}');
+                if (widget.embeddedImageEmitsError) {
+                  return _errorWidget(context, constraints, snapshot.error);
+                } else {
+                  return _qrWidget(context, null, widgetSize);
+                }
               }
-            }
-            if (snapshot.hasData) {
-              print('loaded image');
-              final loadedImage = snapshot.data;
-              return _qrWidget(context, loadedImage, widgetSize);
-            } else {
-              return Container();
-            }
-          },
-        );
-      } else {
-        return _qrWidget(context, null, widgetSize);
-      }
-    });
+              if (snapshot.hasData) {
+                print('loaded image');
+                final ui.Image? loadedImage = snapshot.data;
+                return _qrWidget(context, loadedImage, widgetSize);
+              } else {
+                return Container();
+              }
+            },
+          );
+        } else {
+          return _qrWidget(context, null, widgetSize);
+        }
+      },
+    );
   }
 
   Widget _qrWidget(BuildContext context, ui.Image? image, double edgeLength) {
-    final painter = QrPainter.withQr(
+    final QrPainter painter = QrPainter.withQr(
       qr: _qr!,
       color: widget.foregroundColor,
       gapless: widget.gapless,
@@ -230,40 +234,51 @@ class _QrImageViewState extends State<QrImageView> {
   }
 
   Widget _errorWidget(
-      BuildContext context, BoxConstraints constraints, Object? error) {
-    final errorWidget = widget.errorStateBuilder == null
+    BuildContext context,
+    BoxConstraints constraints,
+    Object? error,
+  ) {
+    final Widget errorWidget = widget.errorStateBuilder == null
         ? Container()
         : widget.errorStateBuilder!(context, error);
-    final errorSideLength = (widget.constrainErrorBounds
+    final double errorSideLength = widget.constrainErrorBounds
         ? widget.size ?? constraints.biggest.shortestSide
-        : constraints.biggest.longestSide);
+        : constraints.biggest.longestSide;
     return _QrContentView(
       edgeLength: errorSideLength,
       backgroundColor: widget.backgroundColor,
       padding: widget.padding,
-      child: errorWidget,
       semanticsLabel: widget.semanticsLabel,
+      child: errorWidget,
     );
   }
 
   late ImageStreamListener streamListener;
+
   Future<ui.Image> _loadQrImage(
-      BuildContext buildContext, QrEmbeddedImageStyle? style) async {
+    BuildContext buildContext,
+    QrEmbeddedImageStyle? style,
+  ) {
     if (style != null) {}
 
-    final mq = MediaQuery.of(buildContext);
-    final completer = Completer<ui.Image>();
-    final stream = widget.embeddedImage!.resolve(ImageConfiguration(
-      devicePixelRatio: mq.devicePixelRatio,
-    ));
+    final MediaQueryData mq = MediaQuery.of(buildContext);
+    final Completer<ui.Image> completer = Completer<ui.Image>();
+    final ImageStream stream = widget.embeddedImage!.resolve(
+      ImageConfiguration(
+        devicePixelRatio: mq.devicePixelRatio,
+      ),
+    );
 
-    streamListener = ImageStreamListener((info, err) {
-      stream.removeListener(streamListener);
-      completer.complete(info.image);
-    }, onError: (dynamic err, _) {
-      stream.removeListener(streamListener);
-      completer.completeError(err);
-    });
+    streamListener = ImageStreamListener(
+      (ImageInfo info, bool err) {
+        stream.removeListener(streamListener);
+        completer.complete(info.image);
+      },
+      onError: (Object err, _) {
+        stream.removeListener(streamListener);
+        completer.completeError(err);
+      },
+    );
     stream.addListener(streamListener);
     return completer.future;
   }
@@ -274,7 +289,7 @@ class _QrImageViewState extends State<QrImageView> {
 typedef QrErrorBuilder = Widget Function(BuildContext context, Object? error);
 
 class _QrContentView extends StatelessWidget {
-  _QrContentView({
+  const _QrContentView({
     required this.edgeLength,
     required this.child,
     this.backgroundColor,

@@ -11,8 +11,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 void main() {
-  testWidgets('QrImageView generates correct image', (tester) async {
-    final qrImage = MaterialApp(
+  testWidgets('QrImageView generates correct image', (
+    WidgetTester tester,
+  ) async {
+    final MaterialApp qrImage = MaterialApp(
       home: Center(
         child: RepaintBoundary(
           child: QrImageView(
@@ -31,143 +33,155 @@ void main() {
     );
   });
 
-  testWidgets('QrImageView generates correct image with eye style',
-      (tester) async {
-    final qrImage = MaterialApp(
-      home: Center(
-        child: RepaintBoundary(
-          child: QrImageView(
-            data: 'This is a test image',
-            version: QrVersions.auto,
-            gapless: true,
-            errorCorrectionLevel: QrErrorCorrectLevel.L,
-            eyeStyle: const QrEyeStyle(
-              eyeShape: QrEyeShape.circle,
-              color: Colors.green,
-            ),
-          ),
-        ),
-      ),
-    );
-    await tester.pumpWidget(qrImage);
-    await expectLater(
-      find.byType(QrImageView),
-      matchesGoldenFile('./.golden/qr_image_eye_styled_golden.png'),
-    );
-  });
-
-  testWidgets('QrImageView generates correct image with data module style',
-      (tester) async {
-    final qrImage = MaterialApp(
-      home: Center(
-        child: RepaintBoundary(
-          child: QrImageView(
-            data: 'This is a test image',
-            version: QrVersions.auto,
-            gapless: true,
-            errorCorrectionLevel: QrErrorCorrectLevel.L,
-            dataModuleStyle: const QrDataModuleStyle(
-              dataModuleShape: QrDataModuleShape.circle,
-              color: Colors.blue,
-            ),
-          ),
-        ),
-      ),
-    );
-    await tester.pumpWidget(qrImage);
-    await expectLater(
-      find.byType(QrImageView),
-      matchesGoldenFile('./.golden/qr_image_data_module_styled_golden.png'),
-    );
-  });
-
   testWidgets(
-      'QrImageView generates correct image with eye and data module sytle',
-      (tester) async {
-    final qrImage = MaterialApp(
-      home: Center(
-        child: RepaintBoundary(
-          child: QrImageView(
-            data: 'This is a test image',
-            version: QrVersions.auto,
-            gapless: true,
-            errorCorrectionLevel: QrErrorCorrectLevel.L,
-            eyeStyle: const QrEyeStyle(
-              eyeShape: QrEyeShape.circle,
-              color: Colors.green,
-            ),
-            dataModuleStyle: const QrDataModuleStyle(
-              dataModuleShape: QrDataModuleShape.circle,
-              color: Colors.blue,
-            ),
-          ),
-        ),
-      ),
-    );
-    await tester.pumpWidget(qrImage);
-    await expectLater(
-      find.byType(QrImageView),
-      matchesGoldenFile('./.golden/qr_image_eye_data_module_styled_golden.png'),
-    );
-  });
-
-  testWidgets(
-      'QrImageView does not apply eye and data module color when foreground '
-      'color is also specified', (tester) async {
-    final qrImage = MaterialApp(
-      home: Center(
-        child: RepaintBoundary(
-          child: QrImageView(
-            data: 'This is a test image',
-            version: QrVersions.auto,
-            gapless: true,
-            foregroundColor: Colors.red,
-            errorCorrectionLevel: QrErrorCorrectLevel.L,
-            eyeStyle: const QrEyeStyle(
-              eyeShape: QrEyeShape.circle,
-              color: Colors.green,
-            ),
-            dataModuleStyle: const QrDataModuleStyle(
-              dataModuleShape: QrDataModuleShape.circle,
-              color: Colors.blue,
-            ),
-          ),
-        ),
-      ),
-    );
-    await tester.pumpWidget(qrImage);
-    await expectLater(
-      find.byType(QrImageView),
-      matchesGoldenFile('./.golden/qr_image_foreground_colored_golden.png'),
-    );
-  });
-
-  testWidgets('QrImageView generates correct image with logo', (tester) async {
-    await pumpWidgetWithImages(
-      tester,
-      MaterialApp(
+    'QrImageView generates correct image with eye style',
+    (WidgetTester tester) async {
+      final MaterialApp qrImage = MaterialApp(
         home: Center(
           child: RepaintBoundary(
             child: QrImageView(
-              data: 'This is a a qr code with a logo',
+              data: 'This is a test image',
               version: QrVersions.auto,
               gapless: true,
               errorCorrectionLevel: QrErrorCorrectLevel.L,
-              embeddedImage: FileImage(File('test/.images/logo_yakka.png')),
+              eyeStyle: const QrEyeStyle(
+                eyeShape: QrEyeShape.circle,
+                color: Colors.green,
+              ),
             ),
           ),
         ),
-      ),
-      ['test/.images/logo_yakka.png'],
-    );
+      );
+      await tester.pumpWidget(qrImage);
+      await expectLater(
+        find.byType(QrImageView),
+        matchesGoldenFile('./.golden/qr_image_eye_styled_golden.png'),
+      );
+    },
+  );
 
-    await tester.pumpAndSettle();
+  testWidgets(
+    'QrImageView generates correct image with data module style',
+    (WidgetTester tester) async {
+      final MaterialApp qrImage = MaterialApp(
+        home: Center(
+          child: RepaintBoundary(
+            child: QrImageView(
+              data: 'This is a test image',
+              version: QrVersions.auto,
+              gapless: true,
+              errorCorrectionLevel: QrErrorCorrectLevel.L,
+              dataModuleStyle: const QrDataModuleStyle(
+                dataModuleShape: QrDataModuleShape.circle,
+                color: Colors.blue,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpWidget(qrImage);
+      await expectLater(
+        find.byType(QrImageView),
+        matchesGoldenFile('./.golden/qr_image_data_module_styled_golden.png'),
+      );
+    },
+  );
 
-    await expectLater(
-      find.byType(QrImageView),
-      matchesGoldenFile('./.golden/qr_image_logo_golden.png'),
-    );
-  });
+  testWidgets(
+    'QrImageView generates correct image with eye and data module sytle',
+    (WidgetTester tester) async {
+      final MaterialApp qrImage = MaterialApp(
+        home: Center(
+          child: RepaintBoundary(
+            child: QrImageView(
+              data: 'This is a test image',
+              version: QrVersions.auto,
+              gapless: true,
+              errorCorrectionLevel: QrErrorCorrectLevel.L,
+              eyeStyle: const QrEyeStyle(
+                eyeShape: QrEyeShape.circle,
+                color: Colors.green,
+              ),
+              dataModuleStyle: const QrDataModuleStyle(
+                dataModuleShape: QrDataModuleShape.circle,
+                color: Colors.blue,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpWidget(qrImage);
+      await expectLater(
+        find.byType(QrImageView),
+        matchesGoldenFile(
+          './.golden/qr_image_eye_data_module_styled_golden.png',
+        ),
+      );
+    },
+  );
+
+  testWidgets(
+    'QrImageView does not apply eye and data module color when foreground '
+    'color is also specified',
+    (WidgetTester tester) async {
+      final MaterialApp qrImage = MaterialApp(
+        home: Center(
+          child: RepaintBoundary(
+            child: QrImageView(
+              data: 'This is a test image',
+              version: QrVersions.auto,
+              gapless: true,
+              foregroundColor: Colors.red,
+              errorCorrectionLevel: QrErrorCorrectLevel.L,
+              eyeStyle: const QrEyeStyle(
+                eyeShape: QrEyeShape.circle,
+                color: Colors.green,
+              ),
+              dataModuleStyle: const QrDataModuleStyle(
+                dataModuleShape: QrDataModuleShape.circle,
+                color: Colors.blue,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpWidget(qrImage);
+      await expectLater(
+        find.byType(QrImageView),
+        matchesGoldenFile('./.golden/qr_image_foreground_colored_golden.png'),
+      );
+    },
+  );
+
+  testWidgets(
+    'QrImageView generates correct image with logo',
+    (WidgetTester tester) async {
+      await pumpWidgetWithImages(
+        tester,
+        MaterialApp(
+          home: Center(
+            child: RepaintBoundary(
+              child: QrImageView(
+                data: 'This is a a qr code with a logo',
+                version: QrVersions.auto,
+                gapless: true,
+                errorCorrectionLevel: QrErrorCorrectLevel.L,
+                embeddedImage: FileImage(File('test/.images/logo_yakka.png')),
+              ),
+            ),
+          ),
+        ),
+        <String>['test/.images/logo_yakka.png'],
+      );
+
+      await tester.pumpAndSettle();
+
+      await expectLater(
+        find.byType(QrImageView),
+        matchesGoldenFile('./.golden/qr_image_logo_golden.png'),
+      );
+    },
+  );
 }
 
 /// Pre-cache images to make sure they show up in golden tests.
@@ -180,19 +194,24 @@ Future<void> pumpWidgetWithImages(
 ) async {
   Future<void>? precacheFuture;
   await tester.pumpWidget(
-    Builder(builder: (buildContext) {
-      precacheFuture = tester.runAsync(() async {
-        await Future.wait([
-          for (final assetName in assetNames)
-            precacheImage(FileImage(File(assetName)), buildContext),
-        ]);
-      });
-      return widget;
-    }),
+    Builder(
+      builder: (BuildContext buildContext) {
+        precacheFuture = tester.runAsync(() async {
+          await Future.wait(<Future<void>>[
+            for (final String assetName in assetNames)
+              precacheImage(FileImage(File(assetName)), buildContext),
+          ]);
+        });
+        return widget;
+      },
+    ),
   );
   await precacheFuture;
 }
 
 Widget buildTestableWidget(Widget widget) {
-  return MediaQuery(data: MediaQueryData(), child: MaterialApp(home: widget));
+  return MediaQuery(
+    data: const MediaQueryData(),
+    child: MaterialApp(home: widget),
+  );
 }

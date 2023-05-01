@@ -10,8 +10,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 void main() {
-  testWidgets('QrPainter generates correct image', (tester) async {
-    final painter = QrPainter(
+  testWidgets('QrPainter generates correct image', (WidgetTester tester) async {
+    final QrPainter painter = QrPainter(
       data: 'The painter is this thing',
       version: QrVersions.auto,
       gapless: true,
@@ -21,10 +21,10 @@ void main() {
     await tester.runAsync(() async {
       imageData = await painter.toImageData(600.0);
     });
-    final imageBytes = imageData!.buffer.asUint8List();
-    final widget = Center(
+    final Uint8List imageBytes = imageData!.buffer.asUint8List();
+    final Widget widget = Center(
       child: RepaintBoundary(
-        child: Container(
+        child: SizedBox(
           width: 600,
           height: 600,
           child: Image.memory(imageBytes),
