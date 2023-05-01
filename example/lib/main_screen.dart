@@ -4,11 +4,7 @@
  * See LICENSE for distribution and usage details.
  */
 
-import 'dart:async';
-import 'dart:ui' as ui;
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 /// This is the screen that you'll see when the app starts
@@ -57,7 +53,9 @@ class _MainScreenState extends State<MainScreen> {
           ),
         );
       },
-    );*/
+    );
+
+    return qrFutureBuilder;*/
 
     return Material(
       color: Colors.white,
@@ -79,6 +77,19 @@ class _MainScreenState extends State<MainScreen> {
                         end: Alignment.topRight,
                         colors: [Color(0xff289f70), Color(0xff134b38)],
                       ),
+                      /*gradient: LinearGradient(
+                        begin: Alignment.bottomLeft,
+                        end: Alignment.topRight,
+                        colors: [
+                          Color(0xffff0000),
+                          Color(0xffffa500),
+                          Color(0xffffff00),
+                          Color(0xff008000),
+                          Color(0xff0000ff),
+                          Color(0xff4b0082),
+                          Color(0xffee82ee),
+                        ],
+                      ),*/
                       eyeStyle: const QrEyeStyle(
                         eyeShape: QrEyeShape.square,
                         color: Color(0xff128760),
@@ -88,6 +99,7 @@ class _MainScreenState extends State<MainScreen> {
                         dataModuleShape: QrDataModuleShape.square,
                         color: Color(0xff1a5441),
                         borderRadius: 5,
+                        roundedOutsideCorners: true,
                       ),
                       embeddedImage: AssetImage('assets/images/4.0x/logo_yakka_transparent.png'),
                       embeddedImageStyle: QrEmbeddedImageStyle(
@@ -113,12 +125,5 @@ class _MainScreenState extends State<MainScreen> {
         ),
       ),
     );
-  }
-
-  Future<ui.Image> _loadOverlayImage() async {
-    final completer = Completer<ui.Image>();
-    final byteData = await rootBundle.load('assets/images/4.0x/logo_yakka.png');
-    ui.decodeImageFromList(byteData.buffer.asUint8List(), completer.complete);
-    return completer.future;
   }
 }

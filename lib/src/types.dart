@@ -6,8 +6,6 @@
 
 import 'dart:ui';
 
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 /// Represents a specific element / part of a QR code. This is used to isolate
 /// the different parts so that we can style and modify specific parts
@@ -61,6 +59,9 @@ enum QrDataModuleShape {
 
 /// Enumeration representing the shape behind embedded picture
 enum EmbeddedImageShape {
+  /// Disable
+  none,
+
   /// Use square.
   square,
 
@@ -73,7 +74,7 @@ class QrEyeStyle {
   /// Create a new set of styling options for QR Eye.
   const QrEyeStyle({
     this.eyeShape = QrEyeShape.square,
-    this.color = Colors.black,
+    this.color,
     this.borderRadius = 0,
   });
 
@@ -81,7 +82,7 @@ class QrEyeStyle {
   final QrEyeShape eyeShape;
 
   /// Color to tint the eye.
-  final Color color;
+  final Color? color;
 
   /// Border radius
   final double borderRadius;
@@ -103,18 +104,40 @@ class QrDataModuleStyle {
   /// Create a new set of styling options for data modules.
   const QrDataModuleStyle({
     this.dataModuleShape = QrDataModuleShape.square,
-    this.color = Colors.black,
+    this.color,
     this.borderRadius = 0,
-  });
+    this.roundedOutsideCorners = false,
+    double? outsideBorderRadius,
+  }) : _outsideBorderRadius = outsideBorderRadius;
 
-  /// Eye shape.
+  /// Data module shape.
   final QrDataModuleShape dataModuleShape;
 
   /// Color to tint the data modules.
-  final Color color;
+  final Color? color;
 
   /// Border radius
   final double borderRadius;
+
+  /// Only [QrDataModuleShape.square]
+  /// true for rounded outside corners
+  final bool roundedOutsideCorners;
+
+  /// Only [QrDataModuleShape.square]
+  /// Border radius for outside corners
+  final double? _outsideBorderRadius;
+
+  /// if [roundedOutsideCorners] == true, then by default use [borderRadius]
+  /// [_outsideBorderRadius] <= [borderRadius]
+  /// Get border radius for outside corners
+  double get outsideBorderRadius {
+    if(roundedOutsideCorners) {
+      return _outsideBorderRadius != null
+          && _outsideBorderRadius! < borderRadius
+          ? _outsideBorderRadius! : borderRadius;
+    }
+    return 0;
+  }
 
   @override
   int get hashCode => dataModuleShape.hashCode ^ color.hashCode;
@@ -136,8 +159,8 @@ class QrEmbeddedImageStyle {
     this.color,
     this.safeArea = false,
     this.safeAreaMultiplier = 1,
-    this.embeddedImageShape,
-    this.shapeColor = Colors.black,
+    this.embeddedImageShape = EmbeddedImageShape.none,
+    this.shapeColor,
     this.borderRadius = 0,
   });
 
@@ -157,13 +180,13 @@ class QrEmbeddedImageStyle {
   final double safeAreaMultiplier;
 
   /// Shape background embedded image
-  final EmbeddedImageShape? embeddedImageShape;
+  final EmbeddedImageShape embeddedImageShape;
 
   /// Border radius shape
   final double borderRadius;
 
   /// Color background
-  final Color shapeColor;
+  final Color? shapeColor;
 
   /// Check to see if the style object has a non-null, non-zero size.
   bool get hasDefinedSize => size != null && size!.longestSide > 0;
