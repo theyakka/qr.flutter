@@ -44,7 +44,10 @@ class QrImageView extends StatefulWidget {
     this.embeddedImageEmitsError = false,
     @Deprecated('use colors in eyeStyle and dataModuleStyle instead')
     this.foregroundColor,
-  })  : assert(QrVersions.isSupportedVersion(version)),
+  })  : assert(
+          QrVersions.isSupportedVersion(version),
+          'QR code version $version is not supported',
+        ),
         _data = data,
         _qrCode = null;
 
@@ -75,7 +78,10 @@ class QrImageView extends StatefulWidget {
     this.embeddedImageEmitsError = false,
     @Deprecated('use colors in eyeStyle and dataModuleStyle instead')
     this.foregroundColor,
-  })  : assert(QrVersions.isSupportedVersion(version)),
+  })  : assert(
+          QrVersions.isSupportedVersion(version),
+          'QR code version $version is not supported',
+        ),
         _data = null,
         _qrCode = qr;
 
@@ -165,11 +171,7 @@ class _QrImageViewState extends State<QrImageView> {
         version: widget.version,
         errorCorrectionLevel: widget.errorCorrectionLevel,
       );
-      if (_validationResult.isValid) {
-        _qr = _validationResult.qrCode;
-      } else {
-        _qr = null;
-      }
+      _qr = _validationResult.isValid ? _validationResult.qrCode : null;
     } else if (widget._qrCode != null) {
       _qr = widget._qrCode;
       _validationResult =
@@ -192,29 +194,27 @@ class _QrImageViewState extends State<QrImageView> {
             builder: (BuildContext ctx, AsyncSnapshot<ui.Image> snapshot) {
               if (snapshot.error != null) {
                 print('snapshot error: ${snapshot.error}');
-                if (widget.embeddedImageEmitsError) {
-                  return _errorWidget(context, constraints, snapshot.error);
-                } else {
-                  return _qrWidget(context, null, widgetSize);
-                }
+                return widget.embeddedImageEmitsError
+                    ? _errorWidget(context, constraints, snapshot.error)
+                    : _qrWidget(null, widgetSize);
               }
               if (snapshot.hasData) {
                 print('loaded image');
                 final ui.Image? loadedImage = snapshot.data;
-                return _qrWidget(context, loadedImage, widgetSize);
+                return _qrWidget(loadedImage, widgetSize);
               } else {
                 return Container();
               }
             },
           );
         } else {
-          return _qrWidget(context, null, widgetSize);
+          return _qrWidget(null, widgetSize);
         }
       },
     );
   }
 
-  Widget _qrWidget(BuildContext context, ui.Image? image, double edgeLength) {
+  Widget _qrWidget(ui.Image? image, double edgeLength) {
     final QrPainter painter = QrPainter.withQr(
       qr: _qr!,
       color: widget.foregroundColor,

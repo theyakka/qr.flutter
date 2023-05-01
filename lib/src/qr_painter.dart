@@ -48,7 +48,10 @@ class QrPainter extends CustomPainter {
       'You should use the background color value of your container widget',
     )
     this.emptyColor,
-  }) : assert(QrVersions.isSupportedVersion(version)) {
+  }) : assert(
+          QrVersions.isSupportedVersion(version),
+          'QR code version $version is not supported',
+        ) {
     _init(data);
   }
 
@@ -351,11 +354,7 @@ class QrPainter extends CustomPainter {
       position: position,
     )!;
     outerPaint.strokeWidth = metrics.pixelSize;
-    if (color != null) {
-      outerPaint.color = color!;
-    } else {
-      outerPaint.color = eyeStyle.color!;
-    }
+    outerPaint.color = color != null ? color! : eyeStyle.color!;
 
     final ui.Paint innerPaint = _paintCache
         .firstPaint(QrCodeElement.finderPatternInner, position: position)!;
@@ -477,10 +476,7 @@ class QrPainter extends CustomPainter {
   }
 
   /// Returns the raw QR code [ui.Image] object.
-  Future<ui.Image> toImage(
-    double size, {
-    ui.ImageByteFormat format = ui.ImageByteFormat.png,
-  }) {
+  Future<ui.Image> toImage(double size) {
     return toPicture(size).toImage(size.toInt(), size.toInt());
   }
 
@@ -489,7 +485,7 @@ class QrPainter extends CustomPainter {
     double size, {
     ui.ImageByteFormat format = ui.ImageByteFormat.png,
   }) async {
-    final ui.Image image = await toImage(size, format: format);
+    final ui.Image image = await toImage(size);
     return image.toByteData(format: format);
   }
 }

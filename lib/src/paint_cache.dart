@@ -34,11 +34,9 @@ class PaintCache {
   /// Retrieve the first [Paint] object from the paint cache for the provided
   /// element and position.
   Paint? firstPaint(QrCodeElement element, {FinderPatternPosition? position}) {
-    if (element == QrCodeElement.codePixel) {
-      return _pixelPaints.first;
-    } else {
-      return _keyedPaints[_cacheKey(element, position: position)];
-    }
+    return element == QrCodeElement.codePixel
+        ? _pixelPaints.first
+        : _keyedPaints[_cacheKey(element, position: position)];
   }
 
   /// Retrieve all [Paint] objects from the paint cache for the provided
@@ -49,10 +47,8 @@ class PaintCache {
     QrCodeElement element, {
     FinderPatternPosition? position,
   }) {
-    if (element == QrCodeElement.codePixel) {
-      return _pixelPaints;
-    } else {
-      return <Paint?>[_keyedPaints[_cacheKey(element, position: position)]];
-    }
+    return element == QrCodeElement.codePixel
+        ? _pixelPaints
+        : <Paint?>[_keyedPaints[_cacheKey(element, position: position)]];
   }
 }
