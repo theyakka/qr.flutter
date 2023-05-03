@@ -267,7 +267,6 @@ class QrPainter extends CustomPainter {
     final outsideBorderRadius = Radius
         .circular(dataModuleStyle.outsideBorderRadius);
     final isRoundedOutsideCorners = dataModuleStyle.roundedOutsideCorners;
-    final maxIndexPixel = _qrImage.moduleCount - 1;
 
     for (var x = 0; x < _qr!.moduleCount; x++) {
       for (var y = 0; y < _qr!.moduleCount; y++) {
@@ -287,41 +286,24 @@ class QrPainter extends CustomPainter {
 
               // If pixel isDark == true and outside safe area
               // than can't be rounded
-              final isDarkLeft = x > 0
-                  ? _qrImage.isDark(y, x - 1)
-                  && !(safeAreaRect?.overlaps(
-                      _createDataModuleRect(paintMetrics, x - 1, y, gap))
-                      ?? false)
-                  : false;
-              final isDarkTop = y > 0
-                  ? _qrImage.isDark(y - 1, x)
-                  && !(safeAreaRect?.overlaps(
-                      _createDataModuleRect(paintMetrics, x, y - 1, gap))
-                      ?? false)
-                  : false;
-              final isDarkRight = x < maxIndexPixel
-                  ? _qrImage.isDark(y, x + 1)
-                  && !(safeAreaRect?.overlaps(
-                      _createDataModuleRect(paintMetrics, x + 1, y, gap))
-                      ?? false)
-                  : false;
-              final isDarkBottom = y < maxIndexPixel
-                  ? _qrImage.isDark(y + 1, x)
-                  && !(safeAreaRect?.overlaps(
-                      _createDataModuleRect(paintMetrics, x, y + 1, gap))
-                      ?? false)
-                  : false;
+              final isDarkLeft = _isDarkOnSide(x - 1, y,
+                  safeAreaRect, paintMetrics, gap);
+              final isDarkTop = _isDarkOnSide(x, y - 1,
+                  safeAreaRect, paintMetrics, gap);
+              final isDarkRight =  _isDarkOnSide(x + 1, y,
+                  safeAreaRect, paintMetrics, gap);
+              final isDarkBottom =  _isDarkOnSide(x, y + 1,
+                  safeAreaRect, paintMetrics, gap);
 
               if(!isDark && isRoundedOutsideCorners) {
-                final isDarkTopLeft = x > 0 && y > 0
-                    ? _qrImage.isDark(y - 1, x - 1) : false;
-                final isDarkTopRight = x < maxIndexPixel && y > 0
-                    ? _qrImage.isDark(y - 1, x + 1) : false;
-                final isDarkBottomLeft = x > 0 && y < maxIndexPixel
-                    ? _qrImage.isDark(y + 1, x - 1) : false;
-                final isDarkBottomRight = x < maxIndexPixel
-                    && y < maxIndexPixel
-                    ? _qrImage.isDark(y + 1, x + 1) : false;
+                final isDarkTopLeft =  _isDarkOnSide(x - 1, y - 1,
+                    safeAreaRect, paintMetrics, gap);;
+                final isDarkTopRight =  _isDarkOnSide(x + 1, y - 1,
+                    safeAreaRect, paintMetrics, gap);;
+                final isDarkBottomLeft =  _isDarkOnSide(x - 1, y + 1,
+                    safeAreaRect, paintMetrics, gap);;
+                final isDarkBottomRight =  _isDarkOnSide(x + 1, y + 1,
+                    safeAreaRect, paintMetrics, gap);;
 
                 final roundedRect = RRect.fromRectAndCorners(
                   squareRect,
@@ -403,6 +385,21 @@ class QrPainter extends CustomPainter {
         embeddedImageStyle,
       );
     }
+  }
+
+  bool _isDarkOnSide(int x, int y, Rect? safeAreaRect,
+      _PaintMetrics paintMetrics, num gap,) {
+    final maxIndexPixel = _qrImage.moduleCount - 1;
+
+    final xIsContains = x >= 0 && x <= maxIndexPixel;
+    final yIsContains = y >= 0 && y <= maxIndexPixel;
+
+    return xIsContains && yIsContains
+        ? _qrImage.isDark(y, x)
+        && !(safeAreaRect?.overlaps(
+            _createDataModuleRect(paintMetrics, x, y, gap))
+            ?? false)
+        : false;
   }
 
   Rect _createDataModuleRect(_PaintMetrics paintMetrics, int x, int y, num gap) {
