@@ -8,7 +8,6 @@ import 'package:flutter/widgets.dart';
 
 import 'types.dart';
 
-///
 class PaintCache {
   final List<Paint> _pixelPaints = <Paint>[];
   final Map<String, Paint> _keyedPaints = <String, Paint>{};

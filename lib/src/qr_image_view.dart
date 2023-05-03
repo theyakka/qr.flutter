@@ -193,13 +193,13 @@ class _QrImageViewState extends State<QrImageView> {
             future: _loadQrImage(context, widget.embeddedImageStyle),
             builder: (BuildContext ctx, AsyncSnapshot<ui.Image> snapshot) {
               if (snapshot.error != null) {
-                print('snapshot error: ${snapshot.error}');
+                debugPrint('snapshot error: ${snapshot.error}');
                 return widget.embeddedImageEmitsError
                     ? _errorWidget(context, constraints, snapshot.error)
                     : _qrWidget(null, widgetSize);
               }
               if (snapshot.hasData) {
-                print('loaded image');
+                debugPrint('loaded image');
                 final ui.Image? loadedImage = snapshot.data;
                 return _qrWidget(loadedImage, widgetSize);
               } else {
@@ -217,6 +217,7 @@ class _QrImageViewState extends State<QrImageView> {
   Widget _qrWidget(ui.Image? image, double edgeLength) {
     final QrPainter painter = QrPainter.withQr(
       qr: _qr!,
+      // ignore: deprecated_member_use_from_same_package
       color: widget.foregroundColor,
       gapless: widget.gapless,
       embeddedImageStyle: widget.embeddedImageStyle,

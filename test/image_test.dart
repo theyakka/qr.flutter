@@ -131,6 +131,7 @@ void main() {
               data: 'This is a test image',
               version: QrVersions.auto,
               gapless: true,
+              // ignore: deprecated_member_use_from_same_package
               foregroundColor: Colors.red,
               errorCorrectionLevel: QrErrorCorrectLevel.L,
               eyeStyle: const QrEyeStyle(
