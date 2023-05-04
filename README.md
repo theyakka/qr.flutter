@@ -55,8 +55,8 @@ import 'package:qr_flutter/qr_flutter.dart';
 Next, to render a basic QR code you can use the following code (or something like it):
 
 ```dart
-QrImage(
-  data: "1234567890",
+QrImageView(
+  data: '1234567890',
   version: QrVersions.auto,
   size: 200.0,
 ),
@@ -64,21 +64,22 @@ QrImage(
 
 Depending on your data requirements you may want to tweak the QR code output. The following options are available:
 
-| Property | Type | Description |
-|----|----|----|
-| `version` | int | `QrVersions.auto` or a value between 1 and 40. See http://www.qrcode.com/en/about/version.html for limitations and details. |
-| `errorCorrectionLevel` | int | A value defined on `QrErrorCorrectLevel`. e.g.: `QrErrorCorrectLevel.L`. |
-| `size` | double | The (square) size of the image. If not given, will auto size using shortest size constraint. |
-| `padding` | EdgeInsets | Padding surrounding the QR code data. |
-| `backgroundColor` | Color | The background color (default is none). |
-| `foregroundColor` | Color | The foreground color (default is black). |
-| `gapless` | bool | Adds an extra pixel in size to prevent gaps (default is true). |
-| `errorStateBuilder` | QrErrorBuilder | Allows you to show an error state `Widget` in the event there is an error rendering the QR code (e.g.: version is too low, input is too long, etc). |
-| `constrainErrorBounds` | bool | If true, the error `Widget` will be constrained to the square that the QR code was going to be drawn in. If false, the error state `Widget` will grow/shrink to whatever size it needs. |
-| `embeddedImage` | ImageProvider | An `ImageProvider` that defines an image to be overlaid in the center of the QR code. |
-| `embeddedImageStyle` | QrEmbeddedImageStyle | Properties to style the embedded image. |
-| `embeddedImageEmitsError` | bool | If true, any failure to load the embedded image will trigger the `errorStateBuilder` or render an empty `Container`. If false, the QR code will be rendered and the embedded image will be ignored. |
-|`semanticsLabel`|String|`semanticsLabel` will be used by screen readers to describe the content of the QR code.|
+| Property                  | Type                 | Description                                                                                                                                                                                         |
+|---------------------------|----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `version`                 | int                  | `QrVersions.auto` or a value between 1 and 40. See http://www.qrcode.com/en/about/version.html for limitations and details.                                                                         |
+| `errorCorrectionLevel`    | int                  | A value defined on `QrErrorCorrectLevel`. e.g.: `QrErrorCorrectLevel.L`.                                                                                                                            |
+| `size`                    | double               | The (square) size of the image. If not given, will auto size using shortest size constraint.                                                                                                        |
+| `padding`                 | EdgeInsets           | Padding surrounding the QR code data.                                                                                                                                                               |
+| `backgroundColor`         | Color                | The background color (default is none).                                                                                                                                                             |
+| `eyeStyle`                | QrEyeStyle           | Configures the QR code eyes' (corners') shape and color.                                                                                                                                            |
+| `dataModuleStyle`         | QrDataModuleStyle    | Configures the shape and the color of the dots.                                                                                                                                                     |
+| `gapless`                 | bool                 | Adds an extra pixel in size to prevent gaps (default is true).                                                                                                                                      |
+| `errorStateBuilder`       | QrErrorBuilder       | Allows you to show an error state `Widget` in the event there is an error rendering the QR code (e.g.: version is too low, input is too long, etc).                                                 |
+| `constrainErrorBounds`    | bool                 | If true, the error `Widget` will be constrained to the square that the QR code was going to be drawn in. If false, the error state `Widget` will grow/shrink to whatever size it needs.             |
+| `embeddedImage`           | ImageProvider        | An `ImageProvider` that defines an image to be overlaid in the center of the QR code.                                                                                                               |
+| `embeddedImageStyle`      | QrEmbeddedImageStyle | Properties to style the embedded image.                                                                                                                                                             |
+| `embeddedImageEmitsError` | bool                 | If true, any failure to load the embedded image will trigger the `errorStateBuilder` or render an empty `Container`. If false, the QR code will be rendered and the embedded image will be ignored. |
+| `semanticsLabel`          | String               | `semanticsLabel` will be used by screen readers to describe the content of the QR code.                                                                                                             |
 
 # Examples
 
@@ -90,7 +91,7 @@ Also, the following examples give you a quick overview on how to use the library
 A basic QR code will look something like:
 
 ```dart
-QrImage(
+QrImageView(
   data: 'This is a simple QR code',
   version: QrVersions.auto,
   size: 320,
@@ -101,7 +102,7 @@ QrImage(
 A QR code with an image (from your application's assets) will look like:
 
 ```dart
-QrImage(
+QrImageView(
   data: 'This QR code has an embedded image as well',
   version: QrVersions.auto,
   size: 320,
@@ -116,7 +117,7 @@ QrImage(
 To show an error state in the event that the QR code can't be validated:
 
 ```dart
-QrImage(
+QrImageView(
   data: 'This QR code will show the error state instead',
   version: 1,
   size: 320,
@@ -125,7 +126,7 @@ QrImage(
     return Container(
       child: Center(
         child: Text(
-          "Uh oh! Something went wrong...",
+          'Uh oh! Something went wrong...',
           textAlign: TextAlign.center,
         ),
       ),
@@ -133,13 +134,6 @@ QrImage(
   },
 )
 ```
-
-
-# FAQ
-## Has it been tested in production? Can I use it in production?
-
-Yep! It's stable and ready to rock. It's currently in use in quite a few production applications including:
-- Sixpoint: [Android](https://play.google.com/store/apps/details?id=com.sixpoint.sixpoint&hl=en_US) & [iOS](https://itunes.apple.com/us/app/sixpoint/id663008674?mt=8) 
 
 # Outro
 ## Credits
