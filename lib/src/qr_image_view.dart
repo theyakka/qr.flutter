@@ -43,7 +43,7 @@ class QrImageView extends StatefulWidget {
     ),
     this.embeddedImageEmitsError = false,
     @Deprecated('use colors in eyeStyle and dataModuleStyle instead')
-    this.foregroundColor,
+        this.foregroundColor,
   })  : assert(
           QrVersions.isSupportedVersion(version),
           'QR code version $version is not supported',
@@ -77,7 +77,7 @@ class QrImageView extends StatefulWidget {
     ),
     this.embeddedImageEmitsError = false,
     @Deprecated('use colors in eyeStyle and dataModuleStyle instead')
-    this.foregroundColor,
+        this.foregroundColor,
   })  : assert(
           QrVersions.isSupportedVersion(version),
           'QR code version $version is not supported',

@@ -43,11 +43,11 @@ class QrPainter extends CustomPainter {
       color: Color(0xFF000000),
     ),
     @Deprecated('use colors in eyeStyle and dataModuleStyle instead')
-    this.color = _qrDefaultColor,
+        this.color = _qrDefaultColor,
     @Deprecated(
       'You should use the background color value of your container widget',
     )
-    this.emptyColor,
+        this.emptyColor,
   }) : assert(
           QrVersions.isSupportedVersion(version),
           'QR code version $version is not supported',
@@ -72,11 +72,11 @@ class QrPainter extends CustomPainter {
       color: Color(0xFF000000),
     ),
     @Deprecated('use colors in eyeStyle and dataModuleStyle instead')
-    this.color = _qrDefaultColor,
+        this.color = _qrDefaultColor,
     @Deprecated(
       'You should use the background color value of your container widget',
     )
-    this.emptyColor,
+        this.emptyColor,
   })  : _qr = qr,
         version = qr.typeNumber,
         errorCorrectionLevel = qr.errorCorrectLevel {
@@ -191,7 +191,8 @@ class QrPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     // if the widget has a zero size side then we cannot continue painting.
     if (size.shortestSide == 0) {
-      debugPrint("[QR] WARN: width or height is zero. You should set a 'size' value "
+      debugPrint(
+          "[QR] WARN: width or height is zero. You should set a 'size' value "
           'or nest this painter in a Widget that defines a non-zero size');
       return;
     }
