@@ -1,3 +1,6 @@
+# 4.1.0
+- Bump `qr` dependency (from `^3.0.0` to `^3.0.1`).
+
 # 4.0.1 
 - Bump `qr` dependency (from `^2.0.0` to `^3.0.0`).
 - **BREAKING**: Rename `QrImage` to `QrImageView`

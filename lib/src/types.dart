@@ -4,8 +4,6 @@
  * See LICENSE for distribution and usage details.
  */
 
-import 'dart:ui';
-
 import 'package:flutter/widgets.dart';
 
 /// Represents a specific element / part of a QR code. This is used to isolate
@@ -59,6 +57,7 @@ enum QrDataModuleShape {
 }
 
 /// Styling options for finder pattern eye.
+@immutable
 class QrEyeStyle {
   /// Create a new set of styling options for QR Eye.
   const QrEyeStyle({this.eyeShape, this.color});
@@ -82,6 +81,7 @@ class QrEyeStyle {
 }
 
 /// Styling options for data module.
+@immutable
 class QrDataModuleStyle {
   /// Create a new set of styling options for data modules.
   const QrDataModuleStyle({
@@ -108,9 +108,10 @@ class QrDataModuleStyle {
 }
 
 /// Styling options for any embedded image overlay
+@immutable
 class QrEmbeddedImageStyle {
   /// Create a new set of styling options.
-  QrEmbeddedImageStyle({
+  const QrEmbeddedImageStyle({
     this.size,
     this.color,
   });
@@ -118,10 +119,10 @@ class QrEmbeddedImageStyle {
   /// The size of the image. If one dimension is zero then the other dimension
   /// will be used to scale the zero dimension based on the original image
   /// size.
-  Size? size;
+  final Size? size;
 
   /// Color to tint the image.
-  Color? color;
+  final Color? color;
 
   /// Check to see if the style object has a non-null, non-zero size.
   bool get hasDefinedSize => size != null && size!.longestSide > 0;
