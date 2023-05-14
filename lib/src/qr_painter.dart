@@ -6,7 +6,6 @@
 
 import 'dart:async';
 import 'dart:math';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
@@ -167,7 +166,7 @@ class QrPainter extends CustomPainter {
     // if the widget has a zero size side then we cannot continue painting.
     if (kDebugMode) {
       if (size.shortestSide == 0) {
-        print(
+        debugPrint(
             "[QR] WARN: width or height is zero. You should set a 'size' value "
             "or nest this painter in a Widget that defines a non-zero size");
         return;
@@ -417,8 +416,8 @@ class QrPainter extends CustomPainter {
   bool shouldRepaint(CustomPainter oldDelegate) {
     if (oldDelegate is QrPainter) {
       final shouldRepaint = oldDelegate.hashCode != hashCode;
-      print("hcc: $hashCode, ${oldDelegate.hashCode}");
-      print("sr: $shouldRepaint");
+      debugPrint("hcc: $hashCode, ${oldDelegate.hashCode}");
+      debugPrint("sr: $shouldRepaint");
       return shouldRepaint;
     }
     return true;
@@ -474,16 +473,16 @@ class QrPainter extends CustomPainter {
         errorCorrectionLevel.hashCode ^
         inset.hashCode ^ qrhash ^ _colorMatrix.hashCode ^
         _qrImage.hashCode ^ _isGapless.hashCode;
-    print("hc: $hashCode");
-    print("$hashCode : 1=${appearance.hashCode}");
-    print("$hashCode : 2=${version.hashCode}");
-    print("$hashCode : 3=${errorCorrectionLevel.hashCode}");
-    print("$hashCode : 4=${embeddedImage.hashCode}");
-    print("$hashCode : 5=${inset.hashCode}");
-    print("$hashCode : 6=$qrhash");
-    print("$hashCode : 7=${_colorMatrix.hashCode}");
-    print("$hashCode : 8=${_qrImage.hashCode}");
-    print("$hashCode : 9=${_isGapless.hashCode}");
+    debugPrint("hc: $hashCode");
+    debugPrint("$hashCode : 1=${appearance.hashCode}");
+    debugPrint("$hashCode : 2=${version.hashCode}");
+    debugPrint("$hashCode : 3=${errorCorrectionLevel.hashCode}");
+    debugPrint("$hashCode : 4=${embeddedImage.hashCode}");
+    debugPrint("$hashCode : 5=${inset.hashCode}");
+    debugPrint("$hashCode : 6=$qrhash");
+    debugPrint("$hashCode : 7=${_colorMatrix.hashCode}");
+    debugPrint("$hashCode : 8=${_qrImage.hashCode}");
+    debugPrint("$hashCode : 9=${_isGapless.hashCode}");
     return hashCode;
   }
 
