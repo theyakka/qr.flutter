@@ -110,18 +110,18 @@ class _MainScreenState extends State<MainScreen> {
                     const EdgeInsets.only(left: 20, right: 20, bottom: 100),
                 child: Text(_instructions, textAlign: TextAlign.center),
               ),
-              // Padding(
-              //   padding: const EdgeInsets.only(bottom: 40),
-              //   child: Row(
-              //     crossAxisAlignment: CrossAxisAlignment.center,
-              //     mainAxisAlignment: MainAxisAlignment.center,
-              //     children: [
-              //       TextButton(
-              //           onPressed: onImageButtonPressed,
-              //           child: const Text("Save as image"))
-              //     ],
-              //   ),
-              // )
+              Padding(
+                padding: const EdgeInsets.only(bottom: 40),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(
+                        onPressed: onImageButtonPressed,
+                        child: const Text("Save as image"))
+                  ],
+                ),
+              ),
             ],
           ),
         ),
