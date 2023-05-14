@@ -12,9 +12,9 @@ import 'package:qr_flutter/qr_flutter.dart';
 
 void main() {
   testWidgets('QrImageView generates correct image', (
-    WidgetTester tester,
+    tester,
   ) async {
-    final MaterialApp qrImage = MaterialApp(
+    final qrImage = MaterialApp(
       home: Center(
         child: RepaintBoundary(
           child: QrImageView(
@@ -35,8 +35,8 @@ void main() {
 
   testWidgets(
     'QrImageView generates correct image with eye style',
-    (WidgetTester tester) async {
-      final MaterialApp qrImage = MaterialApp(
+    (tester) async {
+      final qrImage = MaterialApp(
         home: Center(
           child: RepaintBoundary(
             child: QrImageView(
@@ -62,8 +62,8 @@ void main() {
 
   testWidgets(
     'QrImageView generates correct image with data module style',
-    (WidgetTester tester) async {
-      final MaterialApp qrImage = MaterialApp(
+    (tester) async {
+      final qrImage = MaterialApp(
         home: Center(
           child: RepaintBoundary(
             child: QrImageView(
@@ -89,8 +89,8 @@ void main() {
 
   testWidgets(
     'QrImageView generates correct image with eye and data module sytle',
-    (WidgetTester tester) async {
-      final MaterialApp qrImage = MaterialApp(
+    (tester) async {
+      final qrImage = MaterialApp(
         home: Center(
           child: RepaintBoundary(
             child: QrImageView(
@@ -123,8 +123,8 @@ void main() {
   testWidgets(
     'QrImageView does not apply eye and data module color when foreground '
     'color is also specified',
-    (WidgetTester tester) async {
-      final MaterialApp qrImage = MaterialApp(
+    (tester) async {
+      final qrImage = MaterialApp(
         home: Center(
           child: RepaintBoundary(
             child: QrImageView(
@@ -156,7 +156,7 @@ void main() {
 
   testWidgets(
     'QrImageView generates correct image with logo',
-    (WidgetTester tester) async {
+    (tester) async {
       await pumpWidgetWithImages(
         tester,
         MaterialApp(
@@ -196,7 +196,7 @@ Future<void> pumpWidgetWithImages(
   Future<void>? precacheFuture;
   await tester.pumpWidget(
     Builder(
-      builder: (BuildContext buildContext) {
+      builder: (buildContext) {
         precacheFuture = tester.runAsync(() async {
           await Future.wait(<Future<void>>[
             for (final String assetName in assetNames)

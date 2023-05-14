@@ -178,20 +178,20 @@ class _QrImageViewState extends State<QrImageView> {
           QrValidationResult(status: QrValidationStatus.valid, qrCode: _qr);
     }
     return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
+      builder: (context, constraints) {
         // validation failed, show an error state widget if builder is present.
         if (!_validationResult.isValid) {
           return _errorWidget(context, constraints, _validationResult.error);
         }
         // no error, build the regular widget
-        final double widgetSize =
+        final widgetSize =
             widget.size ?? constraints.biggest.shortestSide;
         if (widget.embeddedImage != null) {
           // if requesting to embed an image then we need to load via a
           // FutureBuilder because the image provider will be async.
           return FutureBuilder<ui.Image>(
             future: _loadQrImage(context, widget.embeddedImageStyle),
-            builder: (BuildContext ctx, AsyncSnapshot<ui.Image> snapshot) {
+            builder: (ctx, snapshot) {
               if (snapshot.error != null) {
                 debugPrint('snapshot error: ${snapshot.error}');
                 return widget.embeddedImageEmitsError
@@ -200,7 +200,7 @@ class _QrImageViewState extends State<QrImageView> {
               }
               if (snapshot.hasData) {
                 debugPrint('loaded image');
-                final ui.Image? loadedImage = snapshot.data;
+                final loadedImage = snapshot.data;
                 return _qrWidget(loadedImage, widgetSize);
               } else {
                 return Container();
@@ -215,7 +215,7 @@ class _QrImageViewState extends State<QrImageView> {
   }
 
   Widget _qrWidget(ui.Image? image, double edgeLength) {
-    final QrPainter painter = QrPainter.withQr(
+    final painter = QrPainter.withQr(
       qr: _qr!,
       // ignore: deprecated_member_use_from_same_package
       color: widget.foregroundColor,
@@ -239,10 +239,10 @@ class _QrImageViewState extends State<QrImageView> {
     BoxConstraints constraints,
     Object? error,
   ) {
-    final Widget errorWidget = widget.errorStateBuilder == null
+    final errorWidget = widget.errorStateBuilder == null
         ? Container()
         : widget.errorStateBuilder!(context, error);
-    final double errorSideLength = widget.constrainErrorBounds
+    final errorSideLength = widget.constrainErrorBounds
         ? widget.size ?? constraints.biggest.shortestSide
         : constraints.biggest.longestSide;
     return _QrContentView(
@@ -262,20 +262,20 @@ class _QrImageViewState extends State<QrImageView> {
   ) {
     if (style != null) {}
 
-    final MediaQueryData mq = MediaQuery.of(buildContext);
-    final Completer<ui.Image> completer = Completer<ui.Image>();
-    final ImageStream stream = widget.embeddedImage!.resolve(
+    final mq = MediaQuery.of(buildContext);
+    final completer = Completer<ui.Image>();
+    final stream = widget.embeddedImage!.resolve(
       ImageConfiguration(
         devicePixelRatio: mq.devicePixelRatio,
       ),
     );
 
     streamListener = ImageStreamListener(
-      (ImageInfo info, bool err) {
+      (info, err) {
         stream.removeListener(streamListener);
         completer.complete(info.image);
       },
-      onError: (Object err, _) {
+      onError: (err, _) {
         stream.removeListener(streamListener);
         completer.completeError(err);
       },

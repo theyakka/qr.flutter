@@ -138,7 +138,7 @@ class QrPainter extends CustomPainter {
       throw QrUnsupportedVersionException(version);
     }
     // configure and make the QR code data
-    final QrValidationResult validationResult = QrValidator.validate(
+    final validationResult = QrValidator.validate(
       data: data,
       version: version,
       errorCorrectionLevel: errorCorrectionLevel,
@@ -168,7 +168,7 @@ class QrPainter extends CustomPainter {
     );
     // Cache the finder pattern painters. We'll keep one for each one in case
     // we want to provide customization options later.
-    for (final FinderPatternPosition position in FinderPatternPosition.values) {
+    for (final position in FinderPatternPosition.values) {
       _paintCache.cache(
         Paint()..style = PaintingStyle.stroke,
         QrCodeElement.finderPatternOuter,
@@ -197,7 +197,7 @@ class QrPainter extends CustomPainter {
       return;
     }
 
-    final _PaintMetrics paintMetrics = _PaintMetrics(
+    final paintMetrics = _PaintMetrics(
       containerSize: size.shortestSide,
       moduleCount: _qr!.moduleCount,
       gapSize: gapless ? 0 : _gapSize,
@@ -231,9 +231,9 @@ class QrPainter extends CustomPainter {
 
     double left;
     double top;
-    final num gap = !gapless ? _gapSize : 0;
+    final gap = !gapless ? _gapSize : 0;
     // get the painters for the pixel information
-    final ui.Paint? pixelPaint =
+    final pixelPaint =
         _paintCache.firstPaint(QrCodeElement.codePixel);
     if (color != null) {
       pixelPaint!.color = color!;
@@ -245,13 +245,13 @@ class QrPainter extends CustomPainter {
       emptyPixelPaint = _paintCache.firstPaint(QrCodeElement.codePixelEmpty);
       emptyPixelPaint!.color = emptyColor!;
     }
-    for (int x = 0; x < _qr!.moduleCount; x++) {
-      for (int y = 0; y < _qr!.moduleCount; y++) {
+    for (var x = 0; x < _qr!.moduleCount; x++) {
+      for (var y = 0; y < _qr!.moduleCount; y++) {
         // draw the finder patterns independently
         if (_isFinderPatternPosition(x, y)) {
           continue;
         }
-        final ui.Paint? paint =
+        final paint =
             _qrImage.isDark(y, x) ? pixelPaint : emptyPixelPaint;
         if (paint == null) {
           continue;
@@ -259,15 +259,15 @@ class QrPainter extends CustomPainter {
         // paint a pixel
         left = paintMetrics.inset + (x * (paintMetrics.pixelSize + gap));
         top = paintMetrics.inset + (y * (paintMetrics.pixelSize + gap));
-        double pixelHTweak = 0.0;
-        double pixelVTweak = 0.0;
+        var pixelHTweak = 0.0;
+        var pixelVTweak = 0.0;
         if (gapless && _hasAdjacentHorizontalPixel(x, y, _qr!.moduleCount)) {
           pixelHTweak = 0.5;
         }
         if (gapless && _hasAdjacentVerticalPixel(x, y, _qr!.moduleCount)) {
           pixelVTweak = 0.5;
         }
-        final ui.Rect squareRect = Rect.fromLTWH(
+        final squareRect = Rect.fromLTWH(
           left,
           top,
           paintMetrics.pixelSize + pixelHTweak,
@@ -276,7 +276,7 @@ class QrPainter extends CustomPainter {
         if (dataModuleStyle.dataModuleShape == QrDataModuleShape.square) {
           canvas.drawRect(squareRect, paint);
         } else {
-          final ui.RRect roundedRect = RRect.fromRectAndRadius(
+          final roundedRect = RRect.fromRectAndRadius(
             squareRect,
             Radius.circular(paintMetrics.pixelSize + pixelHTweak),
           );
@@ -286,15 +286,15 @@ class QrPainter extends CustomPainter {
     }
 
     if (embeddedImage != null) {
-      final ui.Size originalSize = Size(
+      final originalSize = Size(
         embeddedImage!.width.toDouble(),
         embeddedImage!.height.toDouble(),
       );
-      final ui.Size? requestedSize =
+      final requestedSize =
           embeddedImageStyle != null ? embeddedImageStyle!.size : null;
-      final ui.Size imageSize =
+      final imageSize =
           _scaledAspectSize(size, originalSize, requestedSize);
-      final ui.Offset position = Offset(
+      final position = Offset(
         (size.width - imageSize.width) / 2.0,
         (size.height - imageSize.height) / 2.0,
       );
@@ -318,10 +318,10 @@ class QrPainter extends CustomPainter {
   }
 
   bool _isFinderPatternPosition(int x, int y) {
-    final bool isTopLeft = y < _finderPatternLimit && x < _finderPatternLimit;
-    final bool isBottomLeft = y < _finderPatternLimit &&
+    final isTopLeft = y < _finderPatternLimit && x < _finderPatternLimit;
+    final isBottomLeft = y < _finderPatternLimit &&
         (x >= _qr!.moduleCount - _finderPatternLimit);
-    final bool isTopRight = y >= _qr!.moduleCount - _finderPatternLimit &&
+    final isTopRight = y >= _qr!.moduleCount - _finderPatternLimit &&
         (x < _finderPatternLimit);
     return isTopLeft || isBottomLeft || isTopRight;
   }
@@ -331,12 +331,12 @@ class QrPainter extends CustomPainter {
     Canvas canvas,
     _PaintMetrics metrics,
   ) {
-    final double totalGap = (_finderPatternLimit - 1) * metrics.gapSize;
-    final double radius =
+    final totalGap = (_finderPatternLimit - 1) * metrics.gapSize;
+    final radius =
         ((_finderPatternLimit * metrics.pixelSize) + totalGap) -
             metrics.pixelSize;
-    final double strokeAdjust = metrics.pixelSize / 2.0;
-    final double edgePos =
+    final strokeAdjust = metrics.pixelSize / 2.0;
+    final edgePos =
         (metrics.inset + metrics.innerContentSize) - (radius + strokeAdjust);
 
     Offset offset;
@@ -350,19 +350,19 @@ class QrPainter extends CustomPainter {
     }
 
     // configure the paints
-    final ui.Paint outerPaint = _paintCache.firstPaint(
+    final outerPaint = _paintCache.firstPaint(
       QrCodeElement.finderPatternOuter,
       position: position,
     )!;
     outerPaint.strokeWidth = metrics.pixelSize;
     outerPaint.color = color != null ? color! : eyeStyle.color!;
 
-    final ui.Paint innerPaint = _paintCache
+    final innerPaint = _paintCache
         .firstPaint(QrCodeElement.finderPatternInner, position: position)!;
     innerPaint.strokeWidth = metrics.pixelSize;
     innerPaint.color = emptyColor ?? const Color(0x00ffffff);
 
-    final ui.Paint? dotPaint = _paintCache.firstPaint(
+    final dotPaint = _paintCache.firstPaint(
       QrCodeElement.finderPatternDot,
       position: position,
     );
@@ -372,20 +372,20 @@ class QrPainter extends CustomPainter {
       dotPaint!.color = eyeStyle.color!;
     }
 
-    final ui.Rect outerRect =
+    final outerRect =
         Rect.fromLTWH(offset.dx, offset.dy, radius, radius);
 
-    final double innerRadius = radius - (2 * metrics.pixelSize);
-    final ui.Rect innerRect = Rect.fromLTWH(
+    final innerRadius = radius - (2 * metrics.pixelSize);
+    final innerRect = Rect.fromLTWH(
       offset.dx + metrics.pixelSize,
       offset.dy + metrics.pixelSize,
       innerRadius,
       innerRadius,
     );
 
-    final double gap = metrics.pixelSize * 2;
-    final double dotSize = radius - gap - (2 * strokeAdjust);
-    final ui.Rect dotRect = Rect.fromLTWH(
+    final gap = metrics.pixelSize * 2;
+    final dotSize = radius - gap - (2 * strokeAdjust);
+    final dotRect = Rect.fromLTWH(
       offset.dx + metrics.pixelSize + strokeAdjust,
       offset.dy + metrics.pixelSize + strokeAdjust,
       dotSize,
@@ -397,15 +397,15 @@ class QrPainter extends CustomPainter {
       canvas.drawRect(innerRect, innerPaint);
       canvas.drawRect(dotRect, dotPaint);
     } else {
-      final ui.RRect roundedOuterStrokeRect =
+      final roundedOuterStrokeRect =
           RRect.fromRectAndRadius(outerRect, Radius.circular(radius));
       canvas.drawRRect(roundedOuterStrokeRect, outerPaint);
 
-      final ui.RRect roundedInnerStrokeRect =
+      final roundedInnerStrokeRect =
           RRect.fromRectAndRadius(outerRect, Radius.circular(innerRadius));
       canvas.drawRRect(roundedInnerStrokeRect, innerPaint);
 
-      final ui.RRect roundedDotStrokeRect =
+      final roundedDotStrokeRect =
           RRect.fromRectAndRadius(dotRect, Radius.circular(dotSize));
       canvas.drawRRect(roundedDotStrokeRect, dotPaint);
     }
@@ -421,12 +421,12 @@ class QrPainter extends CustomPainter {
     if (requestedSize != null && !requestedSize.isEmpty) {
       return requestedSize;
     } else if (requestedSize != null && _hasOneNonZeroSide(requestedSize)) {
-      final double maxSide = requestedSize.longestSide;
-      final double ratio = maxSide / originalSize.longestSide;
+      final maxSide = requestedSize.longestSide;
+      final ratio = maxSide / originalSize.longestSide;
       return Size(ratio * originalSize.width, ratio * originalSize.height);
     } else {
-      final double maxSide = 0.25 * widgetSize.shortestSide;
-      final double ratio = maxSide / originalSize.longestSide;
+      final maxSide = 0.25 * widgetSize.shortestSide;
+      final ratio = maxSide / originalSize.longestSide;
       return Size(ratio * originalSize.width, ratio * originalSize.height);
     }
   }
@@ -437,7 +437,7 @@ class QrPainter extends CustomPainter {
     Size size,
     QrEmbeddedImageStyle? style,
   ) {
-    final ui.Paint paint = Paint()
+    final paint = Paint()
       ..isAntiAlias = true
       ..filterQuality = FilterQuality.high;
     if (style != null) {
@@ -445,11 +445,11 @@ class QrPainter extends CustomPainter {
         paint.colorFilter = ColorFilter.mode(style.color!, BlendMode.srcATop);
       }
     }
-    final ui.Size srcSize =
+    final srcSize =
         Size(embeddedImage!.width.toDouble(), embeddedImage!.height.toDouble());
-    final ui.Rect src =
+    final src =
         Alignment.center.inscribe(srcSize, Offset.zero & srcSize);
-    final ui.Rect dst = Alignment.center.inscribe(size, position & size);
+    final dst = Alignment.center.inscribe(size, position & size);
     canvas.drawImageRect(embeddedImage!, src, dst, paint);
   }
 
@@ -470,8 +470,8 @@ class QrPainter extends CustomPainter {
 
   /// Returns a [ui.Picture] object containing the QR code data.
   ui.Picture toPicture(double size) {
-    final ui.PictureRecorder recorder = ui.PictureRecorder();
-    final ui.Canvas canvas = Canvas(recorder);
+    final recorder = ui.PictureRecorder();
+    final canvas = Canvas(recorder);
     paint(canvas, Size(size, size));
     return recorder.endRecording();
   }
@@ -486,7 +486,7 @@ class QrPainter extends CustomPainter {
     double size, {
     ui.ImageByteFormat format = ui.ImageByteFormat.png,
   }) async {
-    final ui.Image image = await toImage(size);
+    final image = await toImage(size);
     return image.toByteData(format: format);
   }
 }
@@ -514,8 +514,8 @@ class _PaintMetrics {
   double get inset => _inset;
 
   void _calculateMetrics() {
-    final double gapTotal = (moduleCount - 1) * gapSize;
-    final double pixelSize = (containerSize - gapTotal) / moduleCount;
+    final gapTotal = (moduleCount - 1) * gapSize;
+    final pixelSize = (containerSize - gapTotal) / moduleCount;
     _pixelSize = (pixelSize * 2).roundToDouble() / 2;
     _innerContentSize = (_pixelSize * moduleCount) + gapTotal;
     _inset = (containerSize - _innerContentSize) / 2;

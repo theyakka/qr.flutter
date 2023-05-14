@@ -13,7 +13,7 @@ import 'qr_versions.dart';
 class QrUnsupportedVersionException implements Exception {
   /// Create a new QrUnsupportedVersionException.
   factory QrUnsupportedVersionException(int providedVersion) {
-    final String message =
+    final message =
         'Invalid version. $providedVersion is not >= ${QrVersions.min} '
         'and <= ${QrVersions.max}';
     return QrUnsupportedVersionException._internal(providedVersion, message);

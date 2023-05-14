@@ -8,12 +8,14 @@ import 'package:flutter/widgets.dart';
 
 import 'types.dart';
 
+/// Caches painter objects so we do have to recreate them and waste expensive
+/// cycles.
 class PaintCache {
   final List<Paint> _pixelPaints = <Paint>[];
   final Map<String, Paint> _keyedPaints = <String, Paint>{};
 
   String _cacheKey(QrCodeElement element, {FinderPatternPosition? position}) {
-    final String posKey = position != null ? position.toString() : 'any';
+    final posKey = position != null ? position.toString() : 'any';
     return '$element:$posKey';
   }
 
