@@ -37,7 +37,7 @@ dependencies:
 dependencies:
   qr_flutter:
     git:
-      url: https://github.com/theyakka/qr.flutter.git
+      url: https://github.com/alexanderkind/qr.flutter
 ```
 
 Keep in mind the `master` branch could be unstable.
@@ -80,6 +80,12 @@ Depending on your data requirements you may want to tweak the QR code output. Th
 | `embeddedImageStyle`      | QrEmbeddedImageStyle | Properties to style the embedded image.                                                                                                                                                             |
 | `embeddedImageEmitsError` | bool                 | If true, any failure to load the embedded image will trigger the `errorStateBuilder` or render an empty `Container`. If false, the QR code will be rendered and the embedded image will be ignored. |
 | `semanticsLabel`          | String               | `semanticsLabel` will be used by screen readers to describe the content of the QR code.                                                                                                             |
+| `borderRadius`            | double               | Setting corner rounding for shape types `QrEyeShape.square`, `QrDataModuleShape.square`, `EmbeddedImageShape.square`. Set in appropriate styles.                                                    |
+| `roundedOutsideCorners`   | bool                 | If true, the outer corners of the data are rounded. Set to `QrDataModuleStyle`. Rounded to `borderRadius` by default. Only `QrDataModuleShape.square`.                                              |
+| `outsideBorderRadius`     | double               | It is set if the outer rounding `outsideBorderRadius` should differ from the inner one `borderRadius`. No more than `borderRadius`. Only `QrDataModuleShape.square`                                 |
+| `gradient`                | Gradient             | Changing the solid color of the code to a gradient, e.g. `LinearGradient`.                                                                                                                          | 
+| `safeArea`                | bool                 | If true, data is hidden behind the `embeddedImage`. Set to `QrEmbeddedImageStyle`.                                                                                                                  |
+| `safeAreaMultiplier`      | double               | Multiplier `safeArea` size.                                                                                                                                                                         |
 
 # Examples
 
@@ -132,6 +138,55 @@ QrImageView(
       ),
     );
   },
+)
+```
+
+A QR code with inside and outside corners rounding and safe area of embedded image:
+
+```dart
+QrImageView(
+  data: 'London is the capital of Great Britain',
+  version: QrVersions.auto,
+  size: 320,
+  eyeStyle: const QrEyeStyle(
+    borderRadius: 10,
+  ),
+  dataModuleStyle: const QrDataModuleStyle(
+    borderRadius: 5,
+    roundedOutsideCorners: true,
+  ),
+  embeddedImage: AssetImage('assets/images/my_embedded_image.png'),
+  embeddedImageStyle: QrEmbeddedImageStyle(
+    size: Size.square(40),
+    color: Colors.white,
+    safeArea: true,
+    safeAreaMultiplier: 1.1,
+    embeddedImageShape: EmbeddedImageShape.square,
+    borderRadius: 10,
+  ),
+)
+```
+
+A QR code with gradient:
+
+```dart
+QrImageView(
+  data: 'Rainbow after the rain',
+  version: QrVersions.auto,
+  size: 320,
+  gradient: LinearGradient(
+    begin: Alignment.bottomLeft,
+    end: Alignment.topRight,
+      colors: [
+      Color(0xffff0000),
+      Color(0xffffa500),
+      Color(0xffffff00),
+      Color(0xff008000),
+      Color(0xff0000ff),
+      Color(0xff4b0082),
+      Color(0xffee82ee),
+    ],
+  ),
 )
 ```
 
