@@ -4,6 +4,7 @@
  * See LICENSE for distribution and usage details.
  */
 
+import 'package:flutter/widgets.dart';
 import 'dart:ui';
 
 
@@ -70,6 +71,7 @@ enum EmbeddedImageShape {
 }
 
 /// Styling options for finder pattern eye.
+@immutable
 class QrEyeStyle {
   /// Create a new set of styling options for QR Eye.
   const QrEyeStyle({
@@ -100,6 +102,7 @@ class QrEyeStyle {
 }
 
 /// Styling options for data module.
+@immutable
 class QrDataModuleStyle {
   /// Create a new set of styling options for data modules.
   const QrDataModuleStyle({
@@ -152,6 +155,7 @@ class QrDataModuleStyle {
 }
 
 /// Styling options for any embedded image overlay
+@immutable
 class QrEmbeddedImageStyle {
   /// Create a new set of styling options.
   const QrEmbeddedImageStyle({
