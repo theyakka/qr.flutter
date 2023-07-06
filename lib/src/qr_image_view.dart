@@ -184,8 +184,7 @@ class _QrImageViewState extends State<QrImageView> {
           return _errorWidget(context, constraints, _validationResult.error);
         }
         // no error, build the regular widget
-        final widgetSize =
-            widget.size ?? constraints.biggest.shortestSide;
+        final widgetSize = widget.size ?? constraints.biggest.shortestSide;
         if (widget.embeddedImage != null) {
           // if requesting to embed an image then we need to load via a
           // FutureBuilder because the image provider will be async.
