@@ -183,6 +183,129 @@ void main() {
       );
     },
   );
+
+  testWidgets(
+    'QrImageView rounded generates correct image',
+    (tester) async {
+      final qrImage = MaterialApp(
+        home: Center(
+          child: RepaintBoundary(
+            child: QrImageView(
+              data: 'This is a a qr code with a logo',
+              gapless: true,
+              version: QrVersions.auto,
+              eyeStyle: const QrEyeStyle(
+                eyeShape: QrEyeShape.squareRounded,
+                radius: 15,
+                color: Colors.green,
+              ),
+              dataModuleStyle: const QrDataModuleStyle(
+                dataModuleShape: QrDataModuleShape.squareRounded,
+                color: Colors.black,
+                radius: 3,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpWidget(qrImage);
+      await expectLater(
+        find.byType(QrImageView),
+        matchesGoldenFile(
+          './.golden/qr_image_rounded_golden.png',
+        ),
+      );
+    },
+  );
+
+  testWidgets(
+    'QrImageView rounded generates correct image with logo',
+    (tester) async {
+      await pumpWidgetWithImages(
+        tester,
+        MaterialApp(
+          home: Center(
+            child: RepaintBoundary(
+              child: QrImageView(
+                data: 'This is a a qr code with a logo',
+                gapless: true,
+                version: QrVersions.auto,
+                eyeStyle: const QrEyeStyle(
+                  eyeShape: QrEyeShape.squareRounded,
+                  radius: 15,
+                  color: Colors.green,
+                ),
+                dataModuleStyle: const QrDataModuleStyle(
+                  dataModuleShape: QrDataModuleShape.squareRounded,
+                  color: Colors.black,
+                  radius: 3,
+                ),
+                size: 320.0,
+                embeddedImage: FileImage(File('test/.images/logo_yakka.png')),
+                embeddedImageStyle: const QrEmbeddedImageStyle(
+                  size: Size.square(60),
+                ),
+              ),
+            ),
+          ),
+        ),
+        <String>['test/.images/logo_yakka.png'],
+      );
+
+      await tester.pumpAndSettle();
+
+      await expectLater(
+        find.byType(QrImageView),
+        matchesGoldenFile('./.golden/qr_image_rounded_logo_golden.png'),
+      );
+    },
+  );
+
+  testWidgets(
+    'QrImageView rounded generates correct image with logo & border color',
+    (tester) async {
+      await pumpWidgetWithImages(
+        tester,
+        MaterialApp(
+          home: Center(
+            child: RepaintBoundary(
+              child: QrImageView(
+                data: 'This is a a qr code with a logo',
+                gapless: true,
+                version: QrVersions.auto,
+                eyeStyle: const QrEyeStyle(
+                  eyeShape: QrEyeShape.squareRounded,
+                  radius: 15,
+                  color: Colors.green,
+                ),
+                dataModuleStyle: const QrDataModuleStyle(
+                  dataModuleShape: QrDataModuleShape.squareRounded,
+                  color: Colors.black,
+                  radius: 3,
+                ),
+                size: 320.0,
+                embeddedImage: FileImage(File('test/.images/logo_yakka.png')),
+                embeddedImageStyle: const QrEmbeddedImageStyle(
+                  size: Size.square(60),
+                  color: Colors.red,
+                ),
+              ),
+            ),
+          ),
+        ),
+        <String>['test/.images/logo_yakka.png'],
+      );
+
+      await tester.pumpAndSettle();
+
+      await expectLater(
+        find.byType(QrImageView),
+        matchesGoldenFile(
+          './.golden/qr_image_rounded_logo_border_color_golden.png',
+        ),
+      );
+    },
+  );
 }
 
 /// Pre-cache images to make sure they show up in golden tests.

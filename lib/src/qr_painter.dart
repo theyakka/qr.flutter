@@ -348,7 +348,7 @@ class QrPainter extends CustomPainter {
         positionBackground,
         imageSizeBackground,
         QrEmbeddedImageStyle(
-          color: embeddedImageStyle!.color ?? Colors.white,
+          color: embeddedImageStyle?.color ?? Colors.white,
         ),
       );
 

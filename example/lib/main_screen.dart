@@ -18,21 +18,22 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  double qrSize = 200;
+  double logoSize = 40;
   @override
   Widget build(BuildContext context) {
-    const String message =
+    const message =
         // ignore: lines_longer_than_80_chars
         'Hey this is a QR code. Change this value in the main_screen.dart file.';
 
-    final FutureBuilder<ui.Image> qrFutureBuilder = FutureBuilder<ui.Image>(
+    final qrFutureBuilder = FutureBuilder<ui.Image>(
       future: _loadOverlayImage(),
-      builder: (BuildContext ctx, AsyncSnapshot<ui.Image> snapshot) {
-        const double size = 280.0;
+      builder: (ctx, snapshot) {
         if (!snapshot.hasData) {
-          return const SizedBox(width: size, height: size);
+          return SizedBox(width: qrSize, height: qrSize);
         }
         return CustomPaint(
-          size: const Size.square(size),
+          size: Size.square(qrSize),
           painter: QrPainter(
             data: message,
             gapless: true,
@@ -49,8 +50,8 @@ class _MainScreenState extends State<MainScreen> {
             ),
             // size: 320.0,
             embeddedImage: snapshot.data,
-            embeddedImageStyle: const QrEmbeddedImageStyle(
-              size: Size.square(60),
+            embeddedImageStyle: QrEmbeddedImageStyle(
+              size: Size.square(logoSize),
             ),
           ),
         );
@@ -65,8 +66,36 @@ class _MainScreenState extends State<MainScreen> {
             Expanded(
               child: Center(
                 child: SizedBox(
-                  width: 280,
+                  width: qrSize,
                   child: qrFutureBuilder,
+                ),
+              ),
+            ),
+            Expanded(
+              child: Center(
+                child: SizedBox(
+                  width: qrSize,
+                  child: QrImageView(
+                    data: message,
+                    gapless: true,
+                    version: QrVersions.auto,
+                    eyeStyle: const QrEyeStyle(
+                      eyeShape: QrEyeShape.squareRounded,
+                      radius: 15,
+                      color: Colors.green,
+                    ),
+                    dataModuleStyle: const QrDataModuleStyle(
+                      dataModuleShape: QrDataModuleShape.squareRounded,
+                      color: Colors.black,
+                      radius: 3,
+                    ),
+                    // size: 320.0,
+                    embeddedImage:
+                        ExactAssetImage('assets/images/4.0x/logo_yakka.png'),
+                    embeddedImageStyle: QrEmbeddedImageStyle(
+                      size: Size.square(logoSize),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -82,9 +111,8 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Future<ui.Image> _loadOverlayImage() async {
-    final Completer<ui.Image> completer = Completer<ui.Image>();
-    final ByteData byteData =
-        await rootBundle.load('assets/images/4.0x/logo_yakka.png');
+    final completer = Completer<ui.Image>();
+    final byteData = await rootBundle.load('assets/images/4.0x/logo_yakka.png');
     ui.decodeImageFromList(byteData.buffer.asUint8List(), completer.complete);
     return completer.future;
   }
