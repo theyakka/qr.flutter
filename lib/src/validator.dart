@@ -29,12 +29,15 @@ class QrValidator {
           errorCorrectLevel: errorCorrectionLevel,
         );
       }
-      qrCode.make();
       return QrValidationResult(
-          status: QrValidationStatus.valid, qrCode: qrCode);
-    } on InputTooLongException catch (itle) {
+        status: QrValidationStatus.valid,
+        qrCode: qrCode,
+      );
+    } on InputTooLongException catch (title) {
       return QrValidationResult(
-          status: QrValidationStatus.contentTooLong, error: itle);
+        status: QrValidationStatus.contentTooLong,
+        error: title,
+      );
     } on Exception catch (ex) {
       return QrValidationResult(status: QrValidationStatus.error, error: ex);
     }

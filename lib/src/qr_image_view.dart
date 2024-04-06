@@ -7,11 +7,8 @@
 import 'dart:async';
 import 'dart:ui' as ui;
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:qr/qr.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 
 import 'qr_painter.dart';
 import 'qr_versions.dart';
@@ -19,16 +16,15 @@ import 'types.dart';
 import 'validator.dart';
 
 /// A widget that shows a QR code.
-class QrImage extends StatefulWidget {
+class QrImageView extends StatefulWidget {
   /// Create a new QR code using the [String] data and the passed options (or
   /// using the default options).
-  QrImage({
+  QrImageView({
     required String data,
-    Key? key,
+    super.key,
     this.size,
     this.padding = const EdgeInsets.all(10.0),
     this.backgroundColor = Colors.transparent,
-    this.foregroundColor,
     this.version = QrVersions.auto,
     this.errorCorrectionLevel = QrErrorCorrectLevel.L,
     this.errorStateBuilder,
@@ -45,21 +41,25 @@ class QrImage extends StatefulWidget {
       dataModuleShape: QrDataModuleShape.square,
       color: Colors.black,
     ),
-    this.embeddedImageEmitsError = false, this.blendEmbeddedImage=false,
-  })  : assert(QrVersions.isSupportedVersion(version)),
+    this.embeddedImageEmitsError = false,
+	this.blendEmbeddedImage=false,
+    @Deprecated('use colors in eyeStyle and dataModuleStyle instead')
+        this.foregroundColor,
+  })  : assert(
+          QrVersions.isSupportedVersion(version),
+          'QR code version $version is not supported',
+        ),
         _data = data,
-        _qrCode = null,
-        super(key: key);
+        _qrCode = null;
 
   /// Create a new QR code using the [QrCode] data and the passed options (or
   /// using the default options).
-  QrImage.withQr({
+  QrImageView.withQr({
     required QrCode qr,
-    Key? key,
+    super.key,
     this.size,
     this.padding = const EdgeInsets.all(10.0),
     this.backgroundColor = Colors.transparent,
-    this.foregroundColor,
     this.version = QrVersions.auto,
     this.errorCorrectionLevel = QrErrorCorrectLevel.L,
     this.errorStateBuilder,
@@ -76,23 +76,25 @@ class QrImage extends StatefulWidget {
       dataModuleShape: QrDataModuleShape.square,
       color: Colors.black,
     ),
-    this.embeddedImageEmitsError = false, this.blendEmbeddedImage=false,
-  })  : assert(QrVersions.isSupportedVersion(version)),
+	this.blendEmbeddedImage=false,
+    this.embeddedImageEmitsError = false,
+    @Deprecated('use colors in eyeStyle and dataModuleStyle instead')
+        this.foregroundColor,
+  })  : assert(
+          QrVersions.isSupportedVersion(version),
+          'QR code version $version is not supported',
+        ),
         _data = null,
-        _qrCode = qr,
-        super(key: key);
+        _qrCode = qr;
 
   // The data passed to the widget
   final String? _data;
+
   // The QR code data passed to the widget
   final QrCode? _qrCode;
 
   /// The background color of the final QR code widget.
   final Color backgroundColor;
-
-  /// The foreground color of the final QR code widget.
-  @Deprecated('use colors in eyeStyle and dataModuleStyle instead')
-  final Color? foregroundColor;
 
   /// The QR code version to use.
   final int version;
@@ -154,11 +156,15 @@ class QrImage extends StatefulWidget {
   /// Styling option for QR data module.
   final QrDataModuleStyle dataModuleStyle;
 
+  /// The foreground color of the final QR code widget.
+  @Deprecated('use colors in eyeStyle and dataModuleStyle instead')
+  final Color? foregroundColor;
+
   @override
-  _QrImageState createState() => _QrImageState();
+  State<QrImageView> createState() => _QrImageViewState();
 }
 
-class _QrImageState extends State<QrImage> {
+class _QrImageViewState extends State<QrImageView> {
   /// The QR code string data.
   QrCode? _qr;
 
@@ -173,55 +179,53 @@ class _QrImageState extends State<QrImage> {
         version: widget.version,
         errorCorrectionLevel: widget.errorCorrectionLevel,
       );
-      if (_validationResult.isValid) {
-        _qr = _validationResult.qrCode;
-      } else {
-        _qr = null;
-      }
+      _qr = _validationResult.isValid ? _validationResult.qrCode : null;
     } else if (widget._qrCode != null) {
       _qr = widget._qrCode;
       _validationResult =
           QrValidationResult(status: QrValidationStatus.valid, qrCode: _qr);
     }
-    return LayoutBuilder(builder: (context, constraints) {
-      // validation failed, show an error state widget if builder is present.
-      if (!_validationResult.isValid) {
-        return _errorWidget(context, constraints, _validationResult.error);
-      }
-      // no error, build the regular widget
-      final widgetSize = widget.size ?? constraints.biggest.shortestSide;
-      if (widget.embeddedImage != null) {
-        // if requesting to embed an image then we need to load via a
-        // FutureBuilder because the image provider will be async.
-        return FutureBuilder<ui.Image>(
-          future: _loadQrImage(context, widget.embeddedImageStyle),
-          builder: (ctx, snapshot) {
-            if (snapshot.error != null) {
-              print("snapshot error: ${snapshot.error}");
-              if (widget.embeddedImageEmitsError) {
-                return _errorWidget(context, constraints, snapshot.error);
-              } else {
-                return _qrWidget(context, null, widgetSize);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // validation failed, show an error state widget if builder is present.
+        if (!_validationResult.isValid) {
+          return _errorWidget(context, constraints, _validationResult.error);
+        }
+        // no error, build the regular widget
+        final widgetSize =
+            widget.size ?? constraints.biggest.shortestSide;
+        if (widget.embeddedImage != null) {
+          // if requesting to embed an image then we need to load via a
+          // FutureBuilder because the image provider will be async.
+          return FutureBuilder<ui.Image>(
+            future: _loadQrImage(context, widget.embeddedImageStyle),
+            builder: (ctx, snapshot) {
+              if (snapshot.error != null) {
+                debugPrint('snapshot error: ${snapshot.error}');
+                return widget.embeddedImageEmitsError
+                    ? _errorWidget(context, constraints, snapshot.error)
+                    : _qrWidget(null, widgetSize);
               }
-            }
-            if (snapshot.hasData) {
-              print('loaded image');
-              final loadedImage = snapshot.data;
-              return _qrWidget(context, loadedImage, widgetSize);
-            } else {
-              return Container();
-            }
-          },
-        );
-      } else {
-        return _qrWidget(context, null, widgetSize);
-      }
-    });
+              if (snapshot.hasData) {
+                debugPrint('loaded image');
+                final loadedImage = snapshot.data;
+                return _qrWidget(loadedImage, widgetSize);
+              } else {
+                return Container();
+              }
+            },
+          );
+        } else {
+          return _qrWidget(null, widgetSize);
+        }
+      },
+    );
   }
 
-  Widget _qrWidget(BuildContext context, ui.Image? image, double edgeLength) {
+  Widget _qrWidget(ui.Image? image, double edgeLength) {
     final painter = QrPainter.withQr(
       qr: _qr!,
+      // ignore: deprecated_member_use_from_same_package
       color: widget.foregroundColor,
       gapless: widget.gapless,
       embeddedImageStyle: widget.embeddedImageStyle,
@@ -240,51 +244,62 @@ class _QrImageState extends State<QrImage> {
   }
 
   Widget _errorWidget(
-      BuildContext context, BoxConstraints constraints, Object? error) {
+    BuildContext context,
+    BoxConstraints constraints,
+    Object? error,
+  ) {
     final errorWidget = widget.errorStateBuilder == null
         ? Container()
         : widget.errorStateBuilder!(context, error);
-    final errorSideLength = (widget.constrainErrorBounds
+    final errorSideLength = widget.constrainErrorBounds
         ? widget.size ?? constraints.biggest.shortestSide
-        : constraints.biggest.longestSide);
+        : constraints.biggest.longestSide;
     return _QrContentView(
       edgeLength: errorSideLength,
       backgroundColor: widget.backgroundColor,
       padding: widget.padding,
-      child: errorWidget,
       semanticsLabel: widget.semanticsLabel,
+      child: errorWidget,
     );
   }
 
   late ImageStreamListener streamListener;
+
   Future<ui.Image> _loadQrImage(
-      BuildContext buildContext, QrEmbeddedImageStyle? style) async {
+    BuildContext buildContext,
+    QrEmbeddedImageStyle? style,
+  ) {
     if (style != null) {}
 
     final mq = MediaQuery.of(buildContext);
     final completer = Completer<ui.Image>();
-    final stream = widget.embeddedImage!.resolve(ImageConfiguration(
-      devicePixelRatio: mq.devicePixelRatio,
-    ));
+    final stream = widget.embeddedImage!.resolve(
+      ImageConfiguration(
+        devicePixelRatio: mq.devicePixelRatio,
+      ),
+    );
 
-    streamListener = ImageStreamListener((info, err) {
-      stream.removeListener(streamListener);
-      completer.complete(info.image);
-    }, onError: (dynamic err, _) {
-      stream.removeListener(streamListener);
-      completer.completeError(err);
-    });
+    streamListener = ImageStreamListener(
+      (info, err) {
+        stream.removeListener(streamListener);
+        completer.complete(info.image);
+      },
+      onError: (err, _) {
+        stream.removeListener(streamListener);
+        completer.completeError(err);
+      },
+    );
     stream.addListener(streamListener);
     return completer.future;
   }
 }
 
 /// A function type to be called when any form of error occurs while
-/// painting a [QrImage].
+/// painting a [QrImageView].
 typedef QrErrorBuilder = Widget Function(BuildContext context, Object? error);
 
 class _QrContentView extends StatelessWidget {
-  _QrContentView({
+  const _QrContentView({
     required this.edgeLength,
     required this.child,
     this.backgroundColor,
