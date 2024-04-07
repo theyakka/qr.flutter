@@ -42,6 +42,7 @@ class QrImageView extends StatefulWidget {
       color: Colors.black,
     ),
     this.embeddedImageEmitsError = false,
+	this.blendEmbeddedImage=false,
     @Deprecated('use colors in eyeStyle and dataModuleStyle instead')
         this.foregroundColor,
   })  : assert(
@@ -75,6 +76,7 @@ class QrImageView extends StatefulWidget {
       dataModuleShape: QrDataModuleShape.square,
       color: Colors.black,
     ),
+	this.blendEmbeddedImage=false,
     this.embeddedImageEmitsError = false,
     @Deprecated('use colors in eyeStyle and dataModuleStyle instead')
         this.foregroundColor,
@@ -99,6 +101,12 @@ class QrImageView extends StatefulWidget {
 
   /// The QR code error correction level to use.
   final int errorCorrectionLevel;
+
+  /// Embedded image will be blended into the qr code
+  ///
+  /// In layman terms, qr code will not be drawn behind embedded image so it
+  /// looks like the image is part of the qr code.
+  final bool blendEmbeddedImage;
 
   /// The external padding between the edge of the widget and the content.
   final EdgeInsets padding;
@@ -222,6 +230,7 @@ class _QrImageViewState extends State<QrImageView> {
       gapless: widget.gapless,
       embeddedImageStyle: widget.embeddedImageStyle,
       embeddedImage: image,
+      blendEmbeddedImage: widget.blendEmbeddedImage,
       eyeStyle: widget.eyeStyle,
       dataModuleStyle: widget.dataModuleStyle,
     );
