@@ -37,7 +37,7 @@ dependencies:
 dependencies:
   qr_flutter:
     git:
-      url: https://github.com/alexanderkind/qr.flutter
+      url: https://github.com/theyakka/qr.flutter
 ```
 
 Keep in mind the `master` branch could be unstable.
