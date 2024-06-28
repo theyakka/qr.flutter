@@ -202,7 +202,6 @@ class _QrImageViewState extends State<QrImageView> {
                     : _qrWidget(null, widgetSize);
               }
               if (snapshot.hasData) {
-                debugPrint('loaded image');
                 final loadedImage = snapshot.data;
                 return _qrWidget(loadedImage, widgetSize);
               } else {
