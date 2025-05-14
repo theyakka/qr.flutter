@@ -108,7 +108,7 @@ class QrImageView extends StatefulWidget {
   final int errorCorrectionLevel;
 
   /// The external padding between the edge of the widget and the content.
-  final EdgeInsets padding;
+  final EdgeInsetsGeometry padding;
 
   /// The intended size of the widget.
   final double? size;
@@ -309,7 +309,7 @@ class _QrContentView extends StatelessWidget {
   final Color? backgroundColor;
 
   /// The padding that surrounds the child widget.
-  final EdgeInsets? padding;
+  final EdgeInsetsGeometry? padding;
 
   /// The child widget.
   final Widget child;
