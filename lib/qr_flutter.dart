@@ -4,7 +4,8 @@
  * See LICENSE for distribution and usage details.
  */
 
-export 'package:qr/qr.dart';
+// qr_flutter has its own QrValidationResult (see src/validator.dart).
+export 'package:qr/qr.dart' hide QrValidationResult;
 
 export 'src/errors.dart';
 export 'src/qr_image_view.dart';

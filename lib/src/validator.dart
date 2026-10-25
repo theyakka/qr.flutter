@@ -4,7 +4,10 @@
  * See LICENSE for distribution and usage details.
  */
 
-import 'package:qr/qr.dart';
+import 'dart:convert';
+
+import 'package:qr/qr.dart' as qr show QrValidationResult;
+import 'package:qr/qr.dart' hide QrValidationResult;
 
 import 'qr_versions.dart';
 
@@ -16,17 +19,34 @@ class QrValidator {
   static QrValidationResult validate({
     required String data,
     int version = QrVersions.auto,
-    int errorCorrectionLevel = QrErrorCorrectLevel.L,
+    QrErrorCorrectLevel errorCorrectionLevel = QrErrorCorrectLevel.low,
   }) {
-    late final QrCode qrCode;
     try {
+      // Encode as a single byte mode (UTF-8) segment, which is what
+      // `QrCode.addData` did before qr 4.0.0, so the output is unchanged.
+      final payload = QrPayload.fromTypedData(utf8.encode(data));
+      final QrCode? qrCode;
       if (version != QrVersions.auto) {
-        qrCode = QrCode(version, errorCorrectionLevel);
-        qrCode.addData(data);
-      } else {
-        qrCode = QrCode.fromData(
-          data: data,
+        // `QrCode(minTypeNumber: ...)` would silently pick a larger version, so
+        // check that the data fits the requested version instead.
+        qrCode = qr.QrValidationResult.fromPayload(
+          payload: payload,
+          typeNumber: version,
           errorCorrectLevel: errorCorrectionLevel,
+        ).qrCode;
+      } else {
+        qrCode = QrCode(
+          payload: payload,
+          errorCorrectLevel: errorCorrectionLevel,
+        );
+      }
+      if (qrCode == null) {
+        return QrValidationResult(
+          status: QrValidationStatus.contentTooLong,
+          error: Exception(
+            'Input too long for QR code version $version with error '
+            'correction level ${errorCorrectionLevel.name}',
+          ),
         );
       }
       return QrValidationResult(

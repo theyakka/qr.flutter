@@ -21,7 +21,7 @@ void main() {
             data: 'This is a test image',
             version: QrVersions.auto,
             gapless: true,
-            errorCorrectionLevel: QrErrorCorrectLevel.L,
+            errorCorrectionLevel: QrErrorCorrectLevel.low,
           ),
         ),
       ),
@@ -43,7 +43,7 @@ void main() {
               data: 'This is a test image',
               version: QrVersions.auto,
               gapless: true,
-              errorCorrectionLevel: QrErrorCorrectLevel.L,
+              errorCorrectionLevel: QrErrorCorrectLevel.low,
               eyeStyle: const QrEyeStyle(
                 eyeShape: QrEyeShape.circle,
                 color: Colors.green,
@@ -70,7 +70,7 @@ void main() {
               data: 'This is a test image',
               version: QrVersions.auto,
               gapless: true,
-              errorCorrectionLevel: QrErrorCorrectLevel.L,
+              errorCorrectionLevel: QrErrorCorrectLevel.low,
               dataModuleStyle: const QrDataModuleStyle(
                 dataModuleShape: QrDataModuleShape.circle,
                 color: Colors.blue,
@@ -97,7 +97,7 @@ void main() {
               data: 'This is a test image',
               version: QrVersions.auto,
               gapless: true,
-              errorCorrectionLevel: QrErrorCorrectLevel.L,
+              errorCorrectionLevel: QrErrorCorrectLevel.low,
               eyeStyle: const QrEyeStyle(
                 eyeShape: QrEyeShape.circle,
                 color: Colors.green,
@@ -133,7 +133,7 @@ void main() {
               gapless: true,
               // ignore: deprecated_member_use_from_same_package
               foregroundColor: Colors.red,
-              errorCorrectionLevel: QrErrorCorrectLevel.L,
+              errorCorrectionLevel: QrErrorCorrectLevel.low,
               eyeStyle: const QrEyeStyle(
                 eyeShape: QrEyeShape.circle,
                 color: Colors.green,
@@ -166,7 +166,7 @@ void main() {
                 data: 'This is a a qr code with a logo',
                 version: QrVersions.auto,
                 gapless: true,
-                errorCorrectionLevel: QrErrorCorrectLevel.L,
+                errorCorrectionLevel: QrErrorCorrectLevel.low,
                 embeddedImage: FileImage(File('test/.images/logo_yakka.png')),
               ),
             ),

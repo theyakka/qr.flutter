@@ -35,7 +35,6 @@ linter:
     # comments
     # doc comments
     - slash_for_doc_comments
-    - package_api_docs # prefer
     - comment_references
     # markdown
     # writing
@@ -55,7 +54,6 @@ linter:
     - prefer_function_declarations_over_variables
     - unnecessary_lambdas
     # parameters
-    - prefer_equal_for_default_values
     # variables
     - avoid_init_to_null
     # members
@@ -86,7 +84,6 @@ linter:
     # members
     - use_setters_to_change_properties
     - avoid_setters_without_getters
-    - avoid_returning_null # avoid
     - avoid_returning_this # avoid
     # types
     - type_annotate_public_apis # prefer
@@ -99,4 +96,3 @@ linter:
     - avoid_positional_boolean_parameters # avoid
     # equality
     - hash_and_equals
-    - avoid_null_checks_in_equality_operators

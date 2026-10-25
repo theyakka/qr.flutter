@@ -28,7 +28,7 @@ You should add the following to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  qr_flutter: ^4.1.0
+  qr_flutter: ^5.0.0
 ```
 
 **Note**: If you're using the Flutter `master` channel, if you encounter build issues, or want to try the latest and greatest then you should use the `master` branch and not a specific release version. To do so, use the following configuration in your `pubspec.yaml`:
@@ -67,7 +67,7 @@ Depending on your data requirements you may want to tweak the QR code output. Th
 | Property                  | Type                 | Description                                                                                                                                                                                         |
 |---------------------------|----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `version`                 | int                  | `QrVersions.auto` or a value between 1 and 40. See http://www.qrcode.com/en/about/version.html for limitations and details.                                                                         |
-| `errorCorrectionLevel`    | int                  | A value defined on `QrErrorCorrectLevel`. e.g.: `QrErrorCorrectLevel.L`.                                                                                                                            |
+| `errorCorrectionLevel`    | QrErrorCorrectLevel  | A `QrErrorCorrectLevel` value. e.g.: `QrErrorCorrectLevel.low`.                                                                                                                                     |
 | `size`                    | double               | The (square) size of the image. If not given, will auto size using shortest size constraint.                                                                                                        |
 | `padding`                 | EdgeInsets           | Padding surrounding the QR code data.                                                                                                                                                               |
 | `backgroundColor`         | Color                | The background color (default is none).                                                                                                                                                             |

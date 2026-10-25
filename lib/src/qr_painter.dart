@@ -9,7 +9,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:qr/qr.dart';
+import 'package:qr/qr.dart' hide QrValidationResult;
 
 import 'errors.dart';
 import 'paint_cache.dart';
@@ -31,7 +31,7 @@ class QrPainter extends CustomPainter {
   QrPainter({
     required String data,
     required this.version,
-    this.errorCorrectionLevel = QrErrorCorrectLevel.L,
+    this.errorCorrectionLevel = QrErrorCorrectLevel.low,
     @Deprecated('use colors in eyeStyle and dataModuleStyle instead')
     this.color = _qrDefaultColor,
     @Deprecated(
@@ -79,7 +79,7 @@ class QrPainter extends CustomPainter {
   final int version; // the qr code version
 
   /// The error correction level of the QR code.
-  final int errorCorrectionLevel; // the qr code error correction level
+  final QrErrorCorrectLevel errorCorrectionLevel;
 
   /// The color of the squares.
   @Deprecated('use colors in eyeStyle and dataModuleStyle instead')

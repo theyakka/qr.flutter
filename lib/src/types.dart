@@ -136,8 +136,8 @@ class QrDataModuleStyle {
   double get outsideBorderRadius {
     if(roundedOutsideCorners) {
       return _outsideBorderRadius != null
-          && _outsideBorderRadius! < borderRadius
-          ? _outsideBorderRadius! : borderRadius;
+          && _outsideBorderRadius < borderRadius
+          ? _outsideBorderRadius : borderRadius;
     }
     return 0;
   }

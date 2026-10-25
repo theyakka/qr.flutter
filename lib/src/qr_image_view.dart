@@ -8,7 +8,7 @@ import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:qr/qr.dart';
+import 'package:qr/qr.dart' hide QrValidationResult;
 
 import 'qr_painter.dart';
 import 'qr_versions.dart';
@@ -28,7 +28,7 @@ class QrImageView extends StatefulWidget {
     @Deprecated('use colors in eyeStyle and dataModuleStyle instead')
     this.foregroundColor = Colors.black,
     this.version = QrVersions.auto,
-    this.errorCorrectionLevel = QrErrorCorrectLevel.L,
+    this.errorCorrectionLevel = QrErrorCorrectLevel.low,
     this.errorStateBuilder,
     this.constrainErrorBounds = true,
     this.gapless = true,
@@ -61,7 +61,7 @@ class QrImageView extends StatefulWidget {
     @Deprecated('use colors in eyeStyle and dataModuleStyle instead')
     this.foregroundColor = Colors.black,
     this.version = QrVersions.auto,
-    this.errorCorrectionLevel = QrErrorCorrectLevel.L,
+    this.errorCorrectionLevel = QrErrorCorrectLevel.low,
     this.errorStateBuilder,
     this.constrainErrorBounds = true,
     this.gapless = true,
@@ -105,7 +105,7 @@ class QrImageView extends StatefulWidget {
   final int version;
 
   /// The QR code error correction level to use.
-  final int errorCorrectionLevel;
+  final QrErrorCorrectLevel errorCorrectionLevel;
 
   /// The external padding between the edge of the widget and the content.
   final EdgeInsets padding;

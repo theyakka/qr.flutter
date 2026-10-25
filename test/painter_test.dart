@@ -15,7 +15,7 @@ void main() {
       data: 'The painter is this thing',
       version: QrVersions.auto,
       gapless: true,
-      errorCorrectionLevel: QrErrorCorrectLevel.L,
+      errorCorrectionLevel: QrErrorCorrectLevel.low,
     );
     ByteData? imageData;
     await tester.runAsync(() async {

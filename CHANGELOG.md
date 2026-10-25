@@ -1,3 +1,9 @@
+# 5.0.0
+- Bump `qr` dependency (from `^3.0.1` to `^4.0.0`). Requires Dart 3.11 / Flutter 3.41.
+- **BREAKING**: `errorCorrectionLevel` on `QrImageView`, `QrPainter` and `QrValidator.validate` is now a `QrErrorCorrectLevel` enum instead of an `int`. Replace `QrErrorCorrectLevel.L`, `.M`, `.Q` and `.H` with `.low`, `.medium`, `.quartile` and `.high`.
+- **BREAKING**: `package:qr` 4.0.0 is re-exported, so its API changes apply to code that builds a `QrCode` itself (e.g. for `QrImageView.withQr`). Use `QrCode(payload: QrPayload.fromString(data))` instead of `QrCode.fromData(data: data)`. `qr`'s new `QrValidationResult` is hidden in favour of the existing one from this package.
+- Data that does not fit the requested version now gives a `contentTooLong` validation result (and shows `errorStateBuilder`) instead of throwing while painting.
+
 # 4.1.0
 - Bump `qr` dependency (from `^3.0.0` to `^3.0.1`).
 
